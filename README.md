@@ -60,5 +60,5 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
 
-# casa-de-la-cultura
-Sistema administrativo desarrollado para una casa de la cultura
+# Project Details
+Administration system developed for a house of culture
