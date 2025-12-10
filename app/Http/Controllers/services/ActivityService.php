@@ -1,0 +1,500 @@
+<?php
+
+namespace App\Http\Controllers\Services;
+use App\Models\Good;
+use App\Models\Good_Attribute;
+use App\Models\Inventory;
+use App\Models\Activity;
+use App\Models\ActivityGood;
+use App\Models\ActivityPerson;
+use App\Models\ActivityDate;
+use App\Models\ActivityHour;
+use App\Models\InventoryAttribute;
+use Carbon\Carbon;
+use DateInterval;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use DateTime;
+use Illuminate\Support\Facades\Auth;
+
+class ActivityService implements ActivityServiceInterface {
+    protected $colors1 = [
+        "Suspendida" => "red-500",
+        "Activa" => "purple-400",
+        "En Espera" => "orange-400",
+        "Completada" => "lime-400",
+        "Pospuesta" => "yellow-400",
+        "En Progreso" => "cyan-400",
+    ];
+    protected $colors2 = [
+        "Suspendida" => "red-300",
+        "Activa" => "purple-200",
+        "En Espera" => "orange-200",
+        "Completada" => "lime-200",
+        "Pospuesta" => "yellow-100",
+        "En Progreso" => "cyan-200",
+    ];
+
+    protected $headers;
+
+    public function __construct() {
+        date_default_timezone_set("America/Caracas");
+        $this -> headers = [
+        "Fechas y Horas" => [$this, "getActivityDates"],
+        "Bienes" => [$this, "getActivityGoods"],
+        "Organizadores" => [$this, "getActivityPersons"]
+    ];
+    }
+
+    public function getActivityData($data){
+        return $this -> headers[$data -> header]($data -> id);
+    }
+
+    public function listActivities(int $userId){
+        $this->updateActivities();
+        $activities = Activity::where("user_id", "=", $userId)->get();
+        
+        $ids = $this -> getActivitiesIds($activities);
+        
+        $this -> checkActivityDates($ids, $activities);
+        $this -> checkActivityGoods($ids, $activities);
+        $this -> checkActivityPersons($ids, $activities);
+        
+        $this -> getActivitiesColors($activities);
+        $this -> formatDates($activities);
+        $this -> formatHours($activities);
+
+
+        return $activities;
+    }
+
+    public function getActivitiesColors($activities){
+        foreach($activities as $activity){
+            $activity -> color1 = $this->colors1[$activity->status];
+            $activity -> color2 = $this->colors2[$activity->status];
+        }
+    }
+
+    public function formatDates($activities){
+        foreach($activities as $activity){
+            $activity -> starting_date = $this->formatDate($activity -> starting_date);
+            $activity -> ending_date = $this->formatDate($activity -> ending_date);
+        }
+    }
+
+    public function formatSimpleDates($dates){
+        foreach($dates as $date){
+            $date -> date = date("d/m/Y", strtotime($date -> date));
+        }
+    }
+
+    public function formatHour($hour){
+        return date("g:i a", strtotime($hour));
+    }
+
+    public function formatDate($date){
+        return date("d/m/Y", strtotime($date));
+    }
+
+    public function formatHours($hours){
+        foreach($hours as $hour){
+                $hour->starting_time = $this->formatHour($hour->starting_time);
+                $hour->ending_time = $this->formatHour($hour->ending_time);
+        }
+    }
+
+    public function createActivity(Request $data){
+        $activityData = $data->only(['name', 'status', 'starting_date', 'ending_date']);
+        $activityData['important'] = $data->has('important') ? 1 : 0;
+        $activityData['user_id'] = Auth::id();
+        $activityData['starting_time'] = $data->input('date.0.starting_time.0');
+        $activityData['ending_time'] = $data->input('date.0.ending_time.0');
+        $times = [];
+        $activityId = Activity::create($activityData)->id;
+
+        foreach($data->input('date') as $key => $date){
+            if($key == 0){
+                continue;
+            } else {
+                    $dateValues = [];
+                    $dateValues["activity_id"] = $activityId;
+                    $dateValues["date"] = $date["date"];
+                    $dateValues["created_at"] = now();
+                    $dateValues["updated_at"] = now();
+                    
+                    //$activityDateId = ActivityDate::create($dateValues)->id;
+                    $activityDateId = DB::table('activity_dates')->insertGetId($dateValues);
+
+                    $startingTimes = $date['starting_time'];
+                    $endingTimes = $date['ending_time'];
+
+                    foreach($startingTimes as $key => $startingTime){
+                        $times[] = [
+                            "date_id" => $activityDateId,
+                            "starting_time" => $startingTime,
+                            "ending_time" => $endingTimes[$key],
+                            "created_at" => now(), // Requerido por insert()
+                            "updated_at" => now(), // Requerido por insert()
+                        ];
+                    }                    
+                }
+        }
+        if(!empty($times)){
+            ActivityHour::insert($times);
+        }
+
+        if($data->has("good_id")){
+            $goodIds = $data -> input("good_id");
+            $quantitiesRequested = $data -> input("quantity_requested");
+            $goods = [];
+            foreach($goodIds as $key => $goodId){
+                $goods[] = [
+                    "good_id" => $goodId,
+                    "quantity_requested" => $quantitiesRequested[$key] ?? 1,
+                    "activity_id" => $activityId,
+                    "created_at" => now(),
+                    "updated_at" => now(),
+                ];
+
+            }
+            ActivityGood::insert($goods);
+        }
+
+        if($data->has("organizer_name")){
+        $organizerNames = $data -> input('organizer_name');
+        $organizers = [];
+        foreach($organizerNames as $organizerName){
+            $organizers[] = [
+                "activity_id" => $activityId,
+                "name" => $organizerName,
+                "created_at" => now(),
+                "updated_at" => now()
+            ];
+        }
+        ActivityPerson::insert($organizers);
+        }
+    }
+    public function changeStatus(Request $data){
+        $activity = Activity::where("id", "=", $data->id)
+        ->first();
+
+        $activity->status = $data->status;
+        $databaseFormat = "Y-m-d";
+        
+        if($activity->status == "Pospuesta"){
+            $interval = new DateInterval("P$data->amount"."D");
+            $startingDate = DateTime::createFromFormat($databaseFormat, $activity->starting_date);
+            $endingDate = DateTime::createFromFormat($databaseFormat, $activity->ending_date);
+            // DateInterval::createFromDateString("P$data->amount d");
+            // $formattedDate = "+$data->amount day";
+            date_add($startingDate, $interval);
+            date_add($endingDate, $interval);
+            // dd($activity->starting_date, strtotime($formattedDate, $activity->starting_date));
+            $activity -> starting_date = $startingDate;
+            $activity -> ending_date = $endingDate;
+
+            // $activity->starting_date = strtotime($formattedDate, $activity->starting_date);
+            // $activity->ending_date = strtotime($formattedDate, $activity->ending_date);
+            $activity -> save();
+            return ["starting_date"  => $activity->starting_date->format('d/m/Y'), 
+                    "ending_date"    => $activity->ending_date->format('d/m/Y')];
+        }
+        return $activity->save();
+    }
+    public function updateActivities(){
+        Activity::where("ending_date", "=", date("Y-m-d"))
+        ->where("ending_time", "<=", date("H:i:s"))
+        ->where("status", "!=", "Completada")
+        ->where("status", "!=", "Suspendida")
+        ->orWhere("ending_date", "<", date("Y-m-d"))
+        ->where("status", "!=", "Completada")
+        ->where("status", "!=", "Suspendida")
+        ->update(["status" => "En Espera"]);
+        
+        Activity::where("starting_date", "=", date("Y-m-d"))
+        ->where("starting_time", "<=", date("H:i:s"))
+        ->where("status", "!=", "Completada")
+        ->where("status", "!=", "Suspendida")
+        ->where("ending_date", ">=", date("Y-m-d"))
+        ->where("ending_time", ">", date("H:i:s"))
+        ->update(["status" => "En Progreso"]);
+    }
+
+    public function updateActivity(Request $data)
+{
+    $activity = Activity::findOrFail($data->id);
+    $activityData = $data->only(['name', 'status', 'starting_date', 'ending_date']);
+    $activityData['important'] = $data->has('important') ? 1 : 0;
+    $activityData['user_id'] = Auth::id();
+    $activityData['starting_time'] = $data->input('date.0.starting_time.0');
+    $activityData['ending_time']   = $data->input('date.0.ending_time.0');
+
+    $activity->update($activityData);
+    $activityId = $activity->id;
+
+    $existingDateIds = ActivityDate::where('activity_id', $activityId)->pluck('id');
+    DB::table('activity_hours')->whereIn('date_id', $existingDateIds)->delete();
+    DB::table('activity_dates')->where('activity_id', $activityId)->delete();
+
+
+    $times = [];
+    foreach ($data->input('date') as $key => $date) {
+        if ($key == 0) {
+            continue;
+        }
+        $dateValues = [];
+        $dateValues["activity_id"] = $activityId;
+        $dateValues["date"] = $date["date"];
+        $dateValues["created_at"] = now();
+        $dateValues["updated_at"] = now();
+
+        $activityDateId = DB::table('activity_dates')->insertGetId($dateValues);
+
+        $startingTimes = $date['starting_time'];
+        $endingTimes   = $date['ending_time'];
+
+        foreach ($startingTimes as $i => $startingTime) {
+            $times[] = [
+                "date_id"       => $activityDateId,
+                "starting_time" => $startingTime,
+                "ending_time"   => $endingTimes[$i],
+                "created_at"    => now(),
+                "updated_at"    => now(),
+            ];
+        }
+    }
+    if (!empty($times)) {
+        ActivityHour::insert($times);
+    }
+    DB::table('activity_goods')->where('activity_id', $activityId)->delete();
+    if ($data->has("good_id")) {
+        $goodIds = $data->input("good_id");
+        $quantitiesRequested = $data->input("quantity_requested");
+        $goods = [];
+        foreach ($goodIds as $key => $goodId) {
+            $goods[] = [
+                "good_id" => $goodId,
+                "quantity_requested" => $quantitiesRequested[$key] ?? 1,
+                "activity_id" => $activityId,
+                "created_at" => now(),
+                "updated_at" => now(),
+            ];
+        }
+        ActivityGood::insert($goods);
+    }
+    DB::table('activity_people')->where('activity_id', $activityId)->delete();
+    if ($data->has("organizer_name")) {
+        $organizerNames = $data->input('organizer_name');
+        $organizers = [];
+        foreach ($organizerNames as $name) {
+            $organizers[] = [
+                "activity_id" => $activityId,
+                "name"        => $name,
+                "created_at"  => now(),
+                "updated_at"  => now(),
+            ];
+        }
+        ActivityPerson::insert($organizers);
+    }
+    return back()->with('success', 'Actividad actualizada correctamente');
+}
+
+    public function getActivitiesIds($activities){
+        $ids = [];
+        foreach($activities as $activity){
+            $ids[] = $activity->id;
+        }
+        return $ids;
+    }
+
+    public function checkActivityDates($activitiesIds, $activities){
+        $activitiesWithMultipleDates = ActivityDate::whereIn('activity_id', $activitiesIds)->pluck('activity_id')->toArray();
+        
+        foreach($activities as $activity){
+            in_array($activity->id, $activitiesWithMultipleDates) 
+            ? $activity->hasMultipleDates = true
+            : $activity->hasMultipleDates = false;
+        }
+        return $activities;
+    }
+    public function checkActivityGoods($activitiesIds, $activities){
+        $activitiesWithMultipleGoods = ActivityGood::whereIn('activity_id', $activitiesIds)->pluck('activity_id')->toArray();
+        
+        foreach($activities as $activity){
+            in_array($activity->id, $activitiesWithMultipleGoods) 
+            ? $activity->hasMultipleGoods = true
+            : $activity->hasMultipleGoods = false;
+        }
+        return $activities;
+    }
+    public function checkActivityPersons($activitiesIds, $activities){
+        $activitiesWithPersons = ActivityPerson::whereIn('activity_id', $activitiesIds)->pluck('activity_id')->toArray();
+
+        foreach($activities as $activity){
+            in_array($activity->id, $activitiesWithPersons) 
+            ? $activity->hasPersons = true
+            : $activity->hasPersons = false;
+        }
+        return $activities;
+    }
+
+    public function getActivityDates($activityId){
+        $dates = ActivityDate::where("activity_id", "=", $activityId)->get();
+        $hours = $this -> getActivityHours($dates);
+        $this->formatSimpleDates($dates);
+        foreach($hours as $hourArray){
+        $this->formatHours($hourArray);
+        }
+        return [
+            "dates" => $dates,
+            "hours" => $hours
+        ];
+    }
+    public function getActivityHours($activityDates){
+        $ids = [];
+        foreach($activityDates as $activityDate){
+            $ids[] = $activityDate -> id;
+        }
+        $activityHours = ActivityHour::whereIn('date_id', $ids)->get();
+        $hoursById = [];
+        foreach ($activityHours as $activityHour){
+            $hoursById[$activityHour->date_id][] = $activityHour;
+        }
+        return $hoursById;
+    }
+    public function getActivityGoods($activityId){
+        return ActivityGood::where("activity_id", "=", $activityId)
+        ->join('goods', 'goods.id', '=', 'activity_goods.good_id')
+        ->join('inventories', 'goods.inventory_id', '=', 'inventories.id')
+        ->select('goods.name as goodName', 'inventories.name as inventoryName', 'activity_goods.*')
+        ->get();
+    }
+    public function getActivityPersons($activityId){
+        return ActivityPerson::where("activity_id", "=", $activityId)->get();
+    }
+    
+    public function getActivitiesInTheMonth(Request $request){
+        $date = Carbon::parse($request -> date);
+
+        $startingActivities = Activity::whereYear('starting_date', $date->year)
+        ->whereMonth('starting_date', $date->month)
+        ->get();
+
+        $endingActivities = Activity::whereYear('ending_date', $date->year)
+        ->whereMonth('ending_date', $date->month)
+        ->get();
+
+        $extraActivities = ActivityDate::whereYear('date', $date->year)
+        ->whereMonth('date', $date->month)
+        ->with('activity')
+        ->with('hours')
+        ->get();
+
+        $formattedStartingActivities = $startingActivities->map([$this, 'formatStartingDates']);
+        $formattedEndingActivities = $endingActivities->map([$this, 'formatEndingDates']);
+        $formattedExtraActivities = $extraActivities->map([$this, 'formatExtraDates']);
+
+
+        $allActivities = $formattedStartingActivities
+        ->concat($formattedEndingActivities)
+        ->concat($formattedExtraActivities);
+
+        $activities = $allActivities->groupBy([$this, 'parseByDay']);
+        
+        return response()->json([
+            'month' => ucfirst($date->locale('es')->monthName),
+            'year' => $date->year,       
+            'activities' => $activities
+    ]);
+    }
+    public function parseByDay($activity){
+        return Carbon::parse($activity->starting_date)->day;
+    }
+    
+
+    public function formatStartingDates($date){
+        return (object) [
+            'color1' => $this->colors1[$date->status] ?? 'gray-400',
+            'color2' => $this->colors2[$date->status] ?? 'gray-400',
+            'name' => $date->name . ' (Inicio)',
+            'status' => $date->status,
+            'starting_time' => $this->formatHour($date->starting_time),
+            'ending_time' => $this->formatHour($date->ending_time),
+            'starting_date' => Carbon::parse($date->starting_date),
+            'id' => $date->id
+        ];
+    }
+    public function formatEndingDates($date){
+        return (object) [
+            'color1' => $this->colors1[$date->status] ?? 'gray-400',
+            'color2' => $this->colors2[$date->status] ?? 'gray-400',
+            'name' => $date->name . ' (Fin)',
+            'status' => $date->status,
+            'starting_time' => $this->formatHour($date->starting_time),
+            'ending_time' => $this->formatHour($date->ending_time),
+            'starting_date' => Carbon::parse($date->ending_date),
+            'id' => $date->id
+        ];
+    }
+
+    public function formatSingleActivityHour($hour) {
+        return [
+            'starting_time' => $this->formatHour($hour->starting_time),
+            'ending_time'   => $this->formatHour($hour->ending_time),
+            'id'            => $hour->id 
+        ];
+    }
+
+
+    public function formatExtraDates($date){
+
+        $formattedHours = $date->hours->map([$this, "formatSingleActivityHour"]);
+        return (object) [
+            'color1' => $this->colors1[$date->status] ?? 'gray-400',
+            'color2' => $this->colors2[$date->status] ?? 'gray-400',
+            'time_array' => true,
+            'name' => ($date->name ?? optional($date->activity)->name ?? 'Sin nombre') . ' (Extra)',
+            'status' => optional($date->activity)->status, 
+            'hours' => $formattedHours,
+            'starting_time' => $this->formatHour($date->hours->first()?->starting_time),
+            'ending_time' => $this->formatHour($date->hours->first()?->ending_time),
+            'starting_date' => Carbon::parse($date->date),
+            'id' => $date->id, 
+        ];
+    }
+
+    public function getUpcomingActivities($userId){
+
+        $from = now()->copy()->startOfDay(); 
+        $to = now()->copy()->addDays(7)->endOfDay();
+
+        $startingActivities = Activity::whereBetween("starting_date", [$from, $to])
+        ->where('user_id', "=" , $userId)
+        ->where('important', "=", 1)
+        ->get();
+        
+        $endingActivities = Activity::whereBetween("ending_date", [$from, $to])
+        ->where('user_id', "=" , $userId)
+        ->where('important', "=", 1)
+        ->get();
+        $extraActivities = ActivityDate::whereBetween("date", [$from, $to])
+        ->whereHas('activity', function ($query) use ($userId) {
+            $query->where('user_id', '=', $userId)
+            ->where('important', 1);
+        })
+        ->with('activity')
+        ->get();
+        
+        $formattedStartingActivities = $startingActivities->map([$this, 'formatStartingDates']);
+        $formattedEndingActivities = $endingActivities->map([$this, 'formatEndingDates']);
+        $formattedExtraActivities = $extraActivities->map([$this, 'formatExtraDates']);
+
+        $allActivities = $formattedStartingActivities
+        ->concat($formattedEndingActivities)
+        ->concat($formattedExtraActivities);
+
+        return $allActivities->groupBy(function($activity){
+            return $this->parseByDay($activity);
+        });
+    }
+}
