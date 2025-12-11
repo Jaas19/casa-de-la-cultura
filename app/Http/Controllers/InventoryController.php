@@ -17,6 +17,9 @@ class InventoryController extends Controller
     }
     public function index(){
         $inventories = $this -> inventoryService -> listInventories(Auth::id());
+        $inventoryGoods = [];
+        $inventoryAttributes = [];
+        $goodsAttributes = [];
         foreach($inventories as $inventory){
             $inventoryGoods[$inventory->id] = $this -> goodService -> listGoods($inventory->id);
             $inventoryAttributes[$inventory->id] = $this -> inventoryService -> getInventoryAttributes($inventory->id);

@@ -3,6 +3,7 @@ const redirectForm = document.querySelector('.redirectForm');
 
 function redirect(e){
     redirectForm.action = e.target.value;
+    console.log(redirectForm.action)
     redirectForm.submit();
 }
 

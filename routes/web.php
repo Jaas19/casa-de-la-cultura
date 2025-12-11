@@ -15,6 +15,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/dashboard', [ActivityController::class, 'dashboard'])->middleware(['auth', 'verified'])->name('dashboard.index');
 
+Route::get('/admin/register', function () {
+    return view('auth.register');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

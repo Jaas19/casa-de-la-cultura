@@ -8,6 +8,7 @@ use App\Models\Person;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class PersonService implements PersonServiceInterface{
     public function listPersons(){
@@ -156,16 +157,23 @@ class PersonService implements PersonServiceInterface{
         ->where("person_id", "=", $person_id)->first();
     
         if(!$person){
+            AssistancePerson::create(
+                [
+                    "user_id" => Auth::id(),
+                    "person_id" => $person_id,
+                    "status" => 1
+                ]);
+                return response()->json([
+                    'success' => true,
+                    'message' => 'transacción exitosa',
+                ]);
+        } else {
+            $person->status ? $person->status = 0 : $person->status = 1;
+            $person->save();
             return response()->json([
-            'success' => false, 
-            'message' => 'Persona no encontrada'
-        ], 404);
+                'success' => true,
+                'message' => 'transacción exitosa',
+            ]);
         }
-        $person->status ? $person->status = 0 : $person->status = 1;
-        $person->save();
-        return response()->json([
-            'success' => true,
-            'message' => 'transacción exitosa',
-        ]);
     }
 }
