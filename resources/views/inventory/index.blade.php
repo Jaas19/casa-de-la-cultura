@@ -1,12 +1,13 @@
 <x-app-layout>
     <x-slot name="header">
-        <form class="redirectForm" action="">
-            <select class="dropdown-arrow z-10 font-black text-xl bg-transparent border-0 text-gray-200 leading-tight black_contour"
-                style="background-image: url('{{ asset('images/arrow_drop_down.png') }}');">
-                <option class="redirectOption" value="{{ route("inventory.index") }}" selected disabled>Inventario</option>
-                <option class="redirectOption" value="{{ route("dashboard.index") }}">Dashboard</option>
-                <option class="redirectOption" value="{{ route("activity.index") }}">Actividades</option>
-                <option class="redirectOption" value="{{ route("person.index") }}">Personas</option>
+        <form action="" id="redirectForm">
+            <select id="redirect-select" class="dropdown-arrow z-10 font-black text-xl bg-transparent border-0 text-gray-200 leading-tight black_contour"
+            style="background-image: url('{{ asset('images/arrow_drop_down.png') }}');">
+                <option class="bg-black2 redirectOption" value="{{ route("inventory.index") }}" selected disabled>Inventario</option>
+                <option class="bg-black2 redirectOption" value="{{ route("dashboard.index") }}">Dashboard</option>
+                <option class="bg-black2 redirectOption" value="{{ route("activity.index") }}">Actividades</option>
+                <option class="bg-black2 redirectOption" value="{{ route("person.index") }}">Personas</option>
+                <option class="bg-black2 redirectOption" value="{{ route("loan.index") }}">Prestamos</option>
             </select>
         </form>
     </x-slot>
@@ -18,7 +19,7 @@
                 @foreach ($inventories as $inventory)
                     <option class="option" value='{{ $inventory->id }}'>{{ $inventory->name }}</option>
                 @endforeach
-                    <option class="redirect" value="{{ route('inventory.create') }}">Nuevo inventario</option>
+                    <option value="{{ route('inventory.create') }}">Nuevo inventario</option>
             </select>
             <!--Barra de búsqueda y botón de filtro-->
             <div class="relative flex items-center justify-center">
@@ -95,5 +96,8 @@
     <x-slot name="scriptAjax">
         {{ "./js/inventoryAjax.js" }}
     </x-slot>
+    <x-slot name="script2">
+    {{ "../js/redirect.js" }}
+    </x-slot name="script">
 
 </x-app-layout>

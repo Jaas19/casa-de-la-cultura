@@ -1,12 +1,12 @@
 <x-app-layout>
     <x-slot name="header">
-        <form class="redirectForm" action="">
-            <select class="dropdown-arrow z-10 font-black text-xl bg-transparent border-0 text-gray-200 leading-tight black_contour"
-                style="background-image: url('{{ asset('images/arrow_drop_down.png') }}');">
-                <option class="redirectOption"selected disabled>Personas</option>
-                <option class="redirectOption" value="{{ route("dashboard.index") }}">Dashboard</option>
-                <option class="redirectOption" value="{{ route("activity.index") }}">Actividades</option>
-                <option class="redirectOption" value="{{ route("inventory.index") }}">Inventario</option>
+        <form action="" id="redirectForm">
+            <select id="redirect-select" class="dropdown-arrow z-10 font-black text-xl bg-transparent border-0 text-gray-200 leading-tight black_contour"
+            style="background-image: url('{{ asset('images/arrow_drop_down.png') }}');">
+                <option class="bg-black2 redirectOption"selected disabled>Personas</option>
+                <option class="bg-black2 redirectOption" value="{{ route("dashboard.index") }}">Dashboard</option>
+                <option class="bg-black2 redirectOption" value="{{ route("activity.index") }}">Actividades</option>
+                <option class="bg-black2 redirectOption" value="{{ route("inventory.index") }}">Inventario</option>
             </select>
         </form>
     </x-slot>

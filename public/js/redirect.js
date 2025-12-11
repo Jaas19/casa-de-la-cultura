@@ -1,12 +1,12 @@
 const redirectOptions = document.querySelectorAll('.redirectOption')
-const redirectForm = document.querySelector('.redirectForm');
+const redirectForm = document.querySelector('#redirectForm');
+const redirectSelect = document.querySelector('#redirect-select')
 
 function redirect(e){
-    redirectForm.action = e.target.value;
-    console.log(redirectForm.action)
-    redirectForm.submit();
+    if (e.target.value) {
+        console.log(e.target.value)
+        redirectForm.action = e.target.value;
+        redirectForm.submit();
+    }
 }
-
-for(option of redirectOptions){
-    option.addEventListener('click', redirect);
-}
+redirectSelect.addEventListener('change', redirect);

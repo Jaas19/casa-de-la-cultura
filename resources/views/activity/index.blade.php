@@ -3,13 +3,13 @@
         <x-slot name="header">
             <div class="flex items-center relative w-full">
             <div class="flex w-full justify-between">
-            <form class="redirectForm" action="">
-                <select class="dropdown-arrow z-10 font-black text-xl bg-transparent border-0 text-gray-200 leading-tight black_contour"
-                style="background-image: url('{{ asset('images/arrow_drop_down.png') }}')">
-                    <option class="redirectOption" selected disabled>Actividades</option>
-                    <option class="redirectOption" value="{{ route("inventory.index") }}">Inventario</option>
-                    <option class="redirectOption" value="{{ route("dashboard.index") }}">Dashboard</option>
-                    <option class="redirectOption" value="{{ route("person.index") }}">Personas</option>
+            <form action="" id="redirectForm">
+            <select id="redirect-select" class="dropdown-arrow z-10 font-black text-xl bg-transparent border-0 text-gray-200 leading-tight black_contour"
+            style="background-image: url('{{ asset('images/arrow_drop_down.png') }}');">
+                    <option class="bg-black2 redirectOption" selected disabled>Actividades</option>
+                    <option class="bg-black2 redirectOption" value="{{ route("inventory.index") }}">Inventario</option>
+                    <option class="bg-black2 redirectOption" value="{{ route("dashboard.index") }}">Dashboard</option>
+                    <option class="bg-black2 redirectOption" value="{{ route("person.index") }}">Personas</option>
                 </select>
             </form>
 
@@ -17,13 +17,13 @@
 
             <select id="filter-activity-select" class="dropdown-arrow z-10 font-black text-xl bg-transparent border-0 text-gray-200 leading-tight black_contour"
             style="background-image: url('{{ asset('images/arrow_drop_down.png') }}')">
-                <option class="filter-activity-option" value="Todas">Todas</option>
-                <option class="filter-activity-option" value="Activa">Activas</option>
-                <option class="filter-activity-option" value="En Espera">En Espera</option>
-                <option class="filter-activity-option" value="En Progreso">En Progreso</option>
-                <option class="filter-activity-option" value="Completada">Completadas</option>
-                <option class="filter-activity-option" value="Pospuesta">Pospuestas</option>
-                <option class="filter-activity-option" value="Suspendida">Suspendidas</option>
+                <option class="bg-black2 filter-activity-option" value="Todas">Todas</option>
+                <option class="bg-black2 filter-activity-option" value="Activa">Activas</option>
+                <option class="bg-black2 filter-activity-option" value="En Espera">En Espera</option>
+                <option class="bg-black2 filter-activity-option" value="En Progreso">En Progreso</option>
+                <option class="bg-black2 filter-activity-option" value="Completada">Completadas</option>
+                <option class="bg-black2 filter-activity-option" value="Pospuesta">Pospuestas</option>
+                <option class="bg-black2 filter-activity-option" value="Suspendida">Suspendidas</option>
             </select>
             </div>
             </div>

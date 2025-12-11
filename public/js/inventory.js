@@ -4,9 +4,8 @@ const data = document.querySelectorAll('.inventoryData')
 const fields = document.querySelectorAll('.dataField')
 const goodId = document.querySelector('.bg-yellow-950')
 
-const redirectOptions = document.querySelectorAll('.redirectOption')
 const redirectValues = document.querySelectorAll('.redirect');
-const redirectForm = document.querySelector('.redirectForm');
+
 
 const searchGoodInput = document.querySelector('#search-good-input')
 
@@ -40,13 +39,19 @@ function redirect(e){
     redirectForm.submit();
 }
 
-for(option of redirectOptions){
-    option.addEventListener('click', redirect);
-}
 
 function redirectTo(e){
-    window.location.href = e.target.value;
+    if(e.target.value.includes("/") || e.target.value.includes("\\")){
+        window.location.href = e.target.value;
+    } else {
+        showInventoryData(e);
+    }
+    
 }
+
+const inventoriesSelect =  document.querySelector("#inventories");
+inventoriesSelect.addEventListener('change', redirectTo)
+
 
 for (redirectValue of redirectValues){
     redirectValue.addEventListener('click', redirectTo)
