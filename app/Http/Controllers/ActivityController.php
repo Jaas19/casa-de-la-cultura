@@ -28,7 +28,8 @@ class ActivityController extends Controller
 
     public function dashboard() {
         $upcomingActivities = $this->activityService->getUpcomingActivities(Auth::id());
-        return view('dashboard', compact('upcomingActivities'));
+        $username = Auth::user()->name;
+        return view('dashboard', compact('upcomingActivities', 'username'));
     }
     public function create() {
         $userId = Auth::id();

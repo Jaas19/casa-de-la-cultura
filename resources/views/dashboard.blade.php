@@ -9,6 +9,9 @@
                 <option class="redirectOption" value="{{ route("person.index") }}">Personas</option>
             </select>
         </form>
+        <h1 class="text-center w-full text-white2 text-xl black_contour font-black">
+            {{ $username }}
+        </h1>
     </x-slot>
     <x-slot name="element">
         <input id="date-input" type="date" class="bg-black2 text-gray-500">
