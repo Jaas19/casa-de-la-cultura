@@ -103,77 +103,104 @@ class ActivityService implements ActivityServiceInterface {
         }
     }
 
-    public function createActivity(Request $data){
-        $activityData = $data->only(['name', 'status', 'starting_date', 'ending_date']);
-        $activityData['important'] = $data->has('important') ? 1 : 0;
-        $activityData['user_id'] = Auth::id();
-        $activityData['starting_time'] = $data->input('date.0.starting_time.0');
-        $activityData['ending_time'] = $data->input('date.0.ending_time.0');
-        $times = [];
-        $activityId = Activity::create($activityData)->id;
+    public function createActivity(Request $request){
+        try {
+            DB::transaction(function () use ($request) {
+                $data = $request->only(['name', 'status', 'starting_date', 'ending_date']);
+                $data['important'] = $request->has('important') ? 1 : 0;
+                $data['user_id'] = Auth::id();
+                $data['starting_time'] = $request->input('date.0.starting_time.0');
+                $data['ending_time']   = $request->input('date.0.ending_time.0');
+                $activity = Activity::create($data);
 
-        foreach($data->input('date') as $key => $date){
-            if($key == 0){
-                continue;
-            } else {
-                    $dateValues = [];
-                    $dateValues["activity_id"] = $activityId;
-                    $dateValues["date"] = $date["date"];
-                    $dateValues["created_at"] = now();
-                    $dateValues["updated_at"] = now();
-                    
-                    //$activityDateId = ActivityDate::create($dateValues)->id;
-                    $activityDateId = DB::table('activity_dates')->insertGetId($dateValues);
 
-                    $startingTimes = $date['starting_time'];
-                    $endingTimes = $date['ending_time'];
+                $this->saveActivityDetails($activity, $request);
+            });
 
-                    foreach($startingTimes as $key => $startingTime){
-                        $times[] = [
-                            "date_id" => $activityDateId,
-                            "starting_time" => $startingTime,
-                            "ending_time" => $endingTimes[$key],
-                            "created_at" => now(), // Requerido por insert()
-                            "updated_at" => now(), // Requerido por insert()
-                        ];
-                    }                    
-                }
-        }
-        if(!empty($times)){
-            ActivityHour::insert($times);
-        }
+            return redirect()->route('activity.index')->with('success', 'Actividad creada correctamente');
 
-        if($data->has("good_id")){
-            $goodIds = $data -> input("good_id");
-            $quantitiesRequested = $data -> input("quantity_requested");
-            $goods = [];
-            foreach($goodIds as $key => $goodId){
-                $goods[] = [
-                    "good_id" => $goodId,
-                    "quantity_requested" => $quantitiesRequested[$key] ?? 1,
-                    "activity_id" => $activityId,
-                    "created_at" => now(),
-                    "updated_at" => now(),
-                ];
-
-            }
-            ActivityGood::insert($goods);
-        }
-
-        if($data->has("organizer_name")){
-        $organizerNames = $data -> input('organizer_name');
-        $organizers = [];
-        foreach($organizerNames as $organizerName){
-            $organizers[] = [
-                "activity_id" => $activityId,
-                "name" => $organizerName,
-                "created_at" => now(),
-                "updated_at" => now()
-            ];
-        }
-        ActivityPerson::insert($organizers);
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Error al guardar: ' . $e->getMessage()])->withInput();
         }
     }
+
+    private function saveActivityDetails(Activity $activity, Request $request)
+    {
+        if ($request->has('date')) {
+            foreach ($request->input('date') as $key => $date) {
+                if ($key == 0) continue;
+                if (empty($date['date'])){
+                    continue;
+                }
+                $activityDate = $activity->dates()->create([
+                    'date' => $date['date']
+                ]);
+                if (isset($date['starting_time'])) {
+                    $hours = [];
+                    foreach ($date['starting_time'] as $i => $starting_time) {
+                        $hours[] = [
+                            'starting_time' => $starting_time,
+                            'ending_time'   => $date['ending_time'][$i] ?? null,
+                        ];
+                    }
+                    $activityDate->hours()->createMany($hours);
+                }
+            }
+        }
+
+        if ($request->has('good_id')) {
+            $goods = [];
+            $quantities = $request->input('quantity_requested');
+            
+            foreach ($request->input('good_id') as $key => $goodId) {
+                $goods[] = [
+                    'good_id' => $goodId,
+                    'quantity_requested' => $quantities[$key] ?? 1,
+                ];
+            }
+            $activity->goods()->createMany($goods);
+        }
+
+
+        if ($request->has('organizer_name')) {
+            $organizers = [];
+            foreach ($request->input('organizer_name') as $name) {
+                if(!empty($name)) {
+                    $organizers[] = ['name' => $name];
+                }
+            }
+            $activity->organizers()->createMany($organizers);
+        }
+    }
+
+    public function updateActivity(Request $request)
+    {
+        $activity = Activity::findOrFail($request->id);
+        try {
+            DB::transaction(function () use ($request, $activity) {
+                $data = $request->only(['name', 'status', 'starting_date', 'ending_date']);
+                $data['important'] = $request->has('important') ? 1 : 0;
+                $data['starting_time'] = $request->input('date.0.starting_time.0');
+                $data['ending_time']   = $request->input('date.0.ending_time.0');
+
+                $activity->update($data);
+                $dateIds = $activity->dates()->pluck('id');
+                ActivityHour::whereIn('date_id', $dateIds)->delete();
+                $activity->dates()->delete();
+                $activity->goods()->delete();
+                $activity->organizers()->delete();
+
+                $this->saveActivityDetails($activity, $request);
+            });
+
+            return back()->with('success', 'Actividad actualizada correctamente');
+
+        } catch (\Exception $e) {
+            dd($e->getMessage(), $e->getFile());
+            return back()->withErrors(['error' => 'Error al actualizar: ' . $e->getMessage()]);
+        }
+    }
+
     public function changeStatus(Request $data){
         $activity = Activity::where("id", "=", $data->id)
         ->first();
@@ -219,85 +246,6 @@ class ActivityService implements ActivityServiceInterface {
         ->where("ending_time", ">", date("H:i:s"))
         ->update(["status" => "En Progreso"]);
     }
-
-    public function updateActivity(Request $data)
-{
-    $activity = Activity::findOrFail($data->id);
-    $activityData = $data->only(['name', 'status', 'starting_date', 'ending_date']);
-    $activityData['important'] = $data->has('important') ? 1 : 0;
-    $activityData['user_id'] = Auth::id();
-    $activityData['starting_time'] = $data->input('date.0.starting_time.0');
-    $activityData['ending_time']   = $data->input('date.0.ending_time.0');
-
-    $activity->update($activityData);
-    $activityId = $activity->id;
-
-    $existingDateIds = ActivityDate::where('activity_id', $activityId)->pluck('id');
-    DB::table('activity_hours')->whereIn('date_id', $existingDateIds)->delete();
-    DB::table('activity_dates')->where('activity_id', $activityId)->delete();
-
-
-    $times = [];
-    foreach ($data->input('date') as $key => $date) {
-        if ($key == 0) {
-            continue;
-        }
-        $dateValues = [];
-        $dateValues["activity_id"] = $activityId;
-        $dateValues["date"] = $date["date"];
-        $dateValues["created_at"] = now();
-        $dateValues["updated_at"] = now();
-
-        $activityDateId = DB::table('activity_dates')->insertGetId($dateValues);
-
-        $startingTimes = $date['starting_time'];
-        $endingTimes   = $date['ending_time'];
-
-        foreach ($startingTimes as $i => $startingTime) {
-            $times[] = [
-                "date_id"       => $activityDateId,
-                "starting_time" => $startingTime,
-                "ending_time"   => $endingTimes[$i],
-                "created_at"    => now(),
-                "updated_at"    => now(),
-            ];
-        }
-    }
-    if (!empty($times)) {
-        ActivityHour::insert($times);
-    }
-    DB::table('activity_goods')->where('activity_id', $activityId)->delete();
-    if ($data->has("good_id")) {
-        $goodIds = $data->input("good_id");
-        $quantitiesRequested = $data->input("quantity_requested");
-        $goods = [];
-        foreach ($goodIds as $key => $goodId) {
-            $goods[] = [
-                "good_id" => $goodId,
-                "quantity_requested" => $quantitiesRequested[$key] ?? 1,
-                "activity_id" => $activityId,
-                "created_at" => now(),
-                "updated_at" => now(),
-            ];
-        }
-        ActivityGood::insert($goods);
-    }
-    DB::table('activity_people')->where('activity_id', $activityId)->delete();
-    if ($data->has("organizer_name")) {
-        $organizerNames = $data->input('organizer_name');
-        $organizers = [];
-        foreach ($organizerNames as $name) {
-            $organizers[] = [
-                "activity_id" => $activityId,
-                "name"        => $name,
-                "created_at"  => now(),
-                "updated_at"  => now(),
-            ];
-        }
-        ActivityPerson::insert($organizers);
-    }
-    return back()->with('success', 'Actividad actualizada correctamente');
-}
 
     public function getActivitiesIds($activities){
         $ids = [];

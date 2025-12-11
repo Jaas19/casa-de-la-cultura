@@ -59,6 +59,10 @@
             <script src="{{ $script2 }}"></script>
         @endisset
 
+        @isset($script3)
+            <script src="{{ $script3 }}"></script>
+        @endisset
+
         @isset($scriptAjax)
             <script src="{{ $scriptAjax }}"></script>
         @endisset

@@ -22,4 +22,10 @@ class Activity extends Model
     public function dates(): HasMany {
         return $this->hasMany(ActivityDate::class);
     }
+    public function goods(): HasMany {
+        return $this->hasMany(ActivityGood::class);
+    }
+    public function organizers(): HasMany {
+        return $this->hasMany(ActivityPerson::class);
+    }
 }

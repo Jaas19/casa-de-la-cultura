@@ -81,18 +81,19 @@
                 </div>
                 @endforeach
 
-                <div class="hour-button col-span-2 bg-yellow-900 text-md 
+                <div class="new-hour-update-button col-span-2 bg-yellow-900 text-md 
                 text-center font-bold text-white2 black_contour 
                 py-3 hover:bg-yellow-800 transition w-[25%] 
-                self-center justify-center" data-date-count="{{ $i - 1 }}">
+                self-center justify-center" data-date-id="{{ $date->id }}">
                 Agregar Hora
                 </div>
 
-                <div class="hidden" data-date-count="{{ $i }}"></div>
+                
                 @php
                     $i += 1
                 @endphp
             @endforeach
+            <div id="number-of-dates" class="hidden" data-date-count="{{ $i - 1 }}"></div>
 
             <div class="flex items-center justify-right col-span-2">
                 <div id="add-date" class="bg-yellow-900 text-md text-center font-bold text-white2 black_contour py-3 px-10 hover:bg-yellow-800 transition w-[25%] self-center justify-center">
@@ -141,6 +142,7 @@
                     $i += 1
                 @endphp
             @endforeach
+            <div id="number-of-goods" class="hidden" data-good-count="{{ $i - 1 }}"></div>
 
             <div class="flex items-center justify-right col-span-2">
                 <div id="add-good" class="bg-yellow-900 text-md text-center font-bold text-white2 black_contour py-3 px-10 hover:bg-yellow-800 transition w-[25%] self-center justify-center">
@@ -163,6 +165,7 @@
                     $i += 1
                 @endphp
             @endforeach
+            <div id="number-of-organizers" class="hidden" data-organizer-count="{{ $i - 1 }}"></div>
 
             <div class="flex items-center justify-right col-span-2 text-nowrap">
                 <div id="add-organizer" class="bg-yellow-900 text-md text-center font-bold text-white2 black_contour py-3 hover:bg-yellow-800 transition w-[25%] self-center justify-center">
@@ -189,6 +192,10 @@
 
     <x-slot name="script2">
         {{ "../js/activityCreation.js" }}
+    </x-slot>
+
+    <x-slot name="script3">
+        {{ "../js/activityUpdate.js" }}
     </x-slot>
 
     <script>

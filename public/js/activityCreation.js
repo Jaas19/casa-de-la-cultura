@@ -30,8 +30,22 @@ goodButton.addEventListener('click', newGood);
 organizerButton.addEventListener('click', newOrganizer);
 
 let dateAmount = 1;
-let goodAmount = 0;
+const datesCount = document.querySelector("#number-of-dates")
+if(datesCount){
+    dateAmount = parseInt(datesCount.getAttribute("data-date-count")); 
+}
+
 let organizerAmount = 0;
+const organizerCount = document.querySelector("#number-of-organizers")
+if(organizerCount){
+    organizerAmount = parseInt(organizerCount.getAttribute("data-organizer-count")); 
+}
+
+let goodAmount = 0;
+const goodCount = document.querySelector("#number-of-goods")
+if(goodCount){
+    goodAmount = parseInt(goodCount.getAttribute("data-good-count")); 
+}
 
 function newHour(e){
     let div1 = document.createElement('div');
