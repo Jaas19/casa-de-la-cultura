@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations;
+
 
 class Loan extends Model
 {
@@ -21,10 +21,12 @@ class Loan extends Model
     public function user(): BelongsTo {
         return $this->belongsTo(User::class);
     }
-    public function good_id(): BelongsToMany {
-        return $this->belongsToMany(User::class);
+
+    public function good(): BelongsTo {
+        return $this->belongsTo(Good::class);
     }
-    public function person_id(): BelongsTo {
-        return $this->belongsTo(User::class);
+
+    public function person(): BelongsTo {
+        return $this->belongsTo(Person::class);
     }
 }

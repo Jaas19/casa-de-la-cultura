@@ -1,6 +1,7 @@
 const goodAttributes = document.querySelectorAll(".good-attribute");
 const inventoryOptions = document.querySelectorAll(".inventory-option")
 const goodAttributesInputs = document.querySelectorAll(".good-attribute-input");
+const inventorySelect = document.querySelector("#inventory");
 
 function showAttributes(e){
     for(input of goodAttributesInputs){
@@ -23,6 +24,4 @@ function showAttributes(e){
     }
 }
 
-for(inventoryOption of inventoryOptions){
-    inventoryOption.addEventListener("click", showAttributes)
-}
+inventorySelect.addEventListener("change", showAttributes)

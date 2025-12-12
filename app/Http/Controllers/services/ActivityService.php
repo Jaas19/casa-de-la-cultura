@@ -397,9 +397,9 @@ class ActivityService implements ActivityServiceInterface {
     public function formatExtraDates($date){
 
         $formattedHours = $date->hours->map([$this, "formatSingleActivityHour"]);
-        return (object) [
-            'color1' => $this->colors1[$date->status] ?? 'gray-400',
-            'color2' => $this->colors2[$date->status] ?? 'gray-400',
+        return (object) [  
+            'color1' => $this->colors1[$date->activity->status] ?? 'gray-400',
+            'color2' => $this->colors2[$date->activity->status] ?? 'gray-400',
             'time_array' => true,
             'name' => ($date->name ?? optional($date->activity)->name ?? 'Sin nombre') . ' (Extra)',
             'status' => optional($date->activity)->status, 

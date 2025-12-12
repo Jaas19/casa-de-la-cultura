@@ -12,8 +12,10 @@ class LoanController extends Controller
         public function __construct(LoanServiceInterface $loanService) {
         $this->loanService = $loanService;
     }
+    
     public function index() {
-        Auth::id();
-        return view('loan.index');
+        $userId = Auth::id();
+        $loans = $this->loanService->getLoans($userId);
+        return view('loan.index', compact("loans"));
     }
 }

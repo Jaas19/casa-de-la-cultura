@@ -22,21 +22,23 @@
                 <th>Recepción</th>
                 <th>Estado</th>
             </tr>
+            @foreach ($loans as $loan)
             <tr>
-                <td>Teresa</td>
-                <td>1 Piano</td>
-                <td>Academia</td>
-                <td>11/12/25</td>
-                <td>12/12/25</td>
+                <td>{{ $loan->person->name }}</td>
+                <td>{{ $loan->quantity_requested . " " . $loan->good->name }}</td>
+                <td>{{ $loan->good->inventory->name }}</td>
+                <td>{{ $loan->loan_date }}</td>
+                <td>{{ $loan->retrieval_date }}</td>
                 <td>
-                    <select name="" id="" data-loan-id="" class="bg-black2 border-yellow-900 border-0">
-                        <option value="">Seleccionar</option>
-                        <option value="">Seleccionar</option>
-                        <option value="">Seleccionar</option>
-                        <option value="">Seleccionar</option>
+                    <select name="" id="" data-loan-id="" class="loanSelectStatus bg-black2 border-yellow-900 border-0">
+                        <option selected disabled>Seleccionar</option>
+                        <option value="dispatched">Entregado</option>
+                        <option value="returned">Devuelto</option>
+                        <option value="overdue">Atrasado</option>
                     </select>
                 </td>
             </tr>
+            @endforeach
         </tbody>
     </table>
 

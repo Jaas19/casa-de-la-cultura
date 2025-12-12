@@ -35,7 +35,7 @@
                 <div>
                     <label for="inventory">Inventario</label>
                     <select id="inventory" name="inventory_id" class="block" placeholder="Introduzca la cantidad..." required>
-                        <option value="" disabled selected>Seleccionar...</option>
+                        <option value="" selected>Seleccionar...</option>
                         @foreach ($inventories as $inventory)
                             <option value="{{ $inventory->id }}" class="inventory-option">{{ $inventory->name }}</option>
                         @endforeach
