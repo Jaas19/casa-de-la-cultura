@@ -7,6 +7,7 @@
                 <option class="bg-black2 redirectOption" value="{{ route("activity.index") }}">Actividades</option>
                 <option class="bg-black2 redirectOption" value="{{ route("inventory.index") }}">Inventario</option>
                 <option class="bg-black2 redirectOption" value="{{ route("person.index") }}">Personas</option>
+                <option class="bg-black2 redirectOption" value="{{ route("loan.index") }}">Prestamos</option>
             </select>
         </form>
         <h1 class="text-center w-full text-white2 text-xl black_contour font-black">

@@ -10,6 +10,7 @@
                     <option class="bg-black2 redirectOption" value="{{ route("inventory.index") }}">Inventario</option>
                     <option class="bg-black2 redirectOption" value="{{ route("dashboard.index") }}">Dashboard</option>
                     <option class="bg-black2 redirectOption" value="{{ route("person.index") }}">Personas</option>
+                    <option class="bg-black2 redirectOption" value="{{ route("loan.index") }}">Prestamos</option>
                 </select>
             </form>
 

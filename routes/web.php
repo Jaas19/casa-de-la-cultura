@@ -7,6 +7,7 @@ use App\Http\Controllers\GoodController;
 use App\Http\Controllers\MovementController;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\PersonController;
+use App\Http\Controllers\LoanController;
 use Illuminate\Support\Facades\Route;
 
 /*Route::get('/', function () {
@@ -61,6 +62,9 @@ Route::middleware('auth')->group(function () {
     // Pdfs
     Route::get('person/pdf', [PersonController::class, 'pdf'])->name('person.pdf');
     Route::put('person/put2', [PersonController::class, 'put2'])->name('person.put2');
+
+    // Prestamos
+    Route::get('loan', [LoanController::class, 'index'])->name('loan.index');
 });
 
 require __DIR__.'/auth.php';

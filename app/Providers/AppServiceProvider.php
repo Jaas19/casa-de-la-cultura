@@ -23,6 +23,8 @@ use App\Http\Controllers\Services\PersonService;
 use App\Http\Controllers\Services\PersonServiceInterface;
 use App\Http\Controllers\Services\PositionServiceInterface;
 use App\Http\Controllers\Services\PositionService;
+use App\Http\Controllers\Services\LoanServiceInterface;
+use App\Http\Controllers\Services\LoanService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -54,6 +56,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             PositionServiceInterface::class, 
             PositionService::class
+        );
+        $this->app->bind(
+            LoanServiceInterface::class, 
+            LoanService::class
         );
         
         

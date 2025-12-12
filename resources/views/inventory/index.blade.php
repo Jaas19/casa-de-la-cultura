@@ -98,6 +98,6 @@
     </x-slot>
     <x-slot name="script2">
     {{ "../js/redirect.js" }}
-    </x-slot name="script">
+    </x-slot>
 
 </x-app-layout>
