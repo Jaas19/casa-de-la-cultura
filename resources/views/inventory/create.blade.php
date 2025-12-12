@@ -21,13 +21,6 @@
             <input type="text" id="name" name="name" class="block" placeholder="Introduzca el nombre...">
         </div>
 
-
-        <div>
-            <label class="col-start-2" for="name">Atributo (opcional)</label>
-            <input type="text" id="name" name="key_name[]" class="block" placeholder="Introduzca el atributo...">
-        </div>
-
-        <div></div>
         <div class="flex items-center justify-right col-start-2">
             <div id="add-attribute" class="bg-yellow-900 text-md text-center font-bold text-white2 black_contour py-3 px-10 hover:bg-yellow-800 transition w-[50%] self-center justify-center">
                 Añadir atributo

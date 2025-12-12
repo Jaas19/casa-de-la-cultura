@@ -65,6 +65,9 @@ Route::middleware('auth')->group(function () {
 
     // Prestamos
     Route::get('loan', [LoanController::class, 'index'])->name('loan.index');
+    Route::patch('loan/patch', [LoanController::class, 'patch'])->name('loan.patch');
+    Route::get('loan/create', [LoanController::class, 'create'])->name('loan.create');
+    Route::post('loan/store', [LoanController::class, 'store'])->name('loan.store');
 });
 
 require __DIR__.'/auth.php';

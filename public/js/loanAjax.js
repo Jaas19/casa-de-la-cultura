@@ -1,17 +1,19 @@
-const loanStatus = document.querySelectorAll(".loanSelectStatus")
+const loanStatusSelects = document.querySelectorAll(".loanSelectStatus")
 
 function toggleLoanStatus(e){
     e.target.disabled = true
-    const personId = e.target.parentElement.parentElement.getAttribute("data-person-id")
+    const loanId = e.target.getAttribute("data-loan-id")
+    const status = e.target.value
     const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
-        fetch('/person/put2', {
-        method: 'PUT',
+        fetch('loan/patch', {
+        method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
             'X-CSRF-TOKEN': csrfToken,
         },
         body: JSON.stringify({
-                "id": personId,
+                "id": loanId,
+                "status": status
             }),
         }).then(response => {
             e.target.disabled = false;
@@ -26,3 +28,6 @@ function toggleLoanStatus(e){
         })
     }
 
+    for(loanStatusSelect of loanStatusSelects) {
+        loanStatusSelect.addEventListener("change", toggleLoanStatus)
+    }

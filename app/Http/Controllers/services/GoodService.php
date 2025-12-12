@@ -36,6 +36,12 @@ class GoodService implements GoodServiceInterface {
         }
     }
     
+    public function listGoodsWithInventory ($userId){
+        return Good::whereHas('inventory', function ($query) use ($userId){
+            $query->where('user_id', $userId);
+        })->get();
+    }
+
     public function listGoods (int $inventoryId){
         return Good::where("inventory_id", "=", $inventoryId)->get();
     }

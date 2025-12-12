@@ -15,8 +15,8 @@ function createAttributeInput(e){
 
     let label = document.createElement('label');
     if(numberOfAttributes == 0){
-        label.innerText = "Atributo 2"
-        numberOfAttributes = 2
+        label.innerText = "Atributo"
+        numberOfAttributes = 1
     } else {
         numberOfAttributes ++
         label.innerText = "Atributo " + numberOfAttributes

@@ -15,7 +15,8 @@ class Loan extends Model
         "person_id",
         "loan_date",
         "retrieval_date",
-        "quantity_requested"
+        "quantity_requested",
+        "status"
     ];
 
     public function user(): BelongsTo {

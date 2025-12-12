@@ -15,7 +15,7 @@
     <table class="w-full grid-cols-[auto-fill] table-fixed overflow-auto grow-0">
         <tbody class="overflow-auto w-full relative">
             <tr class="w-full">
-                <th>Nombre</th>
+                <th>Persona</th>
                 <th>Bien</th>
                 <th>Inventario</th>
                 <th>Entrega</th>
@@ -30,11 +30,11 @@
                 <td>{{ $loan->loan_date }}</td>
                 <td>{{ $loan->retrieval_date }}</td>
                 <td>
-                    <select name="" id="" data-loan-id="" class="loanSelectStatus bg-black2 border-yellow-900 border-0">
+                    <select name="status" id="" data-loan-id="{{ $loan->id }}" class="loanSelectStatus bg-black2 border-yellow-900 border-0">
                         <option selected disabled>Seleccionar</option>
-                        <option value="dispatched">Entregado</option>
-                        <option value="returned">Devuelto</option>
-                        <option value="overdue">Atrasado</option>
+                        <option value="dispatched" {{ $loan->status == "dispatched" ? "selected" : "" }} >Entregado</option>
+                        <option value="returned" {{ $loan->status == "returned" ? "selected" : "" }} >Devuelto</option>
+                        <option value="overdue" {{ $loan->status == "overdue" ? "selected" : "" }} >Atrasado</option>
                     </select>
                 </td>
             </tr>
@@ -44,5 +44,9 @@
 
     <x-slot name="script">
         {{ "../js/redirect.js" }}
+    </x-slot>
+
+    <x-slot name="script2">
+        {{ "../js/loanAjax.js" }}
     </x-slot>
 </x-app-layout>
