@@ -40,4 +40,9 @@ class LoanController extends Controller
         $persons = $this->personService->listPersons();
         return view("loan.create", compact("goods", "persons", "inventories"));
     }
+
+    public function store(Request $request){
+        $this->loanService -> createLoan($request);
+        return redirect(route("loan.index"));
+    }
 }

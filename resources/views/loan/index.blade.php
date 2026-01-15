@@ -27,12 +27,12 @@
                 <td>{{ $loan->person->name }}</td>
                 <td>{{ $loan->quantity_requested . " " . $loan->good->name }}</td>
                 <td>{{ $loan->good->inventory->name }}</td>
-                <td>{{ $loan->loan_date }}</td>
-                <td>{{ $loan->retrieval_date }}</td>
+                <td>{{ $loan->loan_date->format('d/m/Y') }}</td>
+                <td>{{ $loan->retrieval_date->format('d/m/Y') }}</td>
                 <td>
                     <select name="status" id="" data-loan-id="{{ $loan->id }}" class="loanSelectStatus bg-black2 border-yellow-900 border-0">
                         <option selected disabled>Seleccionar</option>
-                        <option value="dispatched" {{ $loan->status == "dispatched" ? "selected" : "" }} >Entregado</option>
+                        <option value="given" {{ $loan->status == "given" ? "selected" : "" }} >Entregado</option>
                         <option value="returned" {{ $loan->status == "returned" ? "selected" : "" }} >Devuelto</option>
                         <option value="overdue" {{ $loan->status == "overdue" ? "selected" : "" }} >Atrasado</option>
                     </select>
@@ -42,6 +42,12 @@
         </tbody>
     </table>
 
+
+    <x-slot name="footer">
+        <div class="bg-gradient-to-r from-yellow-950 to-yellow-900 min-w-full p-6 text-sm flex items-center justify-center">
+            <a href="loan/create" class="rounded-3xl bg-black2 text-md font-bold text-white2 black_contour p-3 text-center w-[15%]">Registrar</a>
+        </div>
+    </x-slot>
     <x-slot name="script">
         {{ "../js/redirect.js" }}
     </x-slot>

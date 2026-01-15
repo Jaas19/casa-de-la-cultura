@@ -16,6 +16,6 @@ class Good extends Model
     ];
 
     public function inventory(): BelongsTo {
-        return $this->belongsTo(inventory::class);
+        return $this->belongsTo(Inventory::class);
     }
 }

@@ -30,4 +30,9 @@ class Loan extends Model
     public function person(): BelongsTo {
         return $this->belongsTo(Person::class);
     }
+
+    protected $casts = [
+        'loan_date' => 'datetime',
+        'retrieval_date' => 'datetime'
+    ];
 }

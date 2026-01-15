@@ -7,7 +7,7 @@ use App\Models\InventoryAttribute;
 use Illuminate\Http\Request;
 
 interface MovementServiceInterface {
-    public function registerMovement(Request $data);
+    public function registerMovement(array $data);
     public function totalMovementQuantity($inventoryId);
     public function listMovements($inventoryId);
 }

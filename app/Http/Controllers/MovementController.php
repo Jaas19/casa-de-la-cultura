@@ -13,6 +13,6 @@ class MovementController extends Controller
         $this->movementService = $movementService;
     }
     public function store(Request $data) {
-        return $this->movementService->registerMovement($data);
+        return $this->movementService->registerMovement($data->all());
     }
 }

@@ -18,19 +18,23 @@
 
                 <div>
                     <label for="name">Persona</label>
-                    <input type="text" id="name" name="name" class="block" placeholder="Nombre">
+                    <select name="person_id" id="person_id" class="block">
+                        <option value="" disabled selected>Seleccionar...</option>
+                        @foreach ($persons as $person)
+                            <option value="{{ $person->id }}">{{ $person->name }}</option>
+                        @endforeach
+                    </select>
                 </div>
 
                 <div>
                     <label for="loan_date">Fecha de despacho</label>
-                    <input type="date" id="loan_date" name="loan_date" class="block">
+                    <input type="date" id="loan_date" name="loan_date" class="block" value="{{ now()->format("Y-m-d") }}">
                 </div>
 
                 <div>
                     <label for="status">Estado</label>
                     <select name="status" id="status" class="block">
-                        <option selected disabled>Seleccionar...</option>
-                        <option value="dispatched">Entregado</option>
+                        <option value="given" selected>Entregado</option>
                         <option value="returned">Devuelto</option>
                         <option value="overdue">Atrasado</option>
                     </select>
@@ -43,7 +47,7 @@
 
                 <div>
                     <label for="inventory">Inventario</label>
-                    <select id="inventory" name="inventory_id" class="block" required>
+                    <select id="inventory" class="block" required>
                         <option id="selectGoodOption" selected>Seleccionar...</option>
                         @foreach($inventories as $inventory)
                             <option value="{{ $inventory->id }}">{{ $inventory->name }}</option>
