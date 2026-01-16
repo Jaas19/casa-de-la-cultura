@@ -7,7 +7,9 @@
                 <option class="bg-black2 redirectOption" value="{{ route("dashboard.index") }}">Dashboard</option>
                 <option class="bg-black2 redirectOption" value="{{ route("activity.index") }}">Actividades</option>
                 <option class="bg-black2 redirectOption" value="{{ route("inventory.index") }}">Inventario</option>
+                <option class="bg-black2 redirectOption" value="{{ route("person.index") }}">Personas</option>
                 <option class="bg-black2 redirectOption" value="{{ route("loan.index") }}">Prestamos</option>
+                <option class="bg-black2 redirectOption" value="{{ route("session.destroy") }}">Cerrar sesión</option>
             </select>
         </form>
     </x-slot>

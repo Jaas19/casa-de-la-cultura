@@ -6,10 +6,12 @@
             <select id="redirect-select" class="dropdown-arrow z-10 font-black text-xl bg-transparent border-0 text-gray-200 leading-tight black_contour"
             style="background-image: url('{{ asset('images/arrow_drop_down.png') }}');">
                 <option value="" selected disabled>Regresar</option>
+                <option class="bg-black2 redirectOption" value="{{ route("activity.index") }}">Actividades</option>
                 <option class="bg-black2 redirectOption" value="{{ route("inventory.index") }}">Inventario</option>
                 <option class="bg-black2 redirectOption" value="{{ route("dashboard.index") }}">Dashboard</option>
                 <option class="bg-black2 redirectOption" value="{{ route("activity.index") }}">Actividades</option>
                 <option class="bg-black2 redirectOption" value="{{ route("person.index") }}">Personas</option>
+                <option class="bg-black2 redirectOption" value="{{ route("session.destroy") }}">Cerrar sesión</option>
             </select>
         </form>
     </x-slot>

@@ -8,7 +8,9 @@ use App\Http\Controllers\MovementController;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\PersonController;
 use App\Http\Controllers\LoanController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use Illuminate\Support\Facades\Route;
+
 
 /*Route::get('/', function () {
     return view('welcome');
@@ -28,6 +30,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/good/create', [GoodController::class, 'create'])->name('good.create');
     Route::post('/good/create', [GoodController::class, 'store'])->name('good.store');
     Route::patch('/good/patch', [GoodController::class, 'patch'])->name('good.update');
+
+    // Cerrar sesion
+    Route::get('/auth/close', [AuthenticatedSessionController::class, 'destroy'])->name('session.destroy');
 
     Route::get('/attribute/create', [AttributeController::class, 'create'])->name('attribute.create');
 
