@@ -90,6 +90,22 @@
         "></div>
         -->
 
+    <!-- Notificación de Éxito -->
+    @if (session('success'))
+        <x-notification>
+            <x-slot name="tittle">Éxito</x-slot>
+            {{ session('success') }}
+        </x-notification>
+    @endif
+
+    <!-- Notificación de Error -->
+    @if(session('success'))
+        <x-notification>
+            <x-slot name="tittle">Error</x-slot>
+            {{ session('error') }}
+        </x-notification>
+    @endif
+
     <x-slot name="script">
         {{ "../js/redirect.js" }}
     </x-slot>
@@ -98,5 +114,8 @@
         <div class="bg-gradient-to-r from-yellow-950 to-yellow-900 min-w-full p-6 text-sm flex items-center justify-center">
             <a href="discipline/create" class="rounded-3xl bg-black2 text-md font-bold text-white2 black_contour p-3 text-center w-40">Registrar</a>
         </div>
+    </x-slot>
+    <x-slot name="script">
+        {{ "../js/notification.js" }}
     </x-slot>
 </x-app-layout>

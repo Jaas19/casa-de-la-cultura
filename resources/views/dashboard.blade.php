@@ -136,7 +136,7 @@
                         </ul>
                     </div>
                 @endforeach
-                </div>
+            </div>
         </div>
     <x-slot name="script">
         {{ "./js/redirect.js" }}

@@ -33,7 +33,7 @@
 
     </x-slot>
     <table class="w-full grid-cols-[auto-fill] table-fixed overflow-auto grow-0">
-        <tbody class="overflow-auto w-full relative">
+    <tbody class="overflow-auto w-full relative">
             <tr class="w-full">
                 <th>Foto</th>
                 <th>Nombre</th>
