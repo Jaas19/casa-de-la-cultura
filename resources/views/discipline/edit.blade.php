@@ -32,7 +32,7 @@
 
         <div>
             <label for="name">Nombre</label>
-            <input type="text" id="name" name="name" class="block" placeholder="Introduzca el nombre...">
+            <input type="text" id="name" name="name" class="block" placeholder="Introduzca el nombre..." required>
         </div>
 
         <div>

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Lesson;
 
 class Discipline extends Model
 {
@@ -14,7 +15,7 @@ class Discipline extends Model
 
     public function lessons()
     {
-        return $this->hasMany(Lessons::class);
+        return $this->hasMany(Lesson::class);
     }
 }
 

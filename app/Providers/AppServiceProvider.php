@@ -27,6 +27,8 @@ use App\Http\Controllers\Services\LoanServiceInterface;
 use App\Http\Controllers\Services\LoanService;
 use App\Http\Controllers\Services\DisciplineServiceInterface;
 use App\Http\Controllers\Services\DisciplineService;
+use App\Http\Controllers\Services\LessonServiceInterface;
+use App\Http\Controllers\Services\LessonService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -66,6 +68,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             DisciplineServiceInterface::class,
             DisciplineService::class
+        );
+        $this->app->bind(
+            LessonServiceInterface::class,
+            LessonService::class
         );
 
 

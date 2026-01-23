@@ -9,6 +9,7 @@ use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\PersonController;
 use App\Http\Controllers\LoanController;
 use App\Http\Controllers\DisciplineController;
+use App\Http\Controllers\LessonController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use Illuminate\Support\Facades\Route;
 
@@ -81,7 +82,9 @@ Route::middleware('auth')->group(function () {
     // Lessons
     Route::get('discipline/{discipline}/lessons', [LessonController::class, 'index'])->name('lesson.index');
     Route::get('discipline/{discipline}/calendar', [LessonController::class, 'calendar'])->name('lesson.calendar');
-
+    Route::get('discipline/{discipline}/lesson/create', [LessonController::class, 'create'])->name('lesson.create');
+    Route::post('discipline/{discipline}/lesson/create', [LessonController::class, 'store'])->name('lesson.store');
+    Route::post('lesson/calendar', [LessonController::class, 'getCalendarLessons'])->name('lesson.month');
 });
 
 require __DIR__.'/auth.php';

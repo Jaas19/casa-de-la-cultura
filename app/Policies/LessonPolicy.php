@@ -3,18 +3,10 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\Models\Discipline;
+use App\Models\Lesson;
 
-class DisciplinePolicy
+class LessonPolicy
 {
-    public function show(User $user, Discipline $discipline){
-        return $user->id == $discipline->administrator_id;
-    }
-
-    public function update(User $user, Discipline $discipline){
-        return $user->id == $discipline->administrator_id;
-    }
-
     public function calendar(User $user, Discipline $discipline){
         return $user->id == $discipline -> administrator_id;
     }
@@ -23,4 +15,3 @@ class DisciplinePolicy
         return $user->id == $discipline -> administrator_id;
     }
 }
-

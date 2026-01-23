@@ -97,7 +97,7 @@
                     $date = now()->addDays($i);
                     $dayNumber = $date->day;
                     $activitiesForDay = isset($upcomingActivities[$dayNumber]) ? $upcomingActivities[$dayNumber] : [];
-                    
+
                     if ($i == 0) {
                         $title = 'En curso';
                     } elseif ($i == 1){
@@ -105,7 +105,7 @@
                     } else {
                         $title = "En $i días";
                     }
-                    
+
                     $carouselDays[] = [
                         'title' => $title,
                         'activities' => $activitiesForDay
