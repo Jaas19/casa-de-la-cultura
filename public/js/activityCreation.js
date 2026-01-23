@@ -29,22 +29,22 @@ dateButton.addEventListener('click', newDate);
 goodButton.addEventListener('click', newGood);
 organizerButton.addEventListener('click', newOrganizer);
 
-let dateAmount = 1;
+let dateAmount = 0;
 const datesCount = document.querySelector("#number-of-dates")
 if(datesCount){
-    dateAmount = parseInt(datesCount.getAttribute("data-date-count")); 
+    dateAmount = parseInt(datesCount.getAttribute("data-date-count"));
 }
 
 let organizerAmount = 0;
 const organizerCount = document.querySelector("#number-of-organizers")
 if(organizerCount){
-    organizerAmount = parseInt(organizerCount.getAttribute("data-organizer-count")); 
+    organizerAmount = parseInt(organizerCount.getAttribute("data-organizer-count"));
 }
 
 let goodAmount = 0;
 const goodCount = document.querySelector("#number-of-goods")
 if(goodCount){
-    goodAmount = parseInt(goodCount.getAttribute("data-good-count")); 
+    goodAmount = parseInt(goodCount.getAttribute("data-good-count"));
 }
 
 function newHour(e){
@@ -59,7 +59,7 @@ function newHour(e){
     input1.setAttribute('name', `date[${e.target.getAttribute('data-date-count')}][starting_time][]`);
     input1.setAttribute('placeholder', 'Introduzca la hora...');
     input1.classList.add('block');
-    
+
     div1.appendChild(label1);
     div1.appendChild(input1);
 
@@ -74,12 +74,14 @@ function newHour(e){
     input2.setAttribute('name', `date[${e.target.getAttribute('data-date-count')}][ending_time][]`);
     input2.setAttribute('placeholder', 'Introduzca la hora...');
     input2.classList.add('block');
-    
+
     div2.appendChild(label2);
     div2.appendChild(input2);
     activityFormDiv.insertBefore(div1, e.target);
     activityFormDiv.insertBefore(div2, e.target);
 }
+
+addEventListener('DOMContentLoaded', newDate);
 
 function newDate(){
     dateAmount ++
@@ -120,7 +122,7 @@ function newDate(){
     input2.setAttribute('name', `date[${dateAmount-1}][starting_time][]`);
     input2.setAttribute('placeholder', 'Introduzca la hora...');
     input2.classList.add('block');
-    
+
     div3.appendChild(label2);
     div3.appendChild(input2);
 
@@ -136,7 +138,7 @@ function newDate(){
     input3.setAttribute('name', `date[${dateAmount-1}][ending_time][]`);
     input3.setAttribute('placeholder', 'Introduzca la hora...');
     input3.classList.add('block');
-    
+
     div4.appendChild(label3);
     div4.appendChild(input3);
 
@@ -170,7 +172,7 @@ function printGoodOption(select, good){
 
 function newGood(){
     goodAmount ++
-    let header = document.createElement("div"); 
+    let header = document.createElement("div");
     let title = document.createElement("h1");
     header.classList.add("col-span-2")
     title.classList.add("text-white2", "font-black", "text-center", "border-b", "pb-2", "my-8", "text-xl")
@@ -216,7 +218,7 @@ function newGood(){
     div2.appendChild(select2);
     let option = document.createElement("option");
     select2.appendChild(option)
-    
+
 
     let div3 = document.createElement("div");
     let label3 = document.createElement("label");
@@ -262,14 +264,14 @@ function newGood(){
             </div>
             -->*/
 
-    
+
 
 
 
 
 function newOrganizer(){
     organizerAmount ++
-    let header = document.createElement("div"); 
+    let header = document.createElement("div");
     let title = document.createElement("h1");
     header.classList.add("col-span-2")
     header.classList.add("col-start-1")

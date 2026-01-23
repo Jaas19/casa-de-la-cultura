@@ -3,20 +3,22 @@
         <h3 class="font-black black_contour_sm text-white2">{{ $title }}</h3>
     </header>
     <main class="flex w-full h-full items-end text-nowrap">
-        <ul class="flex flex-col text-sm">
-            <form action={{ route("activity.update") }} method="POST">
-                @csrf
-                <button>
-                    <input type="hidden" name="activityId" value="{{ $activityId }}">
-                    <li class="cursor-pointer text-blue-400 border-b w-min border-blue-400">Editar</li>
-                </button>
-            </form>
-            {{ $slot }}
-        </ul>
+        <div class="full">
+            <ul class="flex flex-col text-sm">
+                <form action={{ route("activity.update") }} method="POST">
+                    @csrf
+                    <button class="self-end">
+                        <input type="hidden" name="activityId" value="{{ $activityId }}">
+                        <li class="cursor-pointer text-blue-400 border-b w-min border-blue-400">Editar</li>
+                    </button>
+                </form>
+                {{ $slot }}
+            </ul>
+        </div>
     </main>
     <footer class="border-b-2 w-[70%]">
-            <select data-activity-id="{{ $activityId }}" data-color="text-{{ $color }}" data-color2="" class='cursor-pointer appearance-none bg-transparent bg-no-repeat bg-right 
-            bg-size-[15px] border-0 border-b-1 outline-none text-{{ $color }} 
+            <select data-activity-id="{{ $activityId }}" data-color="text-{{ $color }}" data-color2="" class='cursor-pointer appearance-none bg-transparent bg-no-repeat bg-right
+            bg-size-[15px] border-0 border-b-1 outline-none text-{{ $color }}
             status-select-input font-black w-full text-center' name="" id=""
             style="background-image: url('{{ asset('images/edit_dark.png') }}');">
                 <option value="" data-color2="text-red-300" data-color="text-red-500" class="text-red-500 status-select-option">Suspendida</option>

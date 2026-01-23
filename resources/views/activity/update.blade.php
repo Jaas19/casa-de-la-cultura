@@ -34,22 +34,6 @@
                 </select>
             </div>
             <div>
-                <label for="name">Fecha de inicio</label>
-                <input value="{{ $activity->starting_date }}" type="date" id="quantity" name="starting_date" class="block" placeholder="Introduzca la categoría...">
-            </div>
-            <div>
-                <label for="name">Fecha de fin</label>
-                <input value="{{ $activity->ending_date }}" type="date" id="quantity" name="ending_date" class="block" placeholder="Introduzca la categoría...">
-            </div>
-            <div>
-                <label for="name">Hora de inicio</label>
-                <input value="{{ $activity->starting_time }}" type="time" id="quantity" name="date[0][starting_time][]" class="block" placeholder="Introduzca la categoría...">
-            </div>
-            <div>
-                <label for="name">Hora de fin</label>
-                <input value="{{ $activity->ending_time }}" type="time" id="quantity" name="date[0][ending_time][]" class="block" placeholder="Introduzca la categoría...">
-            </div>
-            <div>
                 <label for="">Importante</label>
                 <input type="checkbox" name="important" value="1" {{ $activity->important == 1 ? "checked" : "" }}>
             </div>
@@ -58,7 +42,7 @@
             <!--Campos Adicionales-->
 
             @php
-                $i = 2
+                $i = 1
             @endphp
             @foreach ($activityDates['dates'] as $date)
                 <div class="col-span-2">
@@ -83,14 +67,14 @@
                 </div>
                 @endforeach
 
-                <div class="new-hour-update-button col-span-2 bg-yellow-900 text-md 
-                text-center font-bold text-white2 black_contour 
-                py-3 hover:bg-yellow-800 transition w-[25%] 
+                <div class="new-hour-update-button col-span-2 bg-yellow-900 text-md
+                text-center font-bold text-white2 black_contour
+                py-3 hover:bg-yellow-800 transition w-[25%]
                 self-center justify-center" data-date-id="{{ $date->id }}">
                 Agregar Hora
                 </div>
 
-                
+
                 @php
                     $i += 1
                 @endphp
@@ -133,8 +117,8 @@
 
                     <div>
                         <label>Cantidad</label>
-                        <input 
-                        class="block" 
+                        <input
+                        class="block"
                         type="text"
                         name="quantity_requested[]"
                         placeholder="Introducir Cantidad..."

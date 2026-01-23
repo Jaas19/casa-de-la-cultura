@@ -46,4 +46,8 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function disciplines(){
+        return $this->hasMany(Discipline::class, 'administrator_id');
+    }
 }

@@ -13,7 +13,6 @@ const statusSelectInputs = document.querySelectorAll('.status-select-input');
 const statusSelectOptions = document.querySelectorAll('.status-select-option');
 
 function filterActivity(e){
-    console.log("si")
     filter = e.target.value;
     if (filter == "Todas") {
         for(activity of activities){
@@ -50,7 +49,7 @@ function updateActivityDate(starting_date, ending_date, activityId){
 }
 
 function updateColor(e){
-    
+
     let select = e.target.parentElement;
     let option = e.target;
     let activityBox = document.querySelector(`[data-header-id="${select.getAttribute("data-activity-id")}"]`);
@@ -68,7 +67,7 @@ function updateColor(e){
     activityBox.classList.remove("to-"+oldColor2.replace("text-", ""));
     activityBox.classList.add("from-"+newColor.replace("text-", ""));
     activityBox.classList.add("to-"+newColor2.replace("text-", ""));
-    
+
     activityBox.setAttribute('data-color', newColor2)
 
 

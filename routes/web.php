@@ -8,13 +8,9 @@ use App\Http\Controllers\MovementController;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\PersonController;
 use App\Http\Controllers\LoanController;
+use App\Http\Controllers\DisciplineController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use Illuminate\Support\Facades\Route;
-
-
-/*Route::get('/', function () {
-    return view('welcome');
-});*/
 
 Route::get('/dashboard', [ActivityController::class, 'dashboard'])->middleware(['auth', 'verified'])->name('dashboard.index');
 
@@ -31,16 +27,16 @@ Route::middleware('auth')->group(function () {
     Route::post('/good/create', [GoodController::class, 'store'])->name('good.store');
     Route::patch('/good/patch', [GoodController::class, 'patch'])->name('good.update');
 
-    // Cerrar sesion
+    // Close session
     Route::get('/auth/close', [AuthenticatedSessionController::class, 'destroy'])->name('session.destroy');
 
     Route::get('/attribute/create', [AttributeController::class, 'create'])->name('attribute.create');
 
-    // Movimientos
+    // Movements
     Route::post('/movement/create', [MovementController::class, 'store'])->name('movement.store');
-    
 
-    // Actividades
+
+    // Activities
     Route::get('/activity', [ActivityController::class, 'index'])->name('activity.index');
     Route::get('/activity/create', [ActivityController::class, 'create'])->name('activity.create');
     Route::post('/activity/update', [ActivityController::class, 'update'])->name('activity.update');
@@ -48,15 +44,15 @@ Route::middleware('auth')->group(function () {
     Route::patch('/activity/patch', [ActivityController::class, 'updateActivity'])->name('activity.patch');
     Route::post('/activity/store', [ActivityController::class, 'store'])->name('activity.store');
     Route::post('/activity/calendar', [ActivityController::class, 'calendar'])->name('activity.calendar');
-    
-    //Inventario
+
+    // Inventory
 
     Route::post('/inventory', [InventoryController::class, 'store'])->name('inventory.store');
     Route::patch('/inventory/patch', [InventoryController::class, 'patch'])->name('inventory.patch');
     Route::get('/inventory/update', [InventoryController::class, 'update'])->name('inventory.update');
     Route::get('/inventory/create', [InventoryController::class, 'create'])->name('inventory.create');
 
-    // Persona
+    // Persons
 
     Route::get('person', [PersonController::class, 'index'])->name('person.index');
     Route::get('person/create', [PersonController::class, 'create'])->name('person.create');
@@ -68,11 +64,23 @@ Route::middleware('auth')->group(function () {
     Route::get('person/pdf', [PersonController::class, 'pdf'])->name('person.pdf');
     Route::put('person/put2', [PersonController::class, 'put2'])->name('person.put2');
 
-    // Prestamos
+    // Loans
     Route::get('loan', [LoanController::class, 'index'])->name('loan.index');
+
     Route::patch('loan/patch', [LoanController::class, 'patch'])->name('loan.patch');
     Route::get('loan/create', [LoanController::class, 'create'])->name('loan.create');
     Route::post('loan/store', [LoanController::class, 'store'])->name('loan.store');
+
+    // Disciplines
+    Route::get('discipline', [DisciplineController::class, 'index'])->name('discipline.index');
+    Route::get('discipline/create', [DisciplineController::class, 'create'])->name('discipline.create');
+    Route::post('discipline/store', [DisciplineController::class, 'store'])->name('discipline.store');
+    Route::post('discipline/patch', [DisciplineController::class, 'patch'])->name('discipline.patch');
+    Route::get('discipline/{discipline}/edit', [DisciplineController::class, 'edit'])->name('discipline.edit');
+
+    // Lessons
+    Route::get('discipline/{discipline}/classes', [LessonController::class, 'index'])->name('lesson.index');
+
 });
 
 require __DIR__.'/auth.php';

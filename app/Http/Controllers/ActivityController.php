@@ -14,23 +14,24 @@ class ActivityController extends Controller
     protected $activityService;
     protected $goodService;
     protected $inventoryService;
+
     public function __construct(ActivityServiceInterface $activityService, GoodServiceInterface $goodService, InventoryServiceInterface $inventoryService) {
         $this->activityService = $activityService;
         $this->goodService = $goodService;
         $this->inventoryService = $inventoryService;
     }
+
     public function index() {
         $activities = $this->activityService->listActivities(Auth::id());
         return view('activity.index', compact("activities"));
     }
-
-    // '/dashboard'
 
     public function dashboard() {
         $upcomingActivities = $this->activityService->getUpcomingActivities(Auth::id());
         $username = Auth::user()->name;
         return view('dashboard', compact('upcomingActivities', 'username'));
     }
+
     public function create() {
         $userId = Auth::id();
         $inventoriesResponse = $this->inventoryService->listInventories($userId);
@@ -42,6 +43,7 @@ class ActivityController extends Controller
         }
         return view('activity.create', compact('goods', 'inventories'));
     }
+
     public function update(Request $data) {
         if(!$data->input("activityId")){
             return redirect("/");

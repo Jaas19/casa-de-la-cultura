@@ -31,7 +31,7 @@ const containerShadow = document.querySelector("#containerShadow");
         "En Progreso": "cyan-200",
     };
 
-    
+
 function loadActivities(e){
     let date
 
@@ -73,7 +73,7 @@ function loadActivities(e){
 }
 
 function fillDays(activities, currentDay){
-    const firstDate = new Date(currentDay.getFullYear(), currentDay.getMonth(), 1) 
+    const firstDate = new Date(currentDay.getFullYear(), currentDay.getMonth(), 1)
     const lastDate = new Date(currentDay.getFullYear(), currentDay.getMonth() + 1, 0)
     const firstDay = firstDate.getDay();
     const lastDay = lastDate.getDate();
@@ -124,9 +124,9 @@ function fillDays(activities, currentDay){
 
             if(activity.time_array){
                 activityDiv.setAttribute("data-hours", JSON.stringify(activity.hours))
-                activityDiv.setAttribute("data-has-many-hours", "true") 
+                activityDiv.setAttribute("data-has-many-hours", "true")
             } else {
-                activityDiv.setAttribute("data-has-many-hours", "false") 
+                activityDiv.setAttribute("data-has-many-hours", "false")
             }
                 activityDiv.setAttribute("data-starting-hour", activity.starting_time)
                 activityDiv.setAttribute("data-ending-hour", activity.ending_time)
@@ -195,7 +195,7 @@ function showWindow(e){
         activitiesContainer.appendChild(section)
         }
 
-        
+
     dayActivitiesModal.classList.remove("hide");
     containerShadow.classList.remove("hide");
     containerShadow.classList.remove("opacity-0")

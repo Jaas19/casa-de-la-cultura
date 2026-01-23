@@ -31,6 +31,8 @@
                     <option value="En Progreso">En Progreso</option>
                 </select>
             </div>
+
+            <!--
             <div>
                 <label for="name">Fecha de inicio</label>
                 <input type="date" id="quantity" name="starting_date" class="block" placeholder="Introduzca la categoría...">
@@ -47,6 +49,7 @@
                 <label for="name">Hora de fin</label>
                 <input type="time" id="quantity" name="date[0][ending_time][]" class="block" placeholder="Introduzca la categoría...">
             </div>
+            -->
             <div>
                 <label for="">Importante</label>
                 <input type="checkbox" name="important" value="1">

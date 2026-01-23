@@ -42,8 +42,8 @@
                 @isset($inventoryAttributes)
                     @foreach ($inventoryAttributes as $Attributes)
                         @foreach ($Attributes as $Attribute)
-                        
-                        
+
+
                     <th class="inventoryHeader hidden" data-inventory-id="{{ $Attribute->inventory_id }}">{{ $Attribute->key_name }}</th>
                         @endforeach
                     @endforeach
@@ -55,10 +55,10 @@
                             <tr class="inventoryData hidden w-full" data-good-id={{ $good->id }} data-inventory-id="{{ $good->inventory_id }}">
                                 <td class="dataField" maxlength="30">{{ $good -> photo }}</td>
                                 <td class="dataField" maxlength="30">{{ $good -> name }}</td>
-                                <td class="dataField text-balance" maxlength="30">{{ 
-                                strlen($good -> description) > 60 
-                                ? substr($good -> description, 0, 60) . "..." 
-                                : $good -> description 
+                                <td class="dataField text-balance" maxlength="30">{{
+                                strlen($good -> description) > 60
+                                ? substr($good -> description, 0, 60) . "..."
+                                : $good -> description
                                 }}</td>
                                 <td class="dataField" maxlength="30">{{ $good -> available_amount }}</td>
                                 @foreach ($goodsAttributes as $attributes)
@@ -74,7 +74,7 @@
                 @endisset
         </tbody>
     </table>
-    
+
 
     <x-slot name="footer">
         @csrf
@@ -82,7 +82,7 @@
             <input type="hidden" id="goodId" name="good_id" value="0">
             <input type="hidden" id="inventoryId" name="inventory_id" value="0">
             <input type="hidden" id="userId" name="user_id" value="{{ $user_id }}">
-            
+
             <a href="good/create" id="register-button" class="rounded-3xl bg-sky-500 text-md font-bold text-white2 black_contour p-3">Registrar</a>
             <button id="suspend-button" class="rounded-3xl bg-red-600 text-md font-bold text-white2 black_contour p-3">Suspender</button>
             <input class="sm:w-36 bg-black2 text-gray-500 w-[84px]" type="text" id="quantity" name="quantity" placeholder="Monto...">
@@ -98,7 +98,7 @@
         {{ "./js/inventoryAjax.js" }}
     </x-slot>
     <x-slot name="script2">
-    {{ "../js/redirect.js" }}
+        {{ "../js/redirect.js" }}
     </x-slot>
 
 </x-app-layout>

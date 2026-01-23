@@ -68,47 +68,17 @@
 
         "></div>
         -->
-        @foreach ($activities as $activity)
-        <x-activity>
-            <x-slot name="title">{{ $activity->name }}</x-slot>
 
-                @if ($activity->hasMultipleGoods)
-                    <li data-activity-id="{{ $activity->id }}" data-header="Bienes" class="clickable-element cursor-pointer text-blue-400 border-b w-min border-blue-400">Bienes Solicitados</li>
-                @endif
 
-                @if ($activity->hasPersons)
-                    <li data-activity-id="{{ $activity->id }}" data-header="Organizadores" class="clickable-element cursor-pointer text-blue-400 border-b w-min border-blue-400">Organizadores</li>
-                @endif
 
-                @if ($activity->hasMultipleDates)
-                    <li data-activity-id="{{ $activity->id }}" data-header="Fechas y Horas" class="clickable-element cursor-pointer text-blue-400 border-b w-min border-blue-400">Fechas y Horas</li>
-                @else
-                    <li>No se encontraron fechas.</li>
-                @endif
-            <x-slot name="status">{{ $activity->status }}</x-slot>
-            <x-slot name="activityId">{{ $activity->id }}</x-slot>
-            <x-slot name="activityName">{{ $activity->name }}</x-slot>
-            <x-slot name="color">{{ $activity->color1 }}</x-slot>
-            <x-slot name="color2">{{ $activity->color2 }}</x-slot>
-        </x-activity>
-        @endforeach
-
-        <x-slot name="script">
-            {{ "./js/redirect.js" }}
-        </x-slot>
-
-        <x-slot name="script2">
-            {{ "./js/activity.js" }}
-        </x-slot>
-
-        <x-slot name="scriptAjax">
-            {{ "./js/activityAjax.js" }}
+        <x-slot name="slot">
+            <!--url-->
         </x-slot>
 
     </div>
     <x-slot name="footer">
         <div class="bg-gradient-to-r from-yellow-950 to-yellow-900 min-w-full p-6 text-sm flex items-center justify-center">
-            <a href="activity/create" class="rounded-3xl bg-black2 text-md font-bold text-white2 black_contour p-3 text-center w-[15%]">Registrar</a>
+            <a href="discipline/create" class="rounded-3xl bg-black2 text-md font-bold text-white2 black_contour p-3 text-center w-[15%]">Registrar</a>
         </div>
     </x-slot>
 </x-app-layout>

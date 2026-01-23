@@ -25,6 +25,8 @@ use App\Http\Controllers\Services\PositionServiceInterface;
 use App\Http\Controllers\Services\PositionService;
 use App\Http\Controllers\Services\LoanServiceInterface;
 use App\Http\Controllers\Services\LoanService;
+use App\Http\Controllers\Services\DisciplineServiceInterface;
+use App\Http\Controllers\Services\DisciplineService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -34,50 +36,54 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(
-            GoodServiceInterface::class, 
+            GoodServiceInterface::class,
             GoodService::class
         );
         $this->app->bind(
-            InventoryServiceInterface::class, 
+            InventoryServiceInterface::class,
             InventoryService::class
         );
         $this->app->bind(
-            MovementServiceInterface::class, 
+            MovementServiceInterface::class,
             MovementService::class
         );
         $this->app->bind(
-            ActivityServiceInterface::class, 
+            ActivityServiceInterface::class,
             ActivityService::class
         );
         $this->app->bind(
-            PersonServiceInterface::class, 
+            PersonServiceInterface::class,
             PersonService::class
         );
         $this->app->bind(
-            PositionServiceInterface::class, 
+            PositionServiceInterface::class,
             PositionService::class
         );
         $this->app->bind(
-            LoanServiceInterface::class, 
+            LoanServiceInterface::class,
             LoanService::class
         );
-        
-        
+        $this->app->bind(
+            DisciplineServiceInterface::class,
+            DisciplineService::class
+        );
+
+
         /*
         $this->app->bind(
-            ActivityDateServiceInterface::class, 
+            ActivityDateServiceInterface::class,
             ActivityDateService::class
         );
         $this->app->bind(
-            ActivityGoodServiceInterface::class, 
+            ActivityGoodServiceInterface::class,
             ActivityGoodService::class
         );
         $this->app->bind(
-            ActivityHourServiceInterface::class, 
+            ActivityHourServiceInterface::class,
             ActivityHourService::class
         );
         $this->app->bind(
-            ActivityPersonServiceInterface::class, 
+            ActivityPersonServiceInterface::class,
             ActivityPersonService::class
         );*/
     }

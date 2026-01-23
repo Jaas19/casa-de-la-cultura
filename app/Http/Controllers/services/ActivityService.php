@@ -53,13 +53,13 @@ class ActivityService implements ActivityServiceInterface {
     public function listActivities(int $userId){
         $this->updateActivities();
         $activities = Activity::where("user_id", "=", $userId)->get();
-        
+
         $ids = $this -> getActivitiesIds($activities);
-        
+
         $this -> checkActivityDates($ids, $activities);
         $this -> checkActivityGoods($ids, $activities);
         $this -> checkActivityPersons($ids, $activities);
-        
+
         $this -> getActivitiesColors($activities);
         $this -> formatDates($activities);
         $this -> formatHours($activities);
@@ -106,11 +106,9 @@ class ActivityService implements ActivityServiceInterface {
     public function createActivity(Request $request){
         try {
             DB::transaction(function () use ($request) {
-                $data = $request->only(['name', 'status', 'starting_date', 'ending_date']);
+                $data = $request->only(['name', 'status']);
                 $data['important'] = $request->has('important') ? 1 : 0;
                 $data['user_id'] = Auth::id();
-                $data['starting_time'] = $request->input('date.0.starting_time.0');
-                $data['ending_time']   = $request->input('date.0.ending_time.0');
                 $activity = Activity::create($data);
 
 
@@ -126,32 +124,30 @@ class ActivityService implements ActivityServiceInterface {
 
     private function saveActivityDetails(Activity $activity, Request $request)
     {
-        if ($request->has('date')) {
-            foreach ($request->input('date') as $key => $date) {
-                if ($key == 0) continue;
-                if (empty($date['date'])){
-                    continue;
+        foreach ($request->input('date') as $key => $date) {
+            if (empty($date['date'])){
+                continue;
+            }
+            $activityDate = $activity->dates()->create([
+                'date' => $date['date']
+            ]);
+            if (isset($date['starting_time'])) {
+                $hours = [];
+                foreach ($date['starting_time'] as $i => $starting_time) {
+                    $hours[] = [
+                        'starting_time' => $starting_time,
+                        'ending_time'   => $date['ending_time'][$i] ?? null,
+                    ];
                 }
-                $activityDate = $activity->dates()->create([
-                    'date' => $date['date']
-                ]);
-                if (isset($date['starting_time'])) {
-                    $hours = [];
-                    foreach ($date['starting_time'] as $i => $starting_time) {
-                        $hours[] = [
-                            'starting_time' => $starting_time,
-                            'ending_time'   => $date['ending_time'][$i] ?? null,
-                        ];
-                    }
-                    $activityDate->hours()->createMany($hours);
-                }
+                $activityDate->hours()->createMany($hours);
             }
         }
+
 
         if ($request->has('good_id')) {
             $goods = [];
             $quantities = $request->input('quantity_requested');
-            
+
             foreach ($request->input('good_id') as $key => $goodId) {
                 $goods[] = [
                     'good_id' => $goodId,
@@ -178,10 +174,8 @@ class ActivityService implements ActivityServiceInterface {
         $activity = Activity::findOrFail($request->id);
         try {
             DB::transaction(function () use ($request, $activity) {
-                $data = $request->only(['name', 'status', 'starting_date', 'ending_date']);
+                $data = $request->only(['name', 'status']);
                 $data['important'] = $request->has('important') ? 1 : 0;
-                $data['starting_time'] = $request->input('date.0.starting_time.0');
-                $data['ending_time']   = $request->input('date.0.ending_time.0');
 
                 $activity->update($data);
                 $dateIds = $activity->dates()->pluck('id');
@@ -196,7 +190,6 @@ class ActivityService implements ActivityServiceInterface {
             return back()->with('success', 'Actividad actualizada correctamente');
 
         } catch (\Exception $e) {
-            dd($e->getMessage(), $e->getFile());
             return back()->withErrors(['error' => 'Error al actualizar: ' . $e->getMessage()]);
         }
     }
@@ -207,7 +200,7 @@ class ActivityService implements ActivityServiceInterface {
 
         $activity->status = $data->status;
         $databaseFormat = "Y-m-d";
-        
+
         if($activity->status == "Pospuesta"){
             $interval = new DateInterval("P$data->amount"."D");
             $startingDate = DateTime::createFromFormat($databaseFormat, $activity->starting_date);
@@ -223,12 +216,14 @@ class ActivityService implements ActivityServiceInterface {
             // $activity->starting_date = strtotime($formattedDate, $activity->starting_date);
             // $activity->ending_date = strtotime($formattedDate, $activity->ending_date);
             $activity -> save();
-            return ["starting_date"  => $activity->starting_date->format('d/m/Y'), 
+            return ["starting_date"  => $activity->starting_date->format('d/m/Y'),
                     "ending_date"    => $activity->ending_date->format('d/m/Y')];
         }
         return $activity->save();
     }
+    // this won't work for now, must be edited
     public function updateActivities(){
+        /*
         Activity::where("ending_date", "=", date("Y-m-d"))
         ->where("ending_time", "<=", date("H:i:s"))
         ->where("status", "!=", "Completada")
@@ -237,7 +232,7 @@ class ActivityService implements ActivityServiceInterface {
         ->where("status", "!=", "Completada")
         ->where("status", "!=", "Suspendida")
         ->update(["status" => "En Espera"]);
-        
+
         Activity::where("starting_date", "=", date("Y-m-d"))
         ->where("starting_time", "<=", date("H:i:s"))
         ->where("status", "!=", "Completada")
@@ -245,6 +240,7 @@ class ActivityService implements ActivityServiceInterface {
         ->where("ending_date", ">=", date("Y-m-d"))
         ->where("ending_time", ">", date("H:i:s"))
         ->update(["status" => "En Progreso"]);
+        */
     }
 
     public function getActivitiesIds($activities){
@@ -257,9 +253,9 @@ class ActivityService implements ActivityServiceInterface {
 
     public function checkActivityDates($activitiesIds, $activities){
         $activitiesWithMultipleDates = ActivityDate::whereIn('activity_id', $activitiesIds)->pluck('activity_id')->toArray();
-        
+
         foreach($activities as $activity){
-            in_array($activity->id, $activitiesWithMultipleDates) 
+            in_array($activity->id, $activitiesWithMultipleDates)
             ? $activity->hasMultipleDates = true
             : $activity->hasMultipleDates = false;
         }
@@ -267,9 +263,9 @@ class ActivityService implements ActivityServiceInterface {
     }
     public function checkActivityGoods($activitiesIds, $activities){
         $activitiesWithMultipleGoods = ActivityGood::whereIn('activity_id', $activitiesIds)->pluck('activity_id')->toArray();
-        
+
         foreach($activities as $activity){
-            in_array($activity->id, $activitiesWithMultipleGoods) 
+            in_array($activity->id, $activitiesWithMultipleGoods)
             ? $activity->hasMultipleGoods = true
             : $activity->hasMultipleGoods = false;
         }
@@ -279,7 +275,7 @@ class ActivityService implements ActivityServiceInterface {
         $activitiesWithPersons = ActivityPerson::whereIn('activity_id', $activitiesIds)->pluck('activity_id')->toArray();
 
         foreach($activities as $activity){
-            in_array($activity->id, $activitiesWithPersons) 
+            in_array($activity->id, $activitiesWithPersons)
             ? $activity->hasPersons = true
             : $activity->hasPersons = false;
         }
@@ -320,17 +316,9 @@ class ActivityService implements ActivityServiceInterface {
     public function getActivityPersons($activityId){
         return ActivityPerson::where("activity_id", "=", $activityId)->get();
     }
-    
+
     public function getActivitiesInTheMonth(Request $request){
         $date = Carbon::parse($request -> date);
-
-        $startingActivities = Activity::whereYear('starting_date', $date->year)
-        ->whereMonth('starting_date', $date->month)
-        ->get();
-
-        $endingActivities = Activity::whereYear('ending_date', $date->year)
-        ->whereMonth('ending_date', $date->month)
-        ->get();
 
         $extraActivities = ActivityDate::whereYear('date', $date->year)
         ->whereMonth('date', $date->month)
@@ -338,93 +326,54 @@ class ActivityService implements ActivityServiceInterface {
         ->with('hours')
         ->get();
 
-        $formattedStartingActivities = $startingActivities->map([$this, 'formatStartingDates']);
-        $formattedEndingActivities = $endingActivities->map([$this, 'formatEndingDates']);
         $formattedExtraActivities = $extraActivities->map([$this, 'formatExtraDates']);
 
 
-        $allActivities = $formattedStartingActivities
-        ->concat($formattedEndingActivities)
-        ->concat($formattedExtraActivities);
+        $allActivities = $formattedExtraActivities;
+
 
         $activities = $allActivities->groupBy([$this, 'parseByDay']);
-        
+
         return response()->json([
             'month' => ucfirst($date->locale('es')->monthName),
-            'year' => $date->year,       
+            'year' => $date->year,
             'activities' => $activities
     ]);
     }
     public function parseByDay($activity){
         return Carbon::parse($activity->starting_date)->day;
     }
-    
-
-    public function formatStartingDates($date){
-        return (object) [
-            'color1' => $this->colors1[$date->status] ?? 'gray-400',
-            'color2' => $this->colors2[$date->status] ?? 'gray-400',
-            'name' => $date->name . ' (Inicio)',
-            'status' => $date->status,
-            'starting_time' => $this->formatHour($date->starting_time),
-            'ending_time' => $this->formatHour($date->ending_time),
-            'starting_date' => Carbon::parse($date->starting_date),
-            'id' => $date->id
-        ];
-    }
-    public function formatEndingDates($date){
-        return (object) [
-            'color1' => $this->colors1[$date->status] ?? 'gray-400',
-            'color2' => $this->colors2[$date->status] ?? 'gray-400',
-            'name' => $date->name . ' (Fin)',
-            'status' => $date->status,
-            'starting_time' => $this->formatHour($date->starting_time),
-            'ending_time' => $this->formatHour($date->ending_time),
-            'starting_date' => Carbon::parse($date->ending_date),
-            'id' => $date->id
-        ];
-    }
 
     public function formatSingleActivityHour($hour) {
         return [
             'starting_time' => $this->formatHour($hour->starting_time),
             'ending_time'   => $this->formatHour($hour->ending_time),
-            'id'            => $hour->id 
+            'id'            => $hour->id
         ];
     }
 
-
-    public function formatExtraDates($date){
+    public function formatExtraDates($date, $day){
 
         $formattedHours = $date->hours->map([$this, "formatSingleActivityHour"]);
-        return (object) [  
+        return (object) [
             'color1' => $this->colors1[$date->activity->status] ?? 'gray-400',
             'color2' => $this->colors2[$date->activity->status] ?? 'gray-400',
             'time_array' => true,
-            'name' => ($date->name ?? optional($date->activity)->name ?? 'Sin nombre') . ' (Extra)',
-            'status' => optional($date->activity)->status, 
+            'name' => ($date->name ?? optional($date->activity)->name ?? 'Sin nombre'),
+            'status' => optional($date->activity)->status,
             'hours' => $formattedHours,
             'starting_time' => $this->formatHour($date->hours->first()?->starting_time),
             'ending_time' => $this->formatHour($date->hours->first()?->ending_time),
             'starting_date' => Carbon::parse($date->date),
-            'id' => $date->id, 
+            'id' => $date->id,
         ];
     }
 
     public function getUpcomingActivities($userId){
 
-        $from = now()->copy()->startOfDay(); 
+        $from = now()->copy()->startOfDay();
         $to = now()->copy()->addDays(7)->endOfDay();
 
-        $startingActivities = Activity::whereBetween("starting_date", [$from, $to])
-        ->where('user_id', "=" , $userId)
-        ->where('important', "=", 1)
-        ->get();
-        
-        $endingActivities = Activity::whereBetween("ending_date", [$from, $to])
-        ->where('user_id', "=" , $userId)
-        ->where('important', "=", 1)
-        ->get();
         $extraActivities = ActivityDate::whereBetween("date", [$from, $to])
         ->whereHas('activity', function ($query) use ($userId) {
             $query->where('user_id', '=', $userId)
@@ -432,14 +381,10 @@ class ActivityService implements ActivityServiceInterface {
         })
         ->with('activity')
         ->get();
-        
-        $formattedStartingActivities = $startingActivities->map([$this, 'formatStartingDates']);
-        $formattedEndingActivities = $endingActivities->map([$this, 'formatEndingDates']);
+
         $formattedExtraActivities = $extraActivities->map([$this, 'formatExtraDates']);
 
-        $allActivities = $formattedStartingActivities
-        ->concat($formattedEndingActivities)
-        ->concat($formattedExtraActivities);
+        $allActivities = $formattedExtraActivities;
 
         return $allActivities->groupBy(function($activity){
             return $this->parseByDay($activity);
