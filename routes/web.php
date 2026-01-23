@@ -75,11 +75,12 @@ Route::middleware('auth')->group(function () {
     Route::get('discipline', [DisciplineController::class, 'index'])->name('discipline.index');
     Route::get('discipline/create', [DisciplineController::class, 'create'])->name('discipline.create');
     Route::post('discipline/store', [DisciplineController::class, 'store'])->name('discipline.store');
-    Route::post('discipline/patch', [DisciplineController::class, 'patch'])->name('discipline.patch');
+    Route::patch('discipline/patch', [DisciplineController::class, 'update'])->name('discipline.patch');
     Route::get('discipline/{discipline}/edit', [DisciplineController::class, 'edit'])->name('discipline.edit');
 
     // Lessons
-    Route::get('discipline/{discipline}/classes', [LessonController::class, 'index'])->name('lesson.index');
+    Route::get('discipline/{discipline}/lessons', [LessonController::class, 'index'])->name('lesson.index');
+    Route::get('discipline/{discipline}/calendar', [LessonController::class, 'calendar'])->name('lesson.calendar');
 
 });
 

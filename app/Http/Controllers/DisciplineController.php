@@ -58,17 +58,21 @@ class DisciplineController extends Controller
         return view('discipline.edit', compact('discipline', 'disciplines'));
 }
 
-    public function update(Request $request, Discipline $discipline) {
-        $this->authorize('update', $discipline);
+    public function update(Request $request) {
         $validatedData = $request->validate(
             [
-                'name' => 'required|string|max:255'
+                'id' => 'required|exists:disciplines,id',
+                'name' => 'required|string|max:255',
+                'status' => 'nullable|integer'
             ], [
                 'name.required' => "El nombre es obligatorio.",
                 'name.string' => "El nombre no es válido.",
-                'name.max' => "El nombre es muy largo."
+                'name.max' => "El nombre es muy largo.",
+                'id.exists' => "La disciplina no existe."
             ]
             );
+        $discipline = Discipline::findOrFail($request->id);
+        $this->authorize('update', $discipline);
 
         try {
             $this->disciplineService->updateDiscipline($discipline, $validatedData);

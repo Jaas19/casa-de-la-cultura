@@ -68,6 +68,7 @@
 
         "></div>
         -->
+
         @foreach ($activities as $activity)
         <x-activity>
             <x-slot name="title">{{ $activity->name }}</x-slot>
