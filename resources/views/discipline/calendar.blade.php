@@ -3,11 +3,16 @@
         <form action="" id="redirectForm">
             <select id="redirect-select" class="bg-black2 dropdown-arrow z-10 font-black text-xl bg-transparent border-0 text-gray-200 leading-tight black_contour"
             style="background-image: url('{{ asset('images/arrow_drop_down.png') }}');">
-                <option class="bg-black2 redirectOption" value="{{ route("dashboard.index") }}" selected disabled>Dashboard</option>
+                <option value="" selected disabled>Volver</option>
                 <option class="bg-black2 redirectOption" value="{{ route("activity.index") }}">Actividades</option>
+                <option class="bg-black2 redirectOption" value="{{ route("dashboard.index") }}">Dashboard</option>
+                <option class="bg-black2 redirectOption" value="{{ route("discipline.index") }}">Disciplinas</option>
                 <option class="bg-black2 redirectOption" value="{{ route("inventory.index") }}">Inventario</option>
                 <option class="bg-black2 redirectOption" value="{{ route("person.index") }}">Personas</option>
                 <option class="bg-black2 redirectOption" value="{{ route("loan.index") }}">Prestamos</option>
+                @can('is-admin')
+                    <option class="bg-black2 redirectOption" value="{{ route("user.create") }}">Crear usuario</option>
+                @endcan
                 <option class="bg-black2 redirectOption" value="{{ route("session.destroy") }}">Cerrar sesión</option>
             </select>
         </form>
@@ -15,6 +20,17 @@
             {{ $discipline->name }}
         </h1>
     </x-slot>
+
+
+    <!--
+        bg-blue-600
+        bg-cyan-400
+        bg-yellow-900
+        bg-green-600
+        bg-lime-400
+        bg-yellow-300
+        bg-pueple-700
+    -->
 
     <x-slot name="element">
         <input id="date-input" type="date" class="bg-black2 text-gray-500">
@@ -25,14 +41,12 @@
     @csrf
 
     <x-slot name="standalone">
-        <article id="dayActivitiesModal" class="transition-all hide flex flex-col bg-gray-200 border border-black max-h-[80svh] fixed w-[80svh] z-10 left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 shadow-2xl rounded-lg">
+        <article id="dayActivitiesModal" class="transition-all hide flex flex-col bg-gray-200 border border-black max-h-[80svh] fixed w-[80svh] z-10 left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 shadow-2xl rounded-lg z-50">
             <h3 id="modalHeader" class="black_contour_sm text-white2 text-xl px-5 flex items-center justify-left bg-gradient-to-r from-yellow-900 to-yellow-700 h-16 rounded-t-lg">
                 </h3>
             <article id="activitiesContainer" class="flex flex-col overflow-auto p-2 gap-2">
                 </article>
         </article>
-
-        <div id="containerShadow" class="fixed inset-0 bg-black opacity-0 hide transition-opacity z-0"></div>
     </x-slot>
 
     <div class="flex items-center justify-center p-[5%]">
@@ -56,16 +70,19 @@
             @endfor
         </table>
     </div>
+    @if($discipline->id != 0)
+        <x-slot name="footer">
+            <div class="bg-gradient-to-r from-yellow-950 to-yellow-900 min-w-full p-6 text-sm flex items-center justify-center">
 
-    <x-slot name="footer">
-        <div class="bg-gradient-to-r from-yellow-950 to-yellow-900 min-w-full p-6 text-sm flex items-center justify-center">
-            <a href="{{ route('lesson.create', $discipline->id) }}" class="rounded-3xl bg-black2 text-md font-bold text-white2 black_contour p-3 text-center w-40">Registrar clase</a>
-        </div>
-    </x-slot>
+                    <a href="{{ route('schedule.create', $discipline->id) }}" class="rounded-3xl bg-black2 text-md font-bold text-white2 black_contour p-3 text-center w-40">Agendar clase</a>
+
+            </div>
+        </x-slot>
+    @endif
     <x-slot name="script">
-        {{ '../../js/redirect.js' }}
+        {{ asset("js/redirect.js") }}
     </x-slot>
     <x-slot name="script2">
-        {{ "../../js/disciplinesCalendar.js" }}
+        {{ asset("js/disciplinesCalendar.js") }}
     </x-slot>
 </x-app-layout>

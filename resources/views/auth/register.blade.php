@@ -1,7 +1,6 @@
 <x-guest-layout>
     <form method="POST" action="{{ route('register') }}">
         @csrf
-        <input type="hidden" name="role" value="1">
         <!-- Name -->
         <div>
             <x-input-label for="name" :value="__('Nombre')" />
@@ -39,13 +38,25 @@
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
         </div>
 
+        <div class="mt-4">
+            <x-input-label for="status" :value="__('Rol')" />
+
+            <select name="status" id="status" class="bg-[#2b2b2b] text-gray-400 border-yellow-950 rounded-md border-2" required>
+                @foreach ($roles as $role)
+                    <option value="{{ $role->id }}">{{ ucfirst($role->name) }}</option>
+                @endforeach
+            </select>
+
+            <x-input-error :messages="$errors->get('status')" class="mt-2" />
+        </div>
+
         <div class="flex items-center justify-end mt-4">
             <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('login') }}">
-                {{ __('¿Ya se ha registrado?') }}
+                {{ __('Volver') }}
             </a>
 
             <x-primary-button class="ms-4">
-                {{ __('Registrarse') }}
+                {{ __('Registrar') }}
             </x-primary-button>
         </div>
     </form>

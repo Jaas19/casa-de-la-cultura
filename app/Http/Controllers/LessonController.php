@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use App\Models\Lesson;
 use App\Models\Discipline;
 use App\Http\Controllers\Services\LessonServiceInterface;
@@ -28,6 +29,17 @@ class LessonController extends Controller
         return view('discipline.calendar', compact('activeLessons', 'inactiveLessons', 'discipline'));
     }
 
+    public function generalCalendar() {
+        $discipline = new Discipline();
+        $discipline-> id = 0;
+        $discipline->name = "Calendario general";
+
+        $activeLessons = collect();
+        $inactiveLessons = collect();
+
+        return view('discipline.calendar', compact('activeLessons', 'inactiveLessons', 'discipline'));
+    }
+
     public function create(Discipline $discipline){
         $this->authorize('show', $discipline);
         return view('lesson.create', compact('discipline'));
@@ -39,6 +51,7 @@ class LessonController extends Controller
             [
                 'name' => 'string|max:255|required',
                 'description' => 'string|max:255|nullable',
+                'color' => ['required', Rule::in(['blue', 'cyan', 'brown', 'green', 'lime', 'yellow', 'purple'])],
             ],
             [
                 'name.string' => 'El nombre no es válido.',
@@ -46,6 +59,8 @@ class LessonController extends Controller
                 'name.required' => 'El nombre es obligatorio.',
                 'description.string' => 'La descripción no es válida.',
                 'description.max' => 'La descripción es muy larga.',
+                'color.required' =>  'El color es obligatorio',
+                'color.in' => 'El color no es válido',
             ]
         );
 
@@ -103,14 +118,16 @@ class LessonController extends Controller
 
     public function getCalendarLessons(Request $request)
     {
-        $validated = $request->validate([
+        $validatedData = $request->validate([
             'date' => 'required|date',
-            'discipline_id' => 'required|exists:disciplines,id',
+            'discipline_id' => 'nullable',
         ]);
 
+        $disciplineId = (!empty($validated['discipline_id'])) ? $validated['discipline_id'] : null;
+
         $data = $this->lessonService->getMonthlyLessons(
-            $validated['discipline_id'],
-            $validated['date']
+            $validatedData['discipline_id'],
+            $validatedData['date']
         );
 
         return response()->json($data);

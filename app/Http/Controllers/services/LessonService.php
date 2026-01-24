@@ -23,16 +23,18 @@ class LessonService implements LessonServiceInterface {
     }
 
 
-    public function getMonthlyLessons(int $disciplineId, ?string $dateInput) {
+    public function getMonthlyLessons(?int $disciplineId, ?string $dateInput) {
         $date = $dateInput ? Carbon::parse($dateInput) : Carbon::now();
         $startOfMonth = $date->copy()->startOfMonth();
         $endOfMonth = $date->copy()->endOfMonth();
 
         $schedules = Schedule::query()
-            ->whereHas('lesson', function ($query) use ($disciplineId) {
-                $query->where('discipline_id', $disciplineId);
+            ->when($disciplineId, function($query) use ($disciplineId) {
+                return $query->whereHas('lesson', function ($q) use ($disciplineId) {
+                    $q->where('discipline_id', $disciplineId);
+                });
             })
-            ->with('lesson')
+            ->with('lesson.discipline')
             ->whereBetween('date', [$startOfMonth, $endOfMonth])
             ->orderBy('starting_time')
             ->get();
@@ -56,10 +58,11 @@ class LessonService implements LessonServiceInterface {
             return $daySchedules->map(function ($schedule) {
                 return [
                     'id' => $schedule->id,
-                    'name' => $schedule->lesson->name,
+                    'name' => $schedule->lesson->name . " (" . $schedule->lesson->discipline->name . ")",
                     'status' => $schedule->status,
-                    'starting_time' => Carbon::parse($schedule->start_time)->format('H:i'),
-                    'ending_time' => Carbon::parse($schedule->end_time)->format('H:i'),
+                    'starting_time' => Carbon::parse($schedule->starting_time)->format('H:i'),
+                    'ending_time' => Carbon::parse($schedule->ending_time)->format('H:i'),
+                    'color' => $schedule->lesson->color,
                     'time_array' => false,
                     'hours' => []
                 ];

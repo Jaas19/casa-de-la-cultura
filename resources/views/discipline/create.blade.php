@@ -5,10 +5,14 @@
             style="background-image: url('{{ asset('images/arrow_drop_down.png') }}');">
                 <option value="" selected disabled>Volver</option>
                 <option class="bg-black2 redirectOption" value="{{ route("activity.index") }}">Actividades</option>
-                <option class="bg-black2 redirectOption" value="{{ route("inventory.index") }}">Inventario</option>
                 <option class="bg-black2 redirectOption" value="{{ route("dashboard.index") }}">Dashboard</option>
+                <option class="bg-black2 redirectOption" value="{{ route("discipline.index") }}">Disciplinas</option>
+                <option class="bg-black2 redirectOption" value="{{ route("inventory.index") }}">Inventario</option>
                 <option class="bg-black2 redirectOption" value="{{ route("person.index") }}">Personas</option>
                 <option class="bg-black2 redirectOption" value="{{ route("loan.index") }}">Prestamos</option>
+                @can('is-admin')
+                    <option class="bg-black2 redirectOption" value="{{ route("user.create") }}">Crear usuario</option>
+                @endcan
                 <option class="bg-black2 redirectOption" value="{{ route("session.destroy") }}">Cerrar sesión</option>
             </select>
         </form>
@@ -17,13 +21,6 @@
     <form class="flex flex-col justify-between h-full" action='{{ route('discipline.store') }}' method="POST">
     @csrf
     <div id="login-div" class="px-[10vw] py-[10vh] grid sm:grid-cols-2 gap-5">
-            @if($errors->any())
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            @endif
         <div>
             <label for="name">Nombre de la disciplina</label>
             <input type="text" required id="name" name="name" class="block" placeholder="Introduzca el nombre..." value="{{ old('name') }}">

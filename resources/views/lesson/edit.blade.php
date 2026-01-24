@@ -5,10 +5,14 @@
             style="background-image: url('{{ asset('images/arrow_drop_down.png') }}');">
                 <option value="" selected disabled>Volver</option>
                 <option class="bg-black2 redirectOption" value="{{ route("activity.index") }}">Actividades</option>
-                <option class="bg-black2 redirectOption" value="{{ route("inventory.index") }}">Inventario</option>
                 <option class="bg-black2 redirectOption" value="{{ route("dashboard.index") }}">Dashboard</option>
+                <option class="bg-black2 redirectOption" value="{{ route("discipline.index") }}">Disciplinas</option>
+                <option class="bg-black2 redirectOption" value="{{ route("inventory.index") }}">Inventario</option>
                 <option class="bg-black2 redirectOption" value="{{ route("person.index") }}">Personas</option>
                 <option class="bg-black2 redirectOption" value="{{ route("loan.index") }}">Prestamos</option>
+                @can('is-admin')
+                    <option class="bg-black2 redirectOption" value="{{ route("user.create") }}">Crear usuario</option>
+                @endcan
                 <option class="bg-black2 redirectOption" value="{{ route("session.destroy") }}">Cerrar sesión</option>
             </select>
         </form>
@@ -31,7 +35,7 @@
         </div>
         <div class="row-span-2">
             <label for="date">Descripción (opcional)</label>
-            <textarea id="description" name="description" class="block resize-none" placeholder="Escriba aquí..." value="{{ old('description') ?? $lesson->description }}"></textarea>
+            <textarea id="description" name="description" class="block resize-none" placeholder="Escriba aquí...">{{ old('description') ?? $lesson->description }}</textarea>
         </div>
         <div>
             <label for="status">Estado</label>
@@ -49,7 +53,7 @@
     </div>
     </form>
     <x-slot name="script">
-    {{ "../js/redirect.js" }}
-    </x-slot name="script">
+        {{ asset("js/redirect.js") }}
+    </x-slot>
 
 </x-app-layout>

@@ -5,10 +5,14 @@
             style="background-image: url('{{ asset('images/arrow_drop_down.png') }}');">
                 <option value="" selected disabled>Volver</option>
                 <option class="bg-black2 redirectOption" value="{{ route("activity.index") }}">Actividades</option>
-                <option class="bg-black2 redirectOption" value="{{ route("inventory.index") }}">Inventario</option>
                 <option class="bg-black2 redirectOption" value="{{ route("dashboard.index") }}">Dashboard</option>
+                <option class="bg-black2 redirectOption" value="{{ route("discipline.index") }}">Disciplinas</option>
+                <option class="bg-black2 redirectOption" value="{{ route("inventory.index") }}">Inventario</option>
                 <option class="bg-black2 redirectOption" value="{{ route("person.index") }}">Personas</option>
                 <option class="bg-black2 redirectOption" value="{{ route("loan.index") }}">Prestamos</option>
+                @can('is-admin')
+                    <option class="bg-black2 redirectOption" value="{{ route("user.create") }}">Crear usuario</option>
+                @endcan
                 <option class="bg-black2 redirectOption" value="{{ route("session.destroy") }}">Cerrar sesión</option>
             </select>
         </form>
@@ -80,11 +84,11 @@
     </form>
 
     <x-slot name="script">
-        {{ "../js/redirect.js" }}
+        {{ asset("js/redirect.js") }}
     </x-slot>
 
     <x-slot name="script2">
-        {{ "../js/activityCreation.js" }}
+        {{ asset("js/activityCreation.js") }}
     </x-slot>
 
     <script>

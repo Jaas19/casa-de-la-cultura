@@ -58,7 +58,7 @@
                             </div>
                             @endforeach
                         @endforeach
-            
+
 
 
             </div>
@@ -67,10 +67,10 @@
             </div>
         </form>
     <x-slot name="script">
-        {{ "../js/redirect.js" }}
+        {{ asset("js/redirect.js") }}
     </x-slot>
     <x-slot name="script2">
-        {{ "../js/goodCreation.js" }}
+        {{ asset("js/goodCreation.js") }}
     </x-slot>
 </x-app-layout>
 </div>

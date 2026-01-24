@@ -5,7 +5,7 @@
         <div class="notification bg-white w-96 h-48 flex-shrink-0">
 
             <header @class([
-                'p-2 flex flex-col justify-center text-center h-[30%] text-white font-bold text-lg uppercase tracking-wide',
+                'p-2 flex flex-col justify-center text-center h-[30%] text-white font-bold text-lg uppercase tracking-wide black_contour_sm',
                 'bg-gradient-to-r from-green-600 to-green-800' => $title === 'Éxito',
                 'bg-gradient-to-r from-red-600 to-red-800'     => $title === 'Error',
                 'bg-gradient-to-r from-yellow-900 to-yellow-700' => $title !== 'Éxito' && $title !== 'Error',
@@ -13,13 +13,23 @@
                 {{ $title }}
             </header>
 
-            <ul class="list-disc py-4 px-8 h-full bg-white text-gray-800">
-                <li class="marker:text-gray-400">
-                    <span class="text-md font-medium">
-                        {{ $slot }}
-                    </span>
-                </li>
-            </ul>
+            @if ($title == 'Error')
+                <ul class="list-disc py-4 px-8 h-full bg-white text-red-600">
+                    {{ $slot }}
+                </ul>
+            @endif
+
+            @if ($title == 'Éxito')
+                <ul class="list-disc py-4 px-8 h-full bg-white text-lime-400">
+                    {{ $slot }}
+                </ul>
+            @endif
+
+            @if ($title != 'Error' && $title != 'Éxito')
+                <ul class="list-disc py-4 px-8 h-full bg-white text-yellow-950">
+                    {{ $slot }}
+                </ul>
+            @endif
         </div>
     </div>
 </div>

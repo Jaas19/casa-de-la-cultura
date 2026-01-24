@@ -25,7 +25,7 @@
     <div class="flex justify-center w-full h-full items-end p-[5vh]">
         <button class="rounded-3xl bg-yellow-900 text-md font-bold text-white2 black_contour py-3 px-10 hover:bg-yellow-800 transition">Registrar</button>
     </div>
-    
-    
-
+    <x-slot name="script">
+        {{ asset("js/redirect.js") }}
+    </x-slot>
 </x-app-layout>

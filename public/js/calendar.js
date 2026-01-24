@@ -173,6 +173,7 @@ function showWindow(e){
         section.className = `min-h-20 p-3 bg-white flex flex-col justify-start border-b-4 border-${activity.getAttribute("data-color")}`
         const header = document.createElement("h4")
         header.innerText = activity.getAttribute("data-name")
+        header.classList.add("font-bold")
 
 
         const list = document.createElement("ul")

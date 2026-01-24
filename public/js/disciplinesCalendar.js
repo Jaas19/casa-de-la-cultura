@@ -8,9 +8,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const containerShadow = document.querySelector("#containerShadow");
 
     const colors1 = {
-        "0": "red-500",
-        "1": "lime-400",
-    };
+        "blue": "blue-600",
+        "cyan": "cyan-400",
+        "brown": "yellow-900",
+        "green": "green-600",
+        "lime": "lime-400",
+        "yellow": "yellow-300",
+        "purple": "pueple-700",
+    }
+
 
     function loadLessons(e) {
         let date;
@@ -109,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             for (const activity of activities[dateStr]) {
                 const activityDiv = document.createElement("div");
-                const color = colors1[activity.status] || 'gray-400';
+                const color = colors1[activity.color] || 'gray-400';
 
                 activityDiv.classList.add(`bg-${color}`, "rounded-full", "h-2", "w-2");
                 activityDiv.setAttribute("data-name", activity.name);
@@ -187,7 +193,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function hideWindow(e) {
-        if (e && e.target !== containerShadow && e.target !== dayActivitiesModal) return;
+        if (e && dayActivitiesModal.contains(e.target)) {
+            return
+        }
 
         activitiesContainer.innerHTML = "";
         dayActivitiesModal.classList.add("hide");

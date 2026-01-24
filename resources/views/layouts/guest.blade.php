@@ -33,16 +33,48 @@
         {{-- <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100 dark:bg-gray-900"> --}}
         <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-system"
         style="background-image: url('{{ asset('images/house_facade.jpg') }}')">
-            
+
             <div>
                 <a href="/">
                     <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
                 </a>
             </div>
 
-            <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-[#f8f8f8] dark:bg-[#323232] shadow-md overflow-hidden sm:rounded-3xl">
+            <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-[#f8f8f8] dark:bg-[#323232] shadow-md overflow-y-auto sm:rounded-3xl">
                 {{ $slot }}
+                @if (session('success'))
+                            <x-notification>
+                                <x-slot name="title">Éxito</x-slot>
+                                    <li>
+                                        <span class="text-gray-800">
+                                            {{ session('success') }}
+                                        </span>
+                                    </li>
+                            </x-notification>
+                        @endif
+
+                @if($errors->any() || session('error'))
+                    <x-notification>
+                        <x-slot name="title">Error</x-slot>
+                        @foreach ($errors->all() as $error)
+                            <li>
+                                <span class="text-gray-800">
+                                    {{ $error }}
+                                </span>
+                            </li>
+                        @endforeach
+                        @if (session('error'))
+                            <li>
+                                <span class="text-gray-800">
+                                    {{ session('error') }}
+                                </span>
+                            </li>
+                        @endif
+                        {{ session('error') }}
+                    </x-notification>
+                @endif
             </div>
         </div>
     </body>
+    <script src="{{ asset('js/notification.js') }}"></script>
 </html>

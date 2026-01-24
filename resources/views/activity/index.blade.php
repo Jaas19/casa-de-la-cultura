@@ -6,14 +6,16 @@
             <form action="" id="redirectForm">
             <select id="redirect-select" class="dropdown-arrow z-10 font-black text-xl bg-transparent border-0 text-gray-200 leading-tight black_contour"
             style="background-image: url('{{ asset('images/arrow_drop_down.png') }}');">
-                    <option class="bg-black2 redirectOption" selected disabled>Actividades</option>
-                    <option class="bg-black2 redirectOption" value="{{ route("inventory.index") }}">Inventario</option>
-                    <option class="bg-black2 redirectOption" value="{{ route("dashboard.index") }}">Dashboard</option>
-                    <option class="bg-black2 redirectOption" value="{{ route("person.index") }}">Personas</option>
-                    <option class="bg-black2 redirectOption" value="{{ route("loan.index") }}">Prestamos</option>
-                    <option class="bg-black2 redirectOption" value="{{ route("discipline.index") }}">Disciplinas</option>
-                    <option class="bg-black2 redirectOption" value="{{ route("session.destroy") }}">Cerrar sesión</option>
-
+                <option class="bg-black2 redirectOption" value="{{ route("activity.index") }}" selected disabled>Actividades</option>
+                <option class="bg-black2 redirectOption" value="{{ route("dashboard.index") }}">Dashboard</option>
+                <option class="bg-black2 redirectOption" value="{{ route("discipline.index") }}">Disciplinas</option>
+                <option class="bg-black2 redirectOption" value="{{ route("inventory.index") }}">Inventario</option>
+                <option class="bg-black2 redirectOption" value="{{ route("person.index") }}">Personas</option>
+                <option class="bg-black2 redirectOption" value="{{ route("loan.index") }}">Prestamos</option>
+                @can('is-admin')
+                    <option class="bg-black2 redirectOption" value="{{ route("user.create") }}">Crear usuario</option>
+                @endcan
+                <option class="bg-black2 redirectOption" value="{{ route("session.destroy") }}">Cerrar sesión</option>
                 </select>
             </form>
 
@@ -68,7 +70,7 @@
 
         "></div>
         -->
-       
+
         @foreach ($activities as $activity)
         <x-activity>
             <x-slot name="title">{{ $activity->name }}</x-slot>
@@ -95,15 +97,15 @@
         @endforeach
 
         <x-slot name="script">
-            {{ "./js/redirect.js" }}
+            {{ asset("js/redirect.js") }}
         </x-slot>
 
         <x-slot name="script2">
-            {{ "./js/activity.js" }}
+            {{ asset("js/activity.js") }}
         </x-slot>
 
         <x-slot name="scriptAjax">
-            {{ "./js/activityAjax.js" }}
+            {{ asset("js/activityAjax.js") }}
         </x-slot>
 
     </div>

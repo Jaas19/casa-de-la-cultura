@@ -6,13 +6,16 @@
             <form action="" id="redirectForm">
             <select id="redirect-select" class="dropdown-arrow z-10 font-black text-xl bg-transparent border-0 text-gray-200 leading-tight black_contour"
             style="background-image: url('{{ asset('images/arrow_drop_down.png') }}');">
-                    <option class="bg-black2 redirectOption" selected disabled>Disciplinas</option>
-                    <option class="bg-black2 redirectOption" value="{{ route("activity.index") }}">Actividades</option>
-                    <option class="bg-black2 redirectOption" value="{{ route("inventory.index") }}">Inventario</option>
-                    <option class="bg-black2 redirectOption" value="{{ route("dashboard.index") }}">Dashboard</option>
-                    <option class="bg-black2 redirectOption" value="{{ route("person.index") }}">Personas</option>
-                    <option class="bg-black2 redirectOption" value="{{ route("loan.index") }}">Prestamos</option>
-                    <option class="bg-black2 redirectOption" value="{{ route("session.destroy") }}">Cerrar sesión</option>
+                <option class="bg-black2 redirectOption" value="{{ route("activity.index") }}">Actividades</option>
+                <option class="bg-black2 redirectOption" value="{{ route("dashboard.index") }}">Dashboard</option>
+                <option class="bg-black2 redirectOption" value="{{ route("discipline.index") }}" selected disabled>Disciplinas</option>
+                <option class="bg-black2 redirectOption" value="{{ route("inventory.index") }}">Inventario</option>
+                <option class="bg-black2 redirectOption" value="{{ route("person.index") }}">Personas</option>
+                <option class="bg-black2 redirectOption" value="{{ route("loan.index") }}">Prestamos</option>
+                @can('is-admin')
+                    <option class="bg-black2 redirectOption" value="{{ route("user.create") }}">Crear usuario</option>
+                @endcan
+                <option class="bg-black2 redirectOption" value="{{ route("session.destroy") }}">Cerrar sesión</option>
 
                 </select>
             </form>
@@ -84,35 +87,19 @@
         text-lime-400 text-lime-200
         text-yellow-400 text-yellow-100
         text-cyan-400 text-cyan-200
+        text-gray-800
 
         bg-white2 text-black2 rounded-2xl p-3 text-xl p-3 text-center
-
-        "></div>
         -->
 
-    <!-- Notificación de Éxito -->
-    @if (session('success'))
-        <x-notification>
-            <x-slot name="title">Éxito</x-slot>
-            {{ session('success') }}
-        </x-notification>
-    @endif
-
-    <!-- Notificación de Error -->
-    @if(session('success'))
-        <x-notification>
-            <x-slot name="title">Error</x-slot>
-            {{ session('error') }}
-        </x-notification>
-    @endif
-
-    <x-slot name="script">
+    <x-slot name="script2">
         {{ "../js/redirect.js" }}
     </x-slot>
     </div>
     <x-slot name="footer">
-        <div class="bg-gradient-to-r from-yellow-950 to-yellow-900 min-w-full p-6 text-sm flex items-center justify-center">
+        <div class="bg-gradient-to-r from-yellow-950 to-yellow-900 min-w-full p-6 text-sm flex items-center justify-center gap-10">
             <a href="discipline/create" class="rounded-3xl bg-black2 text-md font-bold text-white2 black_contour p-3 text-center w-40">Registrar</a>
+            <a href= {{ route('lesson.general') }} class="rounded-3xl bg-black2 text-md font-bold text-white2 black_contour p-3 text-center w-40">Ver calendario</a>
         </div>
     </x-slot>
     <x-slot name="script">

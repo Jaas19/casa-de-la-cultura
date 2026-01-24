@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\AttributeController;
 use App\Http\Controllers\GoodController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\PersonController;
 use App\Http\Controllers\LoanController;
 use App\Http\Controllers\DisciplineController;
 use App\Http\Controllers\LessonController;
+use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use Illuminate\Support\Facades\Route;
 
@@ -27,6 +29,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/good/create', [GoodController::class, 'create'])->name('good.create');
     Route::post('/good/create', [GoodController::class, 'store'])->name('good.store');
     Route::patch('/good/patch', [GoodController::class, 'patch'])->name('good.update');
+
+    // Register new user
+    Route::get('/user/create', [UserController::class, 'create'])->name('user.create');
 
     // Close session
     Route::get('/auth/close', [AuthenticatedSessionController::class, 'destroy'])->name('session.destroy');
@@ -82,11 +87,16 @@ Route::middleware('auth')->group(function () {
     // Lessons
     Route::get('discipline/{discipline}/lessons', [LessonController::class, 'index'])->name('lesson.index');
     Route::get('discipline/{discipline}/calendar', [LessonController::class, 'calendar'])->name('lesson.calendar');
+    Route::get('lesson/all', [LessonController::class, 'generalCalendar'])->name('lesson.general');
     Route::get('discipline/{discipline}/lesson/create', [LessonController::class, 'create'])->name('lesson.create');
     Route::post('discipline/{discipline}/lesson/create', [LessonController::class, 'store'])->name('lesson.store');
     Route::get('discipline/{discipline}/lesson/{lesson}/edit', [LessonController::class, 'edit'])->name('lesson.edit');
     Route::patch('discipline/{discipline}/lesson/{lesson}/update', [LessonController::class, 'update'])->name('lesson.update');
     Route::post('lesson/calendar', [LessonController::class, 'getCalendarLessons'])->name('lesson.month');
-});
+
+    // Schedules
+    Route::get('discipline/{discipline}/schedule/create', [ScheduleController::class, 'create'])->name('schedule.create');
+    Route::post('discipline/{discipline}/schedule/store', [ScheduleController::class, 'store'])->name('schedule.store');
+    });
 
 require __DIR__.'/auth.php';

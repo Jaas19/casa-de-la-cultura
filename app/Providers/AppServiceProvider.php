@@ -12,7 +12,6 @@ use App\Http\Controllers\Services\ActivityHourService;
 use App\Http\Controllers\Services\ActivityHourServiceInterface;
 use App\Http\Controllers\Services\ActivityPersonService;
 use App\Http\Controllers\Services\ActivityPersonServiceInterface;
-use Illuminate\Support\ServiceProvider;
 use App\Http\Controllers\Services\GoodService;
 use App\Http\Controllers\Services\GoodServiceInterface;
 use App\Http\Controllers\Services\InventoryService;
@@ -29,6 +28,11 @@ use App\Http\Controllers\Services\DisciplineServiceInterface;
 use App\Http\Controllers\Services\DisciplineService;
 use App\Http\Controllers\Services\LessonServiceInterface;
 use App\Http\Controllers\Services\LessonService;
+
+use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Gate;
+
+use App\Models\User;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -99,6 +103,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Gate::define('is-admin', function (User $user){
+            return $user->role == 1;
+        });
     }
 }
