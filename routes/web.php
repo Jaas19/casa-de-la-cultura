@@ -84,6 +84,8 @@ Route::middleware('auth')->group(function () {
     Route::get('discipline/{discipline}/calendar', [LessonController::class, 'calendar'])->name('lesson.calendar');
     Route::get('discipline/{discipline}/lesson/create', [LessonController::class, 'create'])->name('lesson.create');
     Route::post('discipline/{discipline}/lesson/create', [LessonController::class, 'store'])->name('lesson.store');
+    Route::get('discipline/{discipline}/lesson/{lesson}/edit', [LessonController::class, 'edit'])->name('lesson.edit');
+    Route::patch('discipline/{discipline}/lesson/{lesson}/update', [LessonController::class, 'update'])->name('lesson.update');
     Route::post('lesson/calendar', [LessonController::class, 'getCalendarLessons'])->name('lesson.month');
 });
 

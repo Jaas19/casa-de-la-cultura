@@ -13,11 +13,9 @@
                 {{ $title }}
             </header>
 
-            {{-- BODY (CONTENIDO) --}}
             <ul class="list-disc py-4 px-8 h-full bg-white text-gray-800">
                 <li class="marker:text-gray-400">
                     <span class="text-md font-medium">
-                        {{-- Aquí se imprime el mensaje que envías --}}
                         {{ $slot }}
                     </span>
                 </li>

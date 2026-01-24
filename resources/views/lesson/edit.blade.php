@@ -14,7 +14,8 @@
         </form>
     </x-slot>
 
-    <form class="flex flex-col justify-between h-full" action='{{ route('lesson.store', $discipline->id) }}' method="POST">
+    <form class="flex flex-col justify-between h-full" action='{{ route('lesson.update', ["lesson" => $lesson->id, "discipline" => $discipline->id]) }}' method="POST">
+    @method("PATCH")
     @csrf
     <div id="login-div" class="px-[10vw] py-[10vh] grid sm:grid-cols-2 gap-5">
             @if($errors->any())
@@ -26,18 +27,25 @@
             @endif
         <div>
             <label for="name">Nombre</label>
-            <input type="text" required id="name" name="name" class="block" placeholder="Introduzca el nombre..." value="{{ old('name') }}">
+            <input type="text" required id="name" name="name" class="block" placeholder="Introduzca el nombre..." value="{{ old('name') ?? $lesson->name }}">
+        </div>
+        <div class="row-span-2">
+            <label for="date">Descripción (opcional)</label>
+            <textarea id="description" name="description" class="block resize-none" placeholder="Escriba aquí..." value="{{ old('description') ?? $lesson->description }}"></textarea>
         </div>
         <div>
-            <label for="date">Descripción (opcional)</label>
-            <textarea id="description" name="description" class="block resize-none" placeholder="Escriba aquí..." value="{{ old('description') }}"></textarea>
+            <label for="status">Estado</label>
+            <select name="status" id="status" class="block">
+                <option value="1" {{ $lesson->status == 1 ? "selected" : "" }}>Activo</option>
+                <option value="0" {{ $lesson->status == 0 ? "selected" : "" }}>Inactivo</option>
+            </select>
         </div>
     </div>
 
 
 
     <div class="flex justify-center w-full items-end p-[5vh]">
-        <button class="rounded-3xl bg-yellow-900 text-md font-bold text-white2 black_contour py-3 px-10 hover:bg-yellow-800 transition">Registrar</button>
+        <button class="rounded-3xl bg-yellow-900 text-md font-bold text-white2 black_contour py-3 px-10 hover:bg-yellow-800 transition">Actualizar</button>
     </div>
     </form>
     <x-slot name="script">

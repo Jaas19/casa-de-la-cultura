@@ -12,8 +12,14 @@ class LessonService implements LessonServiceInterface {
         return Lesson::create([
             'name' => $data['name'],
             'description' => $data['description'],
-            'administrator_id' => $disciplineId
+            'discipline_id' => $disciplineId
         ]);
+    }
+    public function updateLesson($lesson, $data){
+        if (!$lesson->update($data)) {
+            throw new Exception("No se pudo actualizar la disciplina.");
+        }
+        return $lesson->fresh();
     }
 
 

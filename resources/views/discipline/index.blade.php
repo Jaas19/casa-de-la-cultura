@@ -29,17 +29,17 @@
             </div>
         </x-slot>
 
-        <div class ="flex flex-wrap gap-9 items-center justify-center">
+        <div class ="flex flex-wrap gap-x-9 gap-y-14 items-center justify-center">
             @foreach ($activeDisciplines as $activeDiscipline)
                 <div class="size-72 bg-white rounded-3xl">
-                    <div class="h-[42%] w-full bg-lime-500 py-3 px-4 rounded-t-3xl">
+                    <div class="h-[42%] w-full bg-gradient-to-r from-lime-400 to-lime-200 py-3 px-4 rounded-t-3xl">
                         <h3 class="text-white2 black_contour_sm font-bold">{{ $activeDiscipline->name }}</h3>
                     </div>
                     <div class="py-4 px-4 rounded-b-3xl h-[60%] flex flex-col">
                         <ul class="text-blue-400">
                             <li class="border-b border-blue-400 w-min text-sm"><a href="{{ route('discipline.edit', $activeDiscipline->id) }}">Editar</a></li>
                             <li class="border-b border-blue-400 w-min text-sm"><a href="{{ route('lesson.calendar', $activeDiscipline->id) }}">Calendario</a></li>
-                            <li class="border-b border-blue-400 w-min text-sm"><a href="">Clases</a></li>
+                            <li class="border-b border-blue-400 w-min text-sm"><a href="{{ route('lesson.index', $activeDiscipline->id) }}">Clases</a></li>
                             <li class="border-b border-blue-400 w-min text-sm"><a href="">Estudiantes</a></li>
                         </ul>
                     </div>
@@ -48,14 +48,14 @@
 
             @foreach ($inactiveDisciplines as $inactiveDiscipline)
                 <div class="size-72 bg-white rounded-3xl">
-                    <div class="h-[40%] w-full bg-red-500 py-4 px-4 rounded-t-3xl">
+                    <div class="h-[40%] w-full bg-gradient-to-r from-red-500 to-red-300 py-4 px-4 rounded-t-3xl">
                         <h3 class="text-white2 black_contour_sm font-bold">{{ $inactiveDiscipline->name }}</h3>
                     </div>
                     <div class="py-4 px-4 rounded-b-3xl h-[60%] flex flex-col">
                         <ul class="text-blue-400">
                             <li class="border-b border-blue-400 w-min text-sm"><a href="{{ route('discipline.edit', $inactiveDiscipline->id) }}">Editar</a></li>
                             <li class="border-b border-blue-400 w-min text-sm"><a href="{{ route('lesson.calendar', $inactiveDiscipline->id) }}">Calendario</a></li>
-                            <li class="border-b border-blue-400 w-min text-sm"><a href="">Clases</a></li>
+                            <li class="border-b border-blue-400 w-min text-sm"><a href="{{ route('lesson.index', $inactiveDiscipline->id) }}">Clases</a></li>
                             <li class="border-b border-blue-400 w-min text-sm"><a href="">Estudiantes</a></li>
                         </ul>
                     </div>
@@ -93,7 +93,7 @@
     <!-- Notificación de Éxito -->
     @if (session('success'))
         <x-notification>
-            <x-slot name="tittle">Éxito</x-slot>
+            <x-slot name="title">Éxito</x-slot>
             {{ session('success') }}
         </x-notification>
     @endif
@@ -101,7 +101,7 @@
     <!-- Notificación de Error -->
     @if(session('success'))
         <x-notification>
-            <x-slot name="tittle">Error</x-slot>
+            <x-slot name="title">Error</x-slot>
             {{ session('error') }}
         </x-notification>
     @endif
