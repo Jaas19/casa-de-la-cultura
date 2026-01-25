@@ -1,21 +1,30 @@
 <x-app-layout>
     <x-slot name="header">
-        <form action="" id="redirectForm">
-            <select id="redirect-select" class="dropdown-arrow z-10 font-black text-xl bg-transparent border-0 text-gray-200 leading-tight black_contour"
-            style="background-image: url('{{ asset('images/arrow_drop_down.png') }}');">
-                <option value="" selected disabled>Volver</option>
-                <option class="bg-black2 redirectOption" value="{{ route("activity.index") }}">Actividades</option>
-                <option class="bg-black2 redirectOption" value="{{ route("dashboard.index") }}">Dashboard</option>
-                <option class="bg-black2 redirectOption" value="{{ route("discipline.index") }}">Disciplinas</option>
-                <option class="bg-black2 redirectOption" value="{{ route("inventory.index") }}">Inventario</option>
-                <option class="bg-black2 redirectOption" value="{{ route("person.index") }}">Personas</option>
-                <option class="bg-black2 redirectOption" value="{{ route("loan.index") }}">Prestamos</option>
-                @can('is-admin')
-                    <option class="bg-black2 redirectOption" value="{{ route("user.create") }}">Crear usuario</option>
-                @endcan
-                <option class="bg-black2 redirectOption" value="{{ route("session.destroy") }}">Cerrar sesión</option>
-            </select>
-        </form>
+        <div class="relative flex items-center justify-between w-full">
+            <form action="" id="redirectForm" class="z-10">
+                <select id="redirect-select" class="dropdown-arrow font-black text-xl bg-transparent border-0 text-gray-200 leading-tight black_contour"
+                style="background-image: url('{{ asset('images/arrow_drop_down.png') }}');">
+                    <option value="" selected disabled>Volver</option>
+                    <option class="bg-black2 redirectOption" value="{{ route("activity.index") }}">Actividades</option>
+                    <option class="bg-black2 redirectOption" value="{{ route("dashboard.index") }}">Dashboard</option>
+                    <option class="bg-black2 redirectOption" value="{{ route("discipline.index") }}">Disciplinas</option>
+                    <option class="bg-black2 redirectOption" value="{{ route("inventory.index") }}">Inventario</option>
+                    <option class="bg-black2 redirectOption" value="{{ route("person.index") }}">Personas</option>
+                    <option class="bg-black2 redirectOption" value="{{ route("loan.index") }}">Prestamos</option>
+                    @can('is-admin')
+                        <option class="bg-black2 redirectOption" value="{{ route("user.create") }}">Crear usuario</option>
+                    @endcan
+                    <option class="bg-black2 redirectOption" value="{{ route("session.destroy") }}">Cerrar sesión</option>
+                </select>
+            </form>
+            <h3 class="absolute text-center w-full">
+                <a href="{{ route("lesson.index", $discipline->id) }}"
+                    class="text-white2
+                    text-2xl black_contour font-black mr-5">
+                    {{ $discipline->name }}
+                </a>
+            </h3>
+        </div>
     </x-slot>
 
     <form class="flex flex-col justify-between h-full" action='{{ route('lesson.store', $discipline->id) }}' method="POST">

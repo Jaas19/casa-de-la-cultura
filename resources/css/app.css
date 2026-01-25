@@ -77,12 +77,15 @@ td  {
 }
 
 tr {
-    @apply first:bg-gradient-to-r first:from-yellow-900 first:to-yellow-700 
-    overflow-hidden border-b-2 border-gray-700 first:border-b-0;
+    @apply overflow-hidden border-b-2 border-gray-700 border-b-2 border-gray-700;
 }
 
 label {
     @apply text-black2 dark:text-white2 font-bold;
+}
+
+table {
+    @apply border-collapse;
 }
 
 

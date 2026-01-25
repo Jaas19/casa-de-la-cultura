@@ -1,33 +1,39 @@
 <x-app-layout>
     <div class="activity px-10 py-14 flex flex-wrap justify-evenly gap-y-14">
         <x-slot name="header">
-            <div class="flex items-center relative w-full">
-                <div class="flex w-full gap-5 justify-between">
-                    <form action="" id="redirectForm">
-                        <select id="redirect-select" class="dropdown-arrow z-10 font-black text-xl bg-transparent border-0 text-gray-200 leading-tight black_contour"
-                        style="background-image: url('{{ asset('images/arrow_drop_down.png') }}');">
-                <option value="" selected disabled>Volver</option>
-                <option class="bg-black2 redirectOption" value="{{ route("activity.index") }}">Actividades</option>
-                <option class="bg-black2 redirectOption" value="{{ route("dashboard.index") }}">Dashboard</option>
-                <option class="bg-black2 redirectOption" value="{{ route("discipline.index") }}">Disciplinas</option>
-                <option class="bg-black2 redirectOption" value="{{ route("inventory.index") }}">Inventario</option>
-                <option class="bg-black2 redirectOption" value="{{ route("person.index") }}">Personas</option>
-                <option class="bg-black2 redirectOption" value="{{ route("loan.index") }}">Prestamos</option>
-                @can('is-admin')
-                    <option class="bg-black2 redirectOption" value="{{ route("user.create") }}">Crear usuario</option>
-                @endcan
-                <option class="bg-black2 redirectOption" value="{{ route("session.destroy") }}">Cerrar sesión</option>
-                        </select>
-                    </form>
-
-                    <a href="{{ route("discipline.index") }}" class="flex flex-col justify-center font-bold text-white2 black_contour text-xl">{{ $discipline->name }}</a>
-                    <select id="filter-activity-select" class="dropdown-arrow z-10 font-black text-xl bg-transparent border-0 text-gray-200 leading-tight black_contour"
-                    style="background-image: url('{{ asset('images/arrow_drop_down.png') }}')">
-                        <option class="bg-black2 filter-activity-option" value="Todas">Todas</option>
-                        <option class="bg-black2 filter-activity-option" value="Activas" selected>Activas</option>
-                        <option class="bg-black2 filter-activity-option" value="Inactiva">Inactivas</option>
+            <div class="flex w-full gap-5 justify-between">
+                <form action="" id="redirectForm" class="z-10">
+                    <select id="redirect-select" class="dropdown-arrow font-black text-xl bg-transparent border-0 text-gray-200 leading-tight black_contour"
+                    style="background-image: url('{{ asset('images/arrow_drop_down.png') }}');">
+            <option value="" selected disabled>Volver</option>
+            <option class="bg-black2 redirectOption" value="{{ route("activity.index") }}">Actividades</option>
+            <option class="bg-black2 redirectOption" value="{{ route("dashboard.index") }}">Dashboard</option>
+            <option class="bg-black2 redirectOption" value="{{ route("discipline.index") }}">Disciplinas</option>
+            <option class="bg-black2 redirectOption" value="{{ route("inventory.index") }}">Inventario</option>
+            <option class="bg-black2 redirectOption" value="{{ route("person.index") }}">Personas</option>
+            <option class="bg-black2 redirectOption" value="{{ route("loan.index") }}">Prestamos</option>
+            @can('is-admin')
+                <option class="bg-black2 redirectOption" value="{{ route("user.create") }}">Crear usuario</option>
+            @endcan
+            <option class="bg-black2 redirectOption" value="{{ route("session.destroy") }}">Cerrar sesión</option>
                     </select>
-                </div>
+                </form>
+
+
+                <h3 class="absolute text-center w-full">
+                    <a href="{{ route("discipline.index") }}"
+                        class="text-white2
+                        text-2xl black_contour font-black mr-5">
+                        {{ $discipline->name }}
+                    </a>
+                </h3>
+
+                <select id="filter-activity-select" class="dropdown-arrow z-10 font-black text-xl bg-transparent border-0 text-gray-200 leading-tight black_contour"
+                style="background-image: url('{{ asset('images/arrow_drop_down.png') }}')">
+                    <option class="bg-black2 filter-activity-option" value="Todas">Todas</option>
+                    <option class="bg-black2 filter-activity-option" value="Activas" selected>Activas</option>
+                    <option class="bg-black2 filter-activity-option" value="Inactiva">Inactivas</option>
+                </select>
             </div>
         </x-slot>
 

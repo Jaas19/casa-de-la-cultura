@@ -197,29 +197,14 @@ class ActivityService implements ActivityServiceInterface {
     public function changeStatus(Request $data){
         $activity = Activity::where("id", "=", $data->id)
         ->first();
-
         $activity->status = $data->status;
         $databaseFormat = "Y-m-d";
-
-        if($activity->status == "Pospuesta"){
-            $interval = new DateInterval("P$data->amount"."D");
-            $startingDate = DateTime::createFromFormat($databaseFormat, $activity->starting_date);
-            $endingDate = DateTime::createFromFormat($databaseFormat, $activity->ending_date);
-            // DateInterval::createFromDateString("P$data->amount d");
-            // $formattedDate = "+$data->amount day";
-            date_add($startingDate, $interval);
-            date_add($endingDate, $interval);
-            // dd($activity->starting_date, strtotime($formattedDate, $activity->starting_date));
-            $activity -> starting_date = $startingDate;
-            $activity -> ending_date = $endingDate;
-
-            // $activity->starting_date = strtotime($formattedDate, $activity->starting_date);
-            // $activity->ending_date = strtotime($formattedDate, $activity->ending_date);
-            $activity -> save();
-            return ["starting_date"  => $activity->starting_date->format('d/m/Y'),
-                    "ending_date"    => $activity->ending_date->format('d/m/Y')];
-        }
-        return $activity->save();
+        $activity->save();
+        return response()->json([
+        'success' => true,
+        'message' => 'Estado actualizado correctamente',
+        'data' => $activity
+    ]);
     }
     // this won't work for now, must be edited
     public function updateActivities(){

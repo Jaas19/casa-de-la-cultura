@@ -19,15 +19,19 @@
     </x-slot>
 
     <table class="w-full grid-cols-[auto-fill] table-fixed overflow-auto grow-0">
-        <tbody class="overflow-auto w-full relative">
+        <thead class="relative isolate w-full text-white2
+              after:content-[''] after:absolute after:inset-0 after:-z-10
+              after:bg-gradient-to-r after:from-yellow-900 after:to-yellow-700">
             <tr class="w-full">
-                <th>Persona</th>
+                <th>Responsable</th>
                 <th>Bien</th>
                 <th>Inventario</th>
                 <th>Entrega</th>
                 <th>Recepción</th>
                 <th>Estado</th>
             </tr>
+        </thead>
+        <tbody class="overflow-auto w-full relative">
             @foreach ($loans as $loan)
             <tr>
                 <td>{{ $loan->person->name }}</td>

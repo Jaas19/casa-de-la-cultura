@@ -1,10 +1,8 @@
 <x-app-layout>
     <div class="activity px-10 py-14 flex flex-wrap justify-evenly gap-y-14">
         <x-slot name="header">
-            <div class="flex items-center relative w-full">
-            <div class="flex w-full justify-between">
-            <form action="" id="redirectForm">
-            <select id="redirect-select" class="dropdown-arrow z-10 font-black text-xl bg-transparent border-0 text-gray-200 leading-tight black_contour"
+            <form action="" id="redirectForm" class="z-10">
+            <select id="redirect-select" class="dropdown-arrow font-black text-xl bg-transparent border-0 text-gray-200 leading-tight black_contour"
             style="background-image: url('{{ asset('images/arrow_drop_down.png') }}');">
                 <option class="bg-black2 redirectOption" value="{{ route("activity.index") }}">Actividades</option>
                 <option class="bg-black2 redirectOption" value="{{ route("dashboard.index") }}">Dashboard</option>
@@ -20,7 +18,10 @@
                 </select>
             </form>
 
-            <input type="text" placeholder="Buscar..." class="bg-black2">
+            <div class="flex flex-col items-center w-full absolute">
+                <input type="text" placeholder="Buscar..." class="bg-black2">
+            </div>
+
 
             <select id="filter-activity-select" class="dropdown-arrow z-10 font-black text-xl bg-transparent border-0 text-gray-200 leading-tight black_contour"
             style="background-image: url('{{ asset('images/arrow_drop_down.png') }}')">
@@ -28,8 +29,6 @@
                 <option class="bg-black2 filter-activity-option" value="Activas" selected>Activas</option>
                 <option class="bg-black2 filter-activity-option" value="Inactiva">Inactivas</option>
             </select>
-            </div>
-            </div>
         </x-slot>
 
         <div class ="flex flex-wrap gap-x-9 gap-y-14 items-center justify-center">

@@ -50,6 +50,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/activity/patch', [ActivityController::class, 'updateActivity'])->name('activity.patch');
     Route::post('/activity/store', [ActivityController::class, 'store'])->name('activity.store');
     Route::post('/activity/calendar', [ActivityController::class, 'calendar'])->name('activity.calendar');
+    Route::patch('/activity/changeStatus', [ActivityController::class, 'patch'])->name('activity.changeStatus');
 
     // Inventory
 
@@ -57,6 +58,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/inventory/patch', [InventoryController::class, 'patch'])->name('inventory.patch');
     Route::get('/inventory/update', [InventoryController::class, 'update'])->name('inventory.update');
     Route::get('/inventory/create', [InventoryController::class, 'create'])->name('inventory.create');
+    Route::Post('/inventory/attributes', [InventoryController::class, 'attributes'])->name('inventory.attributes');
 
     // Persons
 

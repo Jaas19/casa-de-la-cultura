@@ -72,6 +72,10 @@ class ActivityController extends Controller
         return redirect('activity');
     }
     public function patch(Request $data){
+        $activity = Activity::find($data->id);
+        if (!$activity) {
+        return response()->json(['error' => 'Actividad no encontrada'], 404);
+    }
         return $this -> activityService -> changeStatus($data);
     }
 

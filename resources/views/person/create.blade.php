@@ -16,7 +16,16 @@
                 <option class="bg-black2 redirectOption" value="{{ route("session.destroy") }}">Cerrar sesión</option>
             </select>
         </form>
+
+        <h3 class="absolute text-right sm:text-center w-full">
+            <a href="{{ route("person.index") }}"
+                class="text-white2
+                text-2xl black_contour font-black mr-5">
+                Registrar persona
+            </a>
+        </h3>
     </x-slot>
+
     <form action='{{ route('person.store') }}' method="POST" enctype="multipart/form-data">
     @csrf
     <div id="login-div" class="px-[10vw] py-[10vh] grid sm:grid-cols-2 gap-5">

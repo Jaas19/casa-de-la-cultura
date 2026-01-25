@@ -37,8 +37,10 @@
 
     </x-slot>
     <table class="w-full grid-cols-[auto-fill] table-fixed overflow-auto grow-0">
-    <tbody class="overflow-auto w-full relative">
-            <tr class="w-full">
+    <thead class="relative isolate w-full text-white2
+              after:content-[''] after:absolute after:inset-0 after:-z-10
+              after:bg-gradient-to-r after:from-yellow-900 after:to-yellow-700">
+            <tr class="w-full relative">
                 <th>Foto</th>
                 <th>Nombre</th>
                 <th>Descripción</th>
@@ -53,6 +55,10 @@
                     @endforeach
                 @endisset
             </tr>
+        </thead>
+    <tbody class="overflow-auto w-full relative">
+
+
                 @isset($inventoryGoods)
                     @foreach ($inventoryGoods as $tableGoods)
                         @foreach ($tableGoods as $good)

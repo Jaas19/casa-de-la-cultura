@@ -46,7 +46,7 @@ function redirectTo(e){
     } else {
         showInventoryData(e);
     }
-    
+
 }
 
 const inventoriesSelect =  document.querySelector("#inventories");

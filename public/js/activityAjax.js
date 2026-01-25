@@ -2,7 +2,7 @@ const detailsBody = document.querySelector("#details-body")
 
 function getDetails(e){
 
-    
+
     let activityId = e.target.getAttribute('data-activity-id');
     let header = e.target.getAttribute('data-header');
 
@@ -27,41 +27,24 @@ function updateStatus(e){
     let csrfToken = document.querySelector('meta[name="csrf-token"]').content;
     let activityId = e.target.parentElement.getAttribute('data-activity-id');
     let status = e.target.innerText;
-    let amount;
-    if(status == "Pospuesta"){
-        amount = prompt("¿Por cuántos días se pospondrá la actividad?")
-    }
-    
-    if(typeof amount !== 'null'){
-        fetch('/activity/patch', {
-        method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': csrfToken,
-        },
-        body: JSON.stringify({
-                "id": activityId,
-                "status": status,
-                "amount": amount
-            }),
-        })
-        .then(data => data.json())
-        .then(data => updateActivityDate(data.starting_date, data.ending_date, activityId));
-    } else {
-        fetch('/activity/patch', {
-        method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': csrfToken,
-        },
-        body: JSON.stringify({
-                "id": activityId,
-                "status": status,
-            }),
-        })
-        .then(data => data.json())
-        .then(data => console.log(data))
-    }
+
+
+    fetch('/activity/changeStatus', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': csrfToken,
+        'Accept': 'application/json',
+    },
+    body: JSON.stringify({
+            "_method": "PATCH",
+            "id": activityId,
+            "status": status,
+        }),
+    })
+    .then(data => data.json())
+    .then(data => console.log(data))
+
 }
 
 function printAnswer(data, header){
@@ -80,7 +63,7 @@ function printAnswer(data, header){
             let list = document.createElement("ul");
             section.appendChild(list)
             let first = true;
-            
+
             for(hour of data.hours[date.id]){
                 console.log(hour)
                 if(!first){

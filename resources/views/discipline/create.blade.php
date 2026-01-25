@@ -16,6 +16,15 @@
                 <option class="bg-black2 redirectOption" value="{{ route("session.destroy") }}">Cerrar sesión</option>
             </select>
         </form>
+
+        <h3 class="absolute text-center w-full">
+            <a href="{{ route("discipline.index") }}"
+                class="text-white2
+                text-2xl black_contour font-black mr-5">
+                Crear disciplina
+            </a>
+        </h3>
+
     </x-slot>
 
     <form class="flex flex-col justify-between h-full" action='{{ route('discipline.store') }}' method="POST">

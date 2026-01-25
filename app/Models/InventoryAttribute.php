@@ -9,5 +9,6 @@ class InventoryAttribute extends Model
     protected $fillable = [
         'inventory_id',
         'key_name',
+        'type'
     ];
 }

@@ -40,7 +40,9 @@
         </div>
     </x-slot>
     <table class=" grid-cols-[auto-fill] table-fixed overflow-auto grow-0">
-        <tbody class="overflow-auto  relative">
+        <thead class="relative isolate w-full text-white2
+              after:content-[''] after:absolute after:inset-0 after:-z-10
+              after:bg-gradient-to-r after:from-yellow-900 after:to-yellow-700">
             <tr class="">
                 <th>Foto</th>
                 <th>Nombre</th>
@@ -51,6 +53,9 @@
                 <th>Cargo</th>
                 <th class="text-nowrap">Asistencia (pdf)</th>
             </tr>
+        </thead>
+        <tbody class="overflow-auto  relative">
+
             @foreach ($persons as $person)
             <tr class="person-data {{ $person->status == "inactive" ? 'hide2' : '' }}" data-status="{{ $person->status }}" data-discipline-id="0" data-person-id="{{ $person->id }}" data-position-id="{{ $person->position->id }}">
                 <td class="person-data-attribute overflow-hidden flex justify-center">

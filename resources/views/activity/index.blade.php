@@ -1,8 +1,6 @@
 <x-app-layout>
     <div class="activity px-10 py-14 flex flex-wrap justify-evenly gap-y-14">
         <x-slot name="header">
-            <div class="flex items-center relative w-full">
-            <div class="flex w-full justify-between">
             <form action="" id="redirectForm">
             <select id="redirect-select" class="dropdown-arrow z-10 font-black text-xl bg-transparent border-0 text-gray-200 leading-tight black_contour"
             style="background-image: url('{{ asset('images/arrow_drop_down.png') }}');">
@@ -31,8 +29,6 @@
                 <option class="bg-black2 filter-activity-option" value="Pospuesta">Pospuestas</option>
                 <option class="bg-black2 filter-activity-option" value="Suspendida">Suspendidas</option>
             </select>
-            </div>
-            </div>
         </x-slot>
 
 

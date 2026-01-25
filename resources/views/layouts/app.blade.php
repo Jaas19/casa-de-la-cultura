@@ -53,11 +53,8 @@
         <div class="min-h-screen sm:w-[80%] w-full">
             <main class="h-screen flex flex-col">
                 <header class="flex items-center bg-gradient-to-r from-yellow-950 to-yellow-900 min-w-full py-6 px-8 text-sm overflow-x-auto overflow-y-hidden">
-                    <div class="flex items-center justify-between w-full">
-                        <div class="flex items-center relative w-full">
+                    <div class="relative flex items-center justify-between w-full">
                                 {{ $header }}
-                        </div>
-
                         @php
                             if(isset($element)){
                                 echo $element;

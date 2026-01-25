@@ -1,28 +1,27 @@
 <x-app-layout>
     <x-slot name="header">
-        <form action="" id="redirectForm">
-            <select id="redirect-select" class="bg-black2 dropdown-arrow z-10 font-black text-xl bg-transparent border-0 text-gray-200 leading-tight black_contour"
-            style="background-image: url('{{ asset('images/arrow_drop_down.png') }}');">
-                <option class="bg-black2 redirectOption" value="{{ route("dashboard.index") }}" selected disabled>Dashboard</option>
-                <option class="bg-black2 redirectOption" value="{{ route("activity.index") }}">Actividades</option>
-                <option class="bg-black2 redirectOption" value="{{ route("inventory.index") }}">Inventario</option>
-                <option class="bg-black2 redirectOption" value="{{ route("person.index") }}">Personas</option>
-                <option class="bg-black2 redirectOption" value="{{ route("loan.index") }}">Prestamos</option>
-                <option class="bg-black2 redirectOption" value="{{ route("discipline.index") }}">Disciplinas</option>
-                @can('is-admin')
-                    <option class="bg-black2 redirectOption" value="{{ route("user.create") }}">Crear usuario</option>
-                @endcan
-                <option class="bg-black2 redirectOption" value="{{ route("session.destroy") }}">Cerrar sesión</option>
-            </select>
-        </form>
-        <h1 class="text-center w-full text-white2 text-xl black_contour font-black">
-            {{ $username }}
-        </h1>
-    </x-slot>
-    <x-slot name="element">
-        <input id="date-input" type="date" class="bg-black2 text-gray-500">
-    </x-slot>
+            <form action="" id="redirectForm" class="z-10">
+                <select id="redirect-select" class="bg-black2 dropdown-arrow font-black text-xl bg-transparent border-0 text-gray-200 leading-tight black_contour"
+                style="background-image: url('{{ asset('images/arrow_drop_down.png') }}');">
+                    <option class="bg-black2 redirectOption" value="{{ route("dashboard.index") }}" selected disabled>Dashboard</option>
+                    <option class="bg-black2 redirectOption" value="{{ route("activity.index") }}">Actividades</option>
+                    <option class="bg-black2 redirectOption" value="{{ route("inventory.index") }}">Inventario</option>
+                    <option class="bg-black2 redirectOption" value="{{ route("person.index") }}">Personas</option>
+                    <option class="bg-black2 redirectOption" value="{{ route("loan.index") }}">Prestamos</option>
+                    <option class="bg-black2 redirectOption" value="{{ route("discipline.index") }}">Disciplinas</option>
+                    @can('is-admin')
+                        <option class="bg-black2 redirectOption" value="{{ route("user.create") }}">Crear usuario</option>
+                    @endcan
+                    <option class="bg-black2 redirectOption" value="{{ route("session.destroy") }}">Cerrar sesión</option>
+                </select>
+            </form>
+            <h3 class="absolute w-full text-center text-white2 text-2xl black_contour font-black">
+                {{ $username }}
+            </h3>
 
+
+            <input id="date-input" type="date" class="z-10 relative bg-black2 text-gray-500">
+    </x-slot>
     <!-- Cargado de clases al archivo css de tailwind
         from-red-500 to-red-300
         from-purple-400 to-purple-200
@@ -75,15 +74,19 @@
         </x-slot>
         <div class="flex items-center justify-center p-[5%]">
             <table id="calendar" data-current-month="" data-current-year="" class="table-fixed grow-0 w-full border-collapse">
-                <tr class="days-header black_contour_sm">
-                    <th>Domingo</th>
-                    <th>Lunes</th>
-                    <th>Martes</th>
-                    <th>Miércoles</th>
-                    <th>Jueves</th>
-                    <th>Viernes</th>
-                    <th>Sábado</th>
-                </tr>
+                <thead class="relative isolate w-full text-white2
+                after:content-[''] after:absolute after:inset-0 after:-z-10
+                after:bg-gradient-to-r after:from-yellow-900 after:to-yellow-700">
+                    <tr class="days-header black_contour_sm">
+                        <th>Domingo</th>
+                        <th>Lunes</th>
+                        <th>Martes</th>
+                        <th>Miércoles</th>
+                        <th>Jueves</th>
+                        <th>Viernes</th>
+                        <th>Sábado</th>
+                    </tr>
+                </thead>
                 @for ($y = 0; $y < 6; $y++)
                     <tr>
                         @for ($x = 0; $x < 7; $x++)
@@ -116,7 +119,7 @@
                     ];
                 }
             @endphp
-            <div class="w-72 h-32 fixed bottom-0 right-0 mr-[2vw] mb-[3vh] overflow-hidden">
+            <div class="w-72 h-32 fixed bottom-0 right-0 mr-[2vw] mb-[3vh] overflow-hidden z-10">
                 <div id="right-button" class="absolute right-0 z-10 cursor-pointer">
                     <img src="{{ asset('images/right_arrow_white.png') }}">
                 </div>

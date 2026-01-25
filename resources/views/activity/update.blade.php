@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <form action="" id="redirectForm">
+        <form action="" id="redirectForm" class="z-10">
             <select id="redirect-select" class="dropdown-arrow z-10 font-black text-xl bg-transparent border-0 text-gray-200 leading-tight black_contour"
             style="background-image: url('{{ asset('images/arrow_drop_down.png') }}');">
                 <option value="" selected disabled>Volver</option>
@@ -16,6 +16,15 @@
                 <option class="bg-black2 redirectOption" value="{{ route("session.destroy") }}">Cerrar sesión</option>
             </select>
         </form>
+
+        <h3 class="absolute text-center w-full">
+            <a href="{{ route("activity.index") }}"
+                class="text-white2
+                text-2xl black_contour font-black mr-5">
+                Editar actividad
+            </a>
+        </h3>
+
     </x-slot>
     <form action="{{ route('activity.patch') }}" method="POST">
         @method("PATCH")
