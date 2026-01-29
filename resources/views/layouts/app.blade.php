@@ -88,15 +88,15 @@
                                         </span>
                                     </li>
                                 @endforeach
-                                @if (session('error'))
-                                    <li>
-                                        <span class="text-gray-800">
-                                            {{ session('error') }}
-                                        </span>
-                                    </li>
-                                @endif
-                                {{ session('error') }}
-                            </x-notification>
+                            @if (session('error'))
+                                <li>
+                                    <span class="text-gray-800">
+                                        {{ session('error') }}
+                                    </span>
+                                </li>
+                            @endif
+                            {{ session('error') }}
+                        </x-notification>
                         @endif
                 </div>
                 @php

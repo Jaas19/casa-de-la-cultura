@@ -12,6 +12,7 @@ use App\Http\Controllers\LoanController;
 use App\Http\Controllers\DisciplineController;
 use App\Http\Controllers\LessonController;
 use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\StudentController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use Illuminate\Support\Facades\Route;
 
@@ -99,6 +100,16 @@ Route::middleware('auth')->group(function () {
     // Schedules
     Route::get('discipline/{discipline}/schedule/create', [ScheduleController::class, 'create'])->name('schedule.create');
     Route::post('discipline/{discipline}/schedule/store', [ScheduleController::class, 'store'])->name('schedule.store');
-    });
 
+    // Students
+    Route::get('discipline/{discipline}/student', [StudentController::class, 'index'])->name('student.index');
+    Route::get('discipline/{discipline}/student/create', [StudentController::class, 'create'])->name('student.create');
+    Route::get('discipline/{discipline}/student/{student}/edit', [StudentController::class, 'edit'])->name('student.edit');
+
+    Route::post('discipline/{discipline}/student/store', [StudentController::class, 'store'])->name('student.store');
+    Route::put('discipline/{discipline}/student/{student}/update', [StudentController::class, 'update'])->name('student.update');
+    Route::patch('discipline/{discipline}/student/{student}/status', [StudentController::class, 'toggleStatus'])->name('student.toggle');
+    Route::patch('discipline/{discipline}/student/{student}/payment', [StudentController::class, 'registerPayment'])->name('student.payment');
+
+    });
 require __DIR__.'/auth.php';

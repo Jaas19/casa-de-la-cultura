@@ -1,0 +1,85 @@
+<x-app-layout>
+    <x-slot name="header">
+        <form action="" id="redirectForm">
+            <select id="redirect-select" class="dropdown-arrow z-10 font-black text-xl bg-transparent border-0 text-gray-200 leading-tight black_contour"
+            style="background-image: url('{{ asset('images/arrow_drop_down.png') }}');">
+                <option value="" selected disabled>Volver</option>
+                <option class="bg-black2 redirectOption" value="{{ route("dashboard.index") }}">Dashboard</option>
+                <option class="bg-black2 redirectOption" value="{{ route("activity.index") }}">Actividades</option>
+                <option class="bg-black2 redirectOption" value="{{ route("inventory.index") }}">Inventario</option>
+                <option class="bg-black2 redirectOption" value="{{ route("person.index") }}">Personas</option>
+                <option class="bg-black2 redirectOption" value="{{ route("loan.index") }}">Prestamos</option>
+                <option class="bg-black2 redirectOption" value="{{ route("discipline.index") }}">Disciplinas</option>
+                @can('is-admin')
+                    <option class="bg-black2 redirectOption" value="{{ route("user.create") }}">Crear usuario</option>
+                @endcan
+                <option class="bg-black2 redirectOption" value="{{ route("session.destroy") }}">Cerrar sesión</option>
+            </select>
+        </form>
+
+        <h3 class="absolute text-center w-full">
+            <a href="{{ route("student.index", $discipline->id) }}"
+                class="text-white2
+                text-2xl black_contour font-black mr-5">
+                Registrando estudiante
+            </a>
+        </h3>
+    </x-slot>
+
+    <form action="{{ route('student.store', $discipline->id) }}" method="POST">
+    @csrf
+    <div class="px-[10vw] py-[10vh] grid sm:grid-cols-2 gap-5">
+
+
+                <div>
+                    <label for="discipline">Disciplina</label>
+                    <select id="discipline" class="block" required>
+                        <option id="selectGoodOption" selected>Seleccionar...</option>
+                        @foreach($disciplines as $arrayDiscipline)
+                            <option value="{{ $arrayDiscipline->id }}" {{ $arrayDiscipline->id == $discipline->id ? "selected" : "" }}>
+                                {{ $arrayDiscipline->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div>
+                    <label for="name">Persona</label>
+                    <select name="person_id" id="person_id" class="block">
+                        <option value="" disabled selected>Seleccionar...</option>
+                        @foreach ($persons as $person)
+                            <option value="{{ $person->id }}">
+                                {{ $person->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div>
+                    <label for="next_payment">Próximo pago</label>
+                    <input type="date" name="next_payment" id="next_payment" class="block"
+                    value="{{ old("date") }}">
+                </div>
+
+                <div>
+                    <label for="status">Estado</label>
+                    <select name="status" id="status" class="block">
+                        <option value="active" selected>Activo</option>
+                        <option value="inactive">Inactivo</option>
+                    </select>
+                </div>
+
+            </div>
+            <div class="flex justify-center w-full items-end p-[5vh]">
+                <button type="submit" class="rounded-3xl bg-yellow-900 text-md font-bold text-white2 black_contour py-3 px-10 hover:bg-yellow-800 transition">Registrar</button>
+            </div>
+    </form>
+
+    <x-slot name="script">
+        {{ asset("js/redirect.js") }}
+    </x-slot>
+
+    <x-slot name="script2">
+        {{ asset("js/loanCreation.js") }}
+    </x-slot>
+</x-app-layout>

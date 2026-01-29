@@ -15,7 +15,7 @@ class PersonController extends Controller
         $this->personService = $personService;
         $this->positionService = $positionService;
     }
-    
+
     public function index(){
         $persons = $this->personService->listPersons();
         $personsAssistance = $this->personService->getControlledPersons(Auth::id());
@@ -60,4 +60,5 @@ class PersonController extends Controller
             'persons' => $this->personService->getControlledPersons(Auth::id())
         ])->stream();
     }
+
 }

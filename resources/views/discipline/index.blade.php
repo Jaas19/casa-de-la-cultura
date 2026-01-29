@@ -42,7 +42,7 @@
                             <li class="border-b border-blue-400 w-min text-sm"><a href="{{ route('discipline.edit', $activeDiscipline->id) }}">Editar</a></li>
                             <li class="border-b border-blue-400 w-min text-sm"><a href="{{ route('lesson.calendar', $activeDiscipline->id) }}">Calendario</a></li>
                             <li class="border-b border-blue-400 w-min text-sm"><a href="{{ route('lesson.index', $activeDiscipline->id) }}">Clases</a></li>
-                            <li class="border-b border-blue-400 w-min text-sm"><a href="">Estudiantes</a></li>
+                            <li class="border-b border-blue-400 w-min text-sm"><a href="{{ route('student.index', $activeDiscipline->id) }}">Estudiantes</a></li>
                         </ul>
                     </div>
                 </div>
@@ -57,7 +57,7 @@
                         <ul class="text-blue-400">
                             <li class="border-b border-blue-400 w-min text-sm"><a href="{{ route('discipline.edit', $inactiveDiscipline->id) }}">Editar</a></li>
                             <li class="border-b border-blue-400 w-min text-sm"><a href="{{ route('lesson.calendar', $inactiveDiscipline->id) }}">Calendario</a></li>
-                            <li class="border-b border-blue-400 w-min text-sm"><a href="{{ route('lesson.index', $inactiveDiscipline->id) }}">Clases</a></li>
+                            <li class="border-b border-blue-400 w-min text-sm"><a href="{{ route('student.index', $inactiveDiscipline->id) }}">Clases</a></li>
                             <li class="border-b border-blue-400 w-min text-sm"><a href="">Estudiantes</a></li>
                         </ul>
                     </div>
