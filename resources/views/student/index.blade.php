@@ -23,7 +23,15 @@
                 text-2xl black_contour font-black">
                 {{ $discipline->name }}
             </a>
-        </h3>
+        </h3>          
+        <select id="filter-activity-select" class="dropdown-arrow z-20 font-black text-xl bg-transparent border-0 text-gray-200 leading-tight black_contour"
+            style="background-image: url('{{ asset('images/arrow_drop_down.png') }}')">
+                <option class="bg-black2 filter-activity-option" value="Todas">Predeterminado</option>
+                <option class="bg-black2 filter-activity-option" value="Activa">Atrasados</option>
+                <option class="bg-black2 filter-activity-option" value="En Espera">Al día</option>
+                <option class="bg-black2 filter-activity-option" value="En Progreso">Para hoy</option>
+        </select>
+
     </x-slot>
 
     <table class="w-full grid-cols-[auto-fill] table-fixed overflow-auto grow-0">
@@ -69,8 +77,10 @@
 
 
     <x-slot name="footer">
-        <div class="bg-gradient-to-r from-yellow-950 to-yellow-900 min-w-full p-6 text-sm flex items-center justify-center">
+        <div class="bg-gradient-to-r from-yellow-950 to-yellow-900 min-w-full p-6 text-sm flex items-center justify-between">
+            <div class="w-48"></div>
             <a href={{ route("student.create", $discipline->id) }} class="rounded-3xl bg-black2 text-md font-bold text-white2 black_contour p-3 text-center w-[15%]">Registrar</a>
+            <input type="text" class="w-48" placeholder="Buscar estudiante...">
         </div>
     </x-slot>
     <x-slot name="script">
