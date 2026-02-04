@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
-        <form action="" id="redirectForm">
-            <select id="redirect-select" class="dropdown-arrow z-10 font-black text-xl bg-transparent border-0 text-gray-200 leading-tight black_contour"
+        <form action="" id="redirectForm" class="z-20">
+            <select id="redirect-select" class="dropdown-arrow font-black text-xl bg-transparent border-0 text-gray-200 leading-tight black_contour"
             style="background-image: url('{{ asset('images/arrow_drop_down.png') }}');">
                 <option value="" selected disabled>Volver</option>
                 <option class="bg-black2 redirectOption" value="{{ route("dashboard.index") }}">Dashboard</option>
