@@ -13,6 +13,8 @@ use App\Http\Controllers\DisciplineController;
 use App\Http\Controllers\LessonController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\PositionController;
+use App\Http\Controllers\PositionTypeController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use Illuminate\Support\Facades\Route;
 
@@ -110,6 +112,21 @@ Route::middleware('auth')->group(function () {
     Route::put('discipline/{discipline}/student/{student}/update', [StudentController::class, 'update'])->name('student.update');
     Route::patch('discipline/{discipline}/student/{student}/status', [StudentController::class, 'toggleStatus'])->name('student.toggle');
     Route::patch('discipline/{discipline}/student/{student}/payment', [StudentController::class, 'registerPayment'])->name('student.payment');
+
+    // Position
+
+    Route::get('position/create', [PositionController::class, 'create'])->name("position.create");
+    Route::get('position/edit', [PositionController::class, 'edit'])->name("position.edit");
+    Route::post('position/store', [PositionController::class, 'store'])->name("position.store");
+    Route::patch('position/update', [PositionController::class, 'update'])->name("position.update");
+
+
+    // PositionType
+
+    Route::get('position_type/create', [PositionTypeController::class, 'create'])->name("position_type.create");
+    Route::get('position_type/edit', [PositionTypeController::class, 'edit'])->name("position_type.edit");
+    Route::post('position_type/store', [PositionTypeController::class, 'store'])->name("position_type.store");
+    Route::patch('position_type/update', [PositionTypeController::class, 'update'])->name("position_type.update");
 
     });
 require __DIR__.'/auth.php';

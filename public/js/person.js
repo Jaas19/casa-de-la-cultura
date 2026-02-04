@@ -8,6 +8,38 @@ const statusInput = document.querySelector('#statusInput')
 const updateForm = document.querySelector('#update-form');
 const updateButton = document.querySelector('#update-button');
 
+const positionTypeSelect = document.querySelector("#positionTypeSelect")
+
+positionTypeSelect.addEventListener("change", filterPersons);
+
+function checkUrl(string){
+    try{
+        const url = new URL(string)
+        return url.protocol === "http:" || url.protocol === "https:";
+    } catch (e) {
+        return false
+    }
+}
+
+function filterPersons(e){
+    const select = e.target;
+    const value = select.value.trim();
+    const isUrl = checkUrl(value);
+
+    if (isUrl){
+        return window.location.href = value;
+    }
+
+    const data = document.querySelectorAll('.person-data');
+    for(const info of data){
+        const currentDataMatches = info.matches("[data-position-type-id=\""+ value +"\"]")
+        if(!currentDataMatches){
+            info.classList.add('hide3')
+        } else {
+            info.classList.remove('hide3')
+        }
+    }
+}
 
 function submitUpdateForm(){
     if(updateForm.getAttribute("action") === ""){
@@ -37,6 +69,11 @@ function showPersonsData(e){
     }
 
     const value = e.target.value.trim();
+    const isUrl = checkUrl(value);
+
+    if (isUrl){
+        return window.location.href = value;
+    }
 
     if(value === ""){
         for(const info of data){

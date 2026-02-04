@@ -45,6 +45,10 @@ select:focus {
     display: none;
 }
 
+.hide3 {
+    display: none;
+}
+
 .suspended {
     display: none;
 }

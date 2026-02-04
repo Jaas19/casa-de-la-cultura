@@ -62,3 +62,13 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 
 # Project Details
 Administration system developed for a house of culture.
+
+## Dependencies
+
+dompdf - https://github.com/dompdf/dompdf - composer require dompdf/dompdf
+PHP 8.2.12 
+Laravel 12
+
+## Tools
+
+Laravel Breeze starter kit

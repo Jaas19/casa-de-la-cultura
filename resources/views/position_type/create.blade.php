@@ -21,64 +21,19 @@
             <a href="{{ route("person.index") }}"
                 class="text-white2
                 text-2xl black_contour font-black mr-5">
-                Registrar persona
+                Registrar vinculación
             </a>
         </h3>
     </x-slot>
 
-    <form action='{{ route('person.store') }}' method="POST" enctype="multipart/form-data">
+    <form action='{{ route('position_type.store') }}' method="POST" enctype="multipart/form-data">
     @csrf
     <div id="login-div" class="px-[10vw] py-[10vh] grid sm:grid-cols-2 gap-5">
-            @if($errors->any())
-
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            @endif
         <div>
             <label for="name">Nombre</label>
-            <input type="text" required id="name" name="name" class="block" placeholder="Introduzca el nombre...">
-        </div>
-                <div>
-            <label for="lastname">Apellido</label>
-            <input type="text" required id="lastname" name="lastname" class="block" placeholder="Introduzca el apellido...">
-        </div>
-        <div>
-            <label for="dni">Cédula</label>
-            <input type="text" required id="dni" name="dni" class="block" placeholder="Introduzca la cédula...">
-        </div>
-        <div class="">
-            <label for="sex">Sexo</label>
-            <select class="block" name="sex" id="sex" required>
-                <option value="" disabled selected class="text-gray-500">Seleccionar...</option>
-                <option value="Masculino">Masculino</option>
-                <option value="Femenino">Femenino</option>
-                <option value="Otro">Otro</option>
-            </select>
-        </div>
-        <div>
-            <label for="phone_number">Teléfono</label>
-            <input type="text" required id="phone_number" name="phone_number" class="block" placeholder="Introduzca el teléfono...">
-        </div>
-        <div class="flex flex-col">
-            <label for="image">Foto<span class="font-normal text-gray-500">(opcional)</span></label>
-            <input class="text-white2" type="file" id="image" name="image" class="block" placeholder="Introduzca el nombre...">
-        </div>
-        <div>
-            <label for="position">Perfil</label>
-            <select name="position_id" id="position_id" class="block" required>
-                <option value="" disabled required selected class="text-gray-500">Seleccionar...</option>
-                @foreach ($positions as $position)
-                    <option value="{{ $position->id }}">{{ $position->name }}</option>
-                @endforeach
-            </select>
+            <input value = "{{ old('name') }}" type="text" required id="name" name="name" class="block" placeholder="Introduzca el nombre...">
         </div>
     </div>
-
-
-
     <div class="flex justify-center w-full items-end p-[5vh]">
         <button class="rounded-3xl bg-yellow-900 text-md font-bold text-white2 black_contour py-3 px-10 hover:bg-yellow-800 transition">Registrar</button>
     </div>

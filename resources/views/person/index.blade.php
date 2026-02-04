@@ -22,14 +22,20 @@
                 <option value="active" selected>Activos</option>
                 <option value="inactive">Suspendidos</option>
             </select>
-            <select name="" class="bg-white2 dark:bg-black2 text-black2 dark:text-gray-500">
-                <option selected disabled>Personal</option>
+            <select name="" id="positionTypeSelect" class="bg-white2 dark:bg-black2 text-black2 dark:text-gray-500">
+                @foreach ($positionTypes as $type)
+                    <option value="{{ $type->id }}">{{ $type->name }}</option>
+                @endforeach
+                    <option value="{{ route("position_type.create") }}">Crear vinculación</option>
+                    <option value="{{ route("position_type.edit") }}">Editar vinculación</option>
             </select>
             <select name="positions" id="positions" class="bg-white2 dark:bg-black2 text-black2 dark:text-gray-500">
                     <option value="" selected>Todos</option>
                     @foreach ($positions as $position)
                     <option class="text-center" value="{{ $position->id }}">{{ $position->name }}</option>
                     @endforeach
+                    <option value="{{ route("position.create") }}">Crear perfil</option>
+                    <option value="{{ route("position.edit") }}">Editar perfil</option>
                 </select>
             <!--Barra de búsqueda y botón de filtro-->
             <div class="relative flex items-center justify-center">
@@ -45,27 +51,27 @@
               after:bg-gradient-to-r after:from-yellow-900 after:to-yellow-700">
             <tr class="">
                 <th>Foto</th>
+                <th>Cédula</th>
                 <th>Nombre</th>
                 <th>Apellido</th>
-                <th>Cédula</th>
                 <th>Sexo</th>
                 <th>Teléfono</th>
-                <th>Cargo</th>
+                <th>Perfil</th>
                 <th class="text-nowrap">Asistencia (pdf)</th>
             </tr>
         </thead>
         <tbody class="overflow-auto  relative">
 
             @foreach ($persons as $person)
-            <tr class="person-data {{ $person->status == "inactive" ? 'hide2' : '' }}" data-status="{{ $person->status }}" data-discipline-id="0" data-person-id="{{ $person->id }}" data-position-id="{{ $person->position->id }}">
+            <tr class="person-data {{ $person->status == "inactive" ? 'hide2' : '' }}" data-status="{{ $person->status }}" data-discipline-id="0" data-person-id="{{ $person->id }}" data-position-id="{{ $person->position->id }}" data-position-type-id="{{ $person->position->type->id }}">
                 <td class="person-data-attribute overflow-hidden flex justify-center">
                 @if ($person->image)
                     <img src="{{Storage::url($person->image)}}" class="max-h-12">
                 @endif
                 </td>
+                <td class="person-data-attribute">{{$person->dni}}</td>
                 <td class="person-data-attribute">{{$person->name}}</td>
                 <td class="person-data-attribute">{{$person->lastname}}</td>
-                <td class="person-data-attribute">{{$person->dni}}</td>
                 <td class="person-data-attribute">{{$person->sex}}</td>
                 <td class="person-data-attribute">{{$person->phone_number}}</td>
                 <td class="person-data-attribute">{{$person->position?->name ?? 'Sin cargo.'}}</td>
@@ -88,10 +94,10 @@
                 <input type="hidden" id="userId" name="user_id" value="{{ $userId }}">
             </form>
 
-            <a href="person/create" id="register-button" class="rounded-3xl bg-sky-500 text-md font-bold text-white2 black_contour p-3">Registrar</a>
-            <a href="person/pdf" target="blank" class="rounded-3xl bg-orange-500 text-md font-bold text-white2 black_contour p-3">Asistencia</a>
-            <div id="update-button" class="cursor-pointer rounded-3xl bg-green-500 text-md font-bold text-white2 black_contour p-3">Editar</div>
-            <button id="suspend-button" class="rounded-3xl bg-red-600 text-md font-bold text-white2 black_contour p-3">Suspender</button>
+            <a href="person/create" id="register-button" class="rounded-3xl bg-sky-500 text-md font-bold text-white2 black_contour p-3">Registrar Persona</a>
+            <a href="person/pdf" target="blank" class="rounded-3xl bg-orange-500 text-md font-bold text-white2 black_contour p-3">Generar Asistencia</a>
+            <div id="update-button" class="cursor-pointer rounded-3xl bg-green-500 text-md font-bold text-white2 black_contour p-3">Editar Persona</div>
+            <button id="suspend-button" class="rounded-3xl bg-red-600 text-md font-bold text-white2 black_contour p-3">Suspender Persona</button>
         </div>
     </x-slot>
     <x-slot name="script">

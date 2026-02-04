@@ -6,6 +6,8 @@ use App\Http\Controllers\Services\PositionServiceInterface;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\PositionType;
+use App\Models\Position;
 
 class PersonController extends Controller
 {
@@ -19,9 +21,10 @@ class PersonController extends Controller
     public function index(){
         $persons = $this->personService->listPersons();
         $personsAssistance = $this->personService->getControlledPersons(Auth::id());
-        $positions = $this->positionService->listPositions();
+        $positions = Position::with('type')->orderBy('position_type_id', 'asc') ->get();
+        $positionTypes = PositionType::all();
         $userId = Auth::id();
-        return view("person.index", compact("persons", "positions", "userId", "personsAssistance"));
+        return view("person.index", compact("persons", "positions", "userId", "personsAssistance", "positionTypes"));
     }
 
     public function create(){

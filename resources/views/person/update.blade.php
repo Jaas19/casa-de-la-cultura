@@ -14,8 +14,18 @@
                     <option class="bg-black2 redirectOption" value="{{ route("user.create") }}">Crear usuario</option>
                 @endcan
                 <option class="bg-black2 redirectOption" value="{{ route("session.destroy") }}">Cerrar sesión</option>
+            </select>
         </form>
+
+        <h3 class="absolute text-right sm:text-center w-full">
+            <a href="{{ route("person.index") }}"
+                class="text-white2
+                text-2xl black_contour font-black mr-5">
+                Editar persona
+            </a>
+        </h3>
     </x-slot>
+
     <form action='{{ route('person.patch') }}' method="POST" enctype="multipart/form-data">
     @csrf
     @method("PATCH")
