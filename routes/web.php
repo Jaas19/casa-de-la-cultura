@@ -14,6 +14,7 @@ use App\Http\Controllers\LessonController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\PositionController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PositionTypeController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use Illuminate\Support\Facades\Route;
@@ -127,6 +128,13 @@ Route::middleware('auth')->group(function () {
     Route::get('position_type/edit', [PositionTypeController::class, 'edit'])->name("position_type.edit");
     Route::post('position_type/store', [PositionTypeController::class, 'store'])->name("position_type.store");
     Route::patch('position_type/update', [PositionTypeController::class, 'update'])->name("position_type.update");
+
+    // Payment
+
+    Route::get('discipline/{discipline}/payment', [PaymentController::class, 'index'])->name('payment.index');
+    Route::get('discipline/{discipline}/payment/create', [PaymentController::class, 'create'])->name('payment.create');
+    Route::post('discipline/{discipline}/payment', [PaymentController::class, 'store'])->name('payment.store');
+    Route::post('discipline/{discipline}/student/search', [PaymentController::class, 'getPersonByDni'])->name('student.getByDni');
 
     });
 require __DIR__.'/auth.php';

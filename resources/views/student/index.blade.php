@@ -23,7 +23,7 @@
                 text-2xl black_contour font-black">
                 {{ $discipline->name }}
             </a>
-        </h3>          
+        </h3>
         <select id="filter-activity-select" class="dropdown-arrow z-20 font-black text-xl bg-transparent border-0 text-gray-200 leading-tight black_contour"
             style="background-image: url('{{ asset('images/arrow_drop_down.png') }}')">
                 <option class="bg-black2 filter-activity-option" value="Todas">Predeterminado</option>
@@ -58,12 +58,9 @@
                 </td>
                 <td data-student-id="{{ $student->id }}" class="student-next-payment-field">{{ $student->next_payment->format("d/m/Y") }}</td>
                 <td>
-                    <select name="" data-route="{{ route('student.payment', [$discipline->id, $student->id]) }}" data-student-id="{{ $student->id }}" id="" class="studentSelectPayment bg-black2 border-yellow-900 border-0 text-center">
-                        <option value="" selected disabled>Seleccionar</option>
-                        <option value="Day">Mañana</option>
-                        <option value="Week">Próxima Semana</option>
-                        <option value="Month">Próximo Mes</option>
-                    </select>
+                    <div class="flex justify-center align-center">
+                        <a href={{ route("payment.create", ['discipline' => $discipline->id, 'student' => $student->id]) }} class="cursor-pointer"><img src="{{ asset("images/save.png") }}" class="size-6"></a>
+                    </div>
                 </td>
                 <td>
                     <div class="flex justify-center align-center">
@@ -79,7 +76,7 @@
     <x-slot name="footer">
         <div class="bg-gradient-to-r from-yellow-950 to-yellow-900 min-w-full p-6 text-sm flex items-center justify-between">
             <div class="w-48"></div>
-            <a href={{ route("student.create", $discipline->id) }} class="rounded-3xl bg-black2 text-md font-bold text-white2 black_contour p-3 text-center w-[15%]">Registrar</a>
+            <a href={{ route("student.create", $discipline->id) }} class="rounded-3xl bg-black2 text-md font-bold text-white2 black_contour p-3 text-center w-[15%]">Registrar estudiante</a>
             <input type="text" class="w-48" placeholder="Buscar estudiante...">
         </div>
     </x-slot>
