@@ -21,49 +21,47 @@
 
 
                 <h3 class="absolute text-center w-full">
-                    <a href="{{ route("discipline.index") }}"
+                    <a href="{{ route("lesson.index", $lesson->discipline_id) }}"
                         class="text-white2
                         text-2xl black_contour font-black mr-5">
-                        {{ $discipline->name }}
+                        {{ $lesson->name }}
                     </a>
                 </h3>
 
                 <select id="filter-activity-select" class="dropdown-arrow z-10 font-black text-xl bg-transparent border-0 text-gray-200 leading-tight black_contour"
                 style="background-image: url('{{ asset('images/arrow_drop_down.png') }}')">
-                    <option class="bg-black2 filter-activity-option" value="Todas">Todas</option>
-                    <option class="bg-black2 filter-activity-option" value="Activas" selected>Activas</option>
-                    <option class="bg-black2 filter-activity-option" value="Inactiva">Inactivas</option>
+                    <option class="bg-black2 filter-activity-option" value="Todas">Todos</option>
+                    <option class="bg-black2 filter-activity-option" value="Activas" selected>Activos</option>
+                    <option class="bg-black2 filter-activity-option" value="Inactiva">Inactivos</option>
                 </select>
             </div>
         </x-slot>
 
         <div class ="flex flex-wrap gap-x-9 gap-y-14 items-center justify-center">
-            @foreach ($activeLessons as $activeLesson)
+            @foreach ($activePeriods as $activePeriod)
                 <div class="size-72 bg-white rounded-3xl">
                     <div class="h-[42%] w-full bg-gradient-to-r from-lime-400 to-lime-200 py-3 px-4 rounded-t-3xl">
-                        <h3 class="text-white2 black_contour_sm font-bold">{{ $activeLesson->name }}</h3>
+                        <h3 class="text-white2 black_contour_sm font-bold">{{ $activePeriod->name }}</h3>
                     </div>
                     <div class="py-4 px-4 rounded-b-3xl h-[60%] flex flex-col">
                         <ul class="text-blue-400">
-                            <li class="border-b border-blue-400 w-min text-sm"><a href="{{ route('lesson.edit', ['lesson' => $activeLesson->id, 'discipline' => $discipline->id]) }}">Editar</a></li>
-                            <li class="border-b border-blue-400 w-min text-sm"><a href="{{ route('period.index', ['lesson' => $activeLesson->id]) }}">Períodos</a></li>
+                            <li class="border-b border-blue-400 w-min text-sm"><a href="{{ route('period.edit', ['lesson' => $lesson, 'period' => $activePeriod->id]) }}">Editar</a></li>
                         </ul>
-                        <p class="text-sm">{{ $activeLesson->description }}</p>
+                        <p class="text-sm">{{ $activePeriod->starting_time }} - {{ $activePeriod->ending_time }}</p>
                     </div>
                 </div>
             @endforeach
 
-            @foreach ($inactiveLessons as $inactiveLesson)
+            @foreach ($inactivePeriods as $inactivePeriod)
                 <div class="size-72 bg-white rounded-3xl">
                     <div class="h-[40%] w-full bg-gradient-to-r from-red-500 to-red-300 py-4 px-4 rounded-t-3xl">
-                        <h3 class="text-white2 black_contour_sm font-bold">{{ $inactiveLesson->name }}</h3>
+                        <h3 class="text-white2 black_contour_sm font-bold">{{ $inactivePeriod->name }}</h3>
                     </div>
                     <div class="py-4 px-4 rounded-b-3xl h-[60%] flex flex-col overflow-hidden">
                         <ul class="text-blue-400">
-                            <li class="border-b border-blue-400 w-min text-sm"><a href="{{ route('lesson.edit', ['lesson' => $inactiveLesson->id, 'discipline' => $discipline->id]) }}">Editar</a></li>
-                            <li class="border-b border-blue-400 w-min text-sm"><a href="{{ route('period.index', ['lesson' => $inactiveLesson->id]) }}">Períodos</a></li>
+                            <li class="border-b border-blue-400 w-min text-sm"><a href="{{ route('period.edit', ['lesson' => $lesson, 'period' => $inactivePeriod->id]) }}">Editar</a></li>
                         </ul>
-                        <p class="text-sm">{{ $inactiveLesson->description }}</p>
+                        <p class="text-sm">{{ $inactivePeriod->starting_time }} - {{ $inactivePeriod->ending_time }}</p>
                     </div>
                 </div>
             @endforeach
@@ -115,7 +113,7 @@
 
     <x-slot name="footer">
         <div class="bg-gradient-to-r from-yellow-950 to-yellow-900 min-w-full p-6 text-sm flex items-center justify-center gap-10">
-            <a href="{{ route("lesson.create", $discipline->id) }}" class="rounded-3xl bg-black2 text-md font-bold text-white2 black_contour p-3 text-center w-40">Registrar</a>
+            <a href="{{ route("period.create", $lesson) }}" class="rounded-3xl bg-black2 text-md font-bold text-white2 black_contour p-3 text-center w-40">Registrar</a>
         </div>
     </x-slot>
 

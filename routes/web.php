@@ -16,6 +16,7 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\PositionController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PositionTypeController;
+use App\Http\Controllers\PeriodController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use Illuminate\Support\Facades\Route;
 
@@ -135,6 +136,14 @@ Route::middleware('auth')->group(function () {
     Route::get('discipline/{discipline}/payment/create', [PaymentController::class, 'create'])->name('payment.create');
     Route::post('discipline/{discipline}/payment', [PaymentController::class, 'store'])->name('payment.store');
     Route::post('discipline/{discipline}/student/search', [PaymentController::class, 'getPersonByDni'])->name('student.getByDni');
+
+    // Period
+
+    Route::get('lesson/{lesson}/period', [PeriodController::class, 'index'])->name('period.index');
+    Route::get('lesson/{lesson}/period/create', [PeriodController::class, 'create'])->name('period.create');
+    Route::post('lesson/{lesson}/period', [PeriodController::class, 'store'])->name('period.store');
+    Route::get('lesson/{lesson}/period/{period}', [PeriodController::class, 'edit'])->name('period.edit');
+    Route::patch('lesson/{lesson}/period/{period}', [PeriodController::class, 'update'])->name('period.update');
 
     });
 require __DIR__.'/auth.php';
