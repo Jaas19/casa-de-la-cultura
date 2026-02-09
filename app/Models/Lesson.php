@@ -11,7 +11,8 @@ class Lesson extends Model
         'discipline_id',
         'name',
         'description',
-        'status'
+        'status',
+        'color',
     ];
 
     public function discipline(){

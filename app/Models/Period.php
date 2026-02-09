@@ -10,6 +10,7 @@ class Period extends Model
     protected $fillable = [
         "lesson_id",
         "day",
+        "status",
         "starting_time",
         "ending_time",
     ];

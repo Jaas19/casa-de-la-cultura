@@ -52,6 +52,19 @@
                 <option value="0" {{ $lesson->status == 0 ? "selected" : "" }}>Inactivo</option>
             </select>
         </div>
+        <div>
+            <label for="color">Color</label>
+            <select name="color" id="color" class="block" required>
+                <option value="" disabled selected>Seleccione...</option>
+                <option value="blue" {{ $lesson->color == "blue" ? "selected" : "" }}>Azúl</option>
+                <option value="cyan" {{ $lesson->color == "cyan" ? "selected" : "" }}>Celeste</option>
+                <option value="brown" {{ $lesson->color == "brown" ? "selected" : "" }}>Marrón</option>
+                <option value="green" {{ $lesson->color == "green" ? "selected" : "" }}>Verde</option>
+                <option value="lime" {{ $lesson->color == "lime" ? "selected" : "" }}>Lima</option>
+                <option value="yellow" {{ $lesson->color == "yellow" ? "selected" : "" }}>Amarillo</option>
+                <option value="purple" {{ $lesson->color == "purple" ? "selected" : "" }}>Morado</option>
+            </select>
+        </div>
     </div>
 
 

@@ -23,7 +23,7 @@
                 <h3 class="absolute text-center w-full">
                     <a href="{{ route("discipline.index") }}"
                         class="text-white2
-                        text-2xl black_contour font-black mr-5">
+                        text-2xl black_contour font-black">
                         {{ $discipline->name }}
                     </a>
                 </h3>
@@ -38,10 +38,26 @@
         </x-slot>
 
         <div class ="flex flex-wrap gap-x-9 gap-y-14 items-center justify-center">
+            @php
+                $day = [
+                    1 => "Lúnes",
+                    2 => "Martes",
+                    3 => "Miércoles",
+                    4 => "Jueves",
+                    5 => "Viernes",
+                    6 => "Sábado",
+                    7 => "Domingo",
+                ];
+            @endphp
             @foreach ($activeLessons as $activeLesson)
                 <div class="size-72 bg-white rounded-3xl">
                     <div class="h-[42%] w-full bg-gradient-to-r from-lime-400 to-lime-200 py-3 px-4 rounded-t-3xl">
                         <h3 class="text-white2 black_contour_sm font-bold">{{ $activeLesson->name }}</h3>
+                        <ul class="text-white2 black_contour_sm">
+                            @foreach ($activeLesson->periods as $period)
+                                <li>{{ $day[$period->day] }}: {{ $period->starting_time->format("g:i a") }} - {{ $period->ending_time->format("g:i a") }}</li>
+                            @endforeach
+                        </ul>
                     </div>
                     <div class="py-4 px-4 rounded-b-3xl h-[60%] flex flex-col">
                         <ul class="text-blue-400">

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Log;
 use App\Models\Lesson;
 use App\Models\Discipline;
 use App\Http\Controllers\Services\LessonServiceInterface;
@@ -17,8 +18,15 @@ class LessonController extends Controller
     }
     public function index(Discipline $discipline){
         $this->authorize('index', $discipline);
-        $activeLessons = $discipline->lessons()->where("status", 1)->get();
-        $inactiveLessons = $discipline->lessons()->where("status", 0)->get();
+
+        $periodsQuery = function($query) {
+            $query->where('status', 1)
+            ->orderBy('day', 'asc')
+            ->orderBy('starting_time', 'asc');
+        };
+
+        $activeLessons = $discipline->lessons()->where("status", 1)->with(["periods" => $periodsQuery])->get();
+        $inactiveLessons = $discipline->lessons()->where("status", 0)->with(["periods" => $periodsQuery])->get();
         return view('lesson.index', compact('activeLessons', 'inactiveLessons', 'discipline'));
     }
 

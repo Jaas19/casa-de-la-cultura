@@ -4,15 +4,18 @@ namespace App\Http\Controllers\Services;
 
 use App\Models\Lesson;
 use App\Models\Schedule;
+use App\Models\Period;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use Exception;
 
 class LessonService implements LessonServiceInterface {
     public function storeLesson($data, $disciplineId){
         return Lesson::create([
             'name' => $data['name'],
             'description' => $data['description'],
-            'discipline_id' => $disciplineId
+            'discipline_id' => $disciplineId,
+            'color' => $data['color'],
         ]);
     }
     public function updateLesson($lesson, $data){
@@ -41,12 +44,39 @@ class LessonService implements LessonServiceInterface {
 
         $activities = $this->formatSchedules($schedules);
 
+        $periods = Period::query()
+        ->with('lesson.discipline')
+        ->when($disciplineId, function($query) use ($disciplineId) {
+            return $query->whereHas('lesson', function ($q) use ($disciplineId) {
+                $q->where('discipline_id', $disciplineId);
+            });
+        })
+        ->where('status', 1)
+        ->orderBy('day', 'asc')
+        ->orderBy('starting_time', 'asc')
+        ->get();
+
+        $periods = $periods->map(function($period) {
+            return [
+                'id' => $period->id,
+                'day' => $period->day,
+                'status' => $period->status,
+                'starting_time' => $period->starting_time ? $period->starting_time->format('g:i a') : null,
+                'ending_time' => $period->ending_time ? $period->ending_time->format('g:i a') : null,
+                'lesson_id' => $period->lesson_id,
+                'lesson' => $period->lesson,
+                'color' => $period->lesson->color ?? 'purple',
+            ];
+        });
+
+
         Carbon::setLocale('es');
 
         return [
             'month' => ucfirst($date->translatedFormat('F')),
             'year' => $date->year,
             'activities' => $activities,
+            'periods' => $periods,
         ];
     }
 

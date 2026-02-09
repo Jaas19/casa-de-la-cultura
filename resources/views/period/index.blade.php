@@ -38,16 +38,30 @@
         </x-slot>
 
         <div class ="flex flex-wrap gap-x-9 gap-y-14 items-center justify-center">
+            @php
+
+                $day = [
+                    1 => "Lúnes",
+                    2 => "Martes",
+                    3 => "Miércoles",
+                    4 => "Jueves",
+                    5 => "Viernes",
+                    6 => "Sábado",
+                    7 => "Domingo",
+                ];
+
+            @endphp
             @foreach ($activePeriods as $activePeriod)
                 <div class="size-72 bg-white rounded-3xl">
                     <div class="h-[42%] w-full bg-gradient-to-r from-lime-400 to-lime-200 py-3 px-4 rounded-t-3xl">
-                        <h3 class="text-white2 black_contour_sm font-bold">{{ $activePeriod->name }}</h3>
+                        <h3 class="text-white2 black_contour_sm font-bold">
+                            {{ $day[$activePeriod->day] }}: {{ $activePeriod->starting_time->format('g:i a') }} - {{ $activePeriod->ending_time->format('g:i a') }}
+                        </h3>
                     </div>
                     <div class="py-4 px-4 rounded-b-3xl h-[60%] flex flex-col">
                         <ul class="text-blue-400">
-                            <li class="border-b border-blue-400 w-min text-sm"><a href="{{ route('period.edit', ['lesson' => $lesson, 'period' => $activePeriod->id]) }}">Editar</a></li>
+                            <li class="border-b border-blue-400 w-min text-sm"><a href="{{ route('period.edit', ['lesson' => $lesson->id, 'period' => $activePeriod]) }}">Editar</a></li>
                         </ul>
-                        <p class="text-sm">{{ $activePeriod->starting_time }} - {{ $activePeriod->ending_time }}</p>
                     </div>
                 </div>
             @endforeach
@@ -55,13 +69,14 @@
             @foreach ($inactivePeriods as $inactivePeriod)
                 <div class="size-72 bg-white rounded-3xl">
                     <div class="h-[40%] w-full bg-gradient-to-r from-red-500 to-red-300 py-4 px-4 rounded-t-3xl">
-                        <h3 class="text-white2 black_contour_sm font-bold">{{ $inactivePeriod->name }}</h3>
+                        <h3 class="text-white2 black_contour_sm font-bold">
+                            {{ $day[$inactivePeriod->day] }}: {{ $inactivePeriod->starting_time->format('g:i a') }} - {{ $inactivePeriod->ending_time->format('g:i a') }}
+                        </h3>
                     </div>
                     <div class="py-4 px-4 rounded-b-3xl h-[60%] flex flex-col overflow-hidden">
                         <ul class="text-blue-400">
-                            <li class="border-b border-blue-400 w-min text-sm"><a href="{{ route('period.edit', ['lesson' => $lesson, 'period' => $inactivePeriod->id]) }}">Editar</a></li>
+                            <li class="border-b border-blue-400 w-min text-sm"><a href="{{ route('period.edit', ['lesson' => $lesson->id, 'period' => $inactivePeriod]) }}">Editar</a></li>
                         </ul>
-                        <p class="text-sm">{{ $inactivePeriod->starting_time }} - {{ $inactivePeriod->ending_time }}</p>
                     </div>
                 </div>
             @endforeach
@@ -93,22 +108,6 @@
 
         "></div>
         -->
-
-    <!-- Notificación de Éxito -->
-    @if (session('success'))
-        <x-notification>
-            <x-slot name="title">Éxito</x-slot>
-            {{ session('success') }}
-        </x-notification>
-    @endif
-
-    <!-- Notificación de Error -->
-    @if(session('success'))
-        <x-notification>
-            <x-slot name="title">Error</x-slot>
-            {{ session('error') }}
-        </x-notification>
-    @endif
     </div>
 
     <x-slot name="footer">

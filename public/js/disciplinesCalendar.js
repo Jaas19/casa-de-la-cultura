@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
         "green": "green-600",
         "lime": "lime-400",
         "yellow": "yellow-300",
-        "purple": "pueple-700",
+        "purple": "purple-700",
     }
 
 
@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(data => {
             calendar.setAttribute("data-current-month", data.month);
             calendar.setAttribute("data-current-year", data.year);
-            fillDays(data.activities, date);
+            fillDays(data.activities, data.periods, date);
 
             if (dateInput) {
                 const year = date.getFullYear();
@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .catch(error => console.error("Error cargando calendario: ", error));
     }
 
-    function fillDays(activities, currentDay) {
+    function fillDays(activities, periods, currentDay) {
         const firstDate = new Date(currentDay.getFullYear(), currentDay.getMonth(), 1);
         const lastDate = new Date(currentDay.getFullYear(), currentDay.getMonth() + 1, 0);
         const firstDay = firstDate.getDay();
@@ -104,7 +104,14 @@ document.addEventListener('DOMContentLoaded', () => {
             day.appendChild(dayNumber);
 
             const dateStr = dayCount.toString();
-            if (!activities[dateStr]) {
+            const tempDate = new Date(currentDay.getFullYear(), currentDay.getMonth(), dayCount);
+            let dayOfWeek = tempDate.getDay();
+            if (dayOfWeek === 0) dayOfWeek = 7;
+
+            const dailyPeriods = periods ? periods.filter(period => period.day == dayOfWeek) : [];
+            const dailyActivities = activities[dateStr] || [];
+
+            if (dailyActivities.length === 0 && dailyPeriods.length === 0) {
                 continue;
             }
 
@@ -113,13 +120,28 @@ document.addEventListener('DOMContentLoaded', () => {
             const activityFlex = document.createElement("div");
             activityFlex.classList.add('flex', 'gap-1', 'flex-wrap', 'content-start', 'mt-1');
 
-            for (const activity of activities[dateStr]) {
+            const allEvents = [...dailyActivities, ...dailyPeriods];
+
+            for (const activity of allEvents) {
                 const activityDiv = document.createElement("div");
-                const color = colors1[activity.color] || 'gray-400';
+
+                const colorKey = activity.color || 'purple';
+                const color = colors1[colorKey] || 'gray-400';
+
+                let name = activity.name;
+
+                if (activity.lesson) {
+                    name = activity.lesson.name;
+
+                    if (activity.lesson.discipline) {
+                        name += ` (${activity.lesson.discipline.name})`;
+                    }
+                }
 
                 activityDiv.classList.add(`bg-${color}`, "rounded-full", "h-2", "w-2");
-                activityDiv.setAttribute("data-name", activity.name);
-                activityDiv.setAttribute("data-color", color);
+
+                activityDiv.setAttribute("data-name", name);
+                activityDiv.setAttribute("data-color", colorKey);
 
                 if (activity.time_array) {
                     activityDiv.setAttribute("data-hours", JSON.stringify(activity.hours));
