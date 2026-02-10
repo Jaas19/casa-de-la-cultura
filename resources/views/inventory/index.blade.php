@@ -54,6 +54,7 @@
                         @endforeach
                     @endforeach
                 @endisset
+                <th>Editar</th>
             </tr>
         </thead>
     <tbody class="overflow-auto w-full relative">
@@ -78,6 +79,11 @@
                                         @endif
                                     @endforeach
                                 @endforeach
+                                <td class="dataField">
+                                    <div class="flex justify-center align-center">
+                                        <a href={{ route("good.edit", $good->id) }} class="cursor-pointer"><img src="{{ asset("images/edit_light.png") }}" class="size-6"></a>
+                                    </div>
+                                </td>
                             </tr>
                         @endforeach
                     @endforeach
@@ -93,11 +99,7 @@
             <input type="hidden" id="inventoryId" name="inventory_id" value="0">
             <input type="hidden" id="userId" name="user_id" value="{{ $user_id }}">
 
-            <a href="good/create" id="register-button" class="rounded-3xl bg-sky-500 text-md font-bold text-white2 black_contour p-3">Registrar</a>
-            <button id="suspend-button" class="rounded-3xl bg-red-600 text-md font-bold text-white2 black_contour p-3">Suspender</button>
-            <input class="sm:w-36 bg-black2 text-gray-500 w-[84px]" type="text" id="quantity" name="quantity" placeholder="Monto...">
-            <button id="retire-button" class="rounded-3xl bg-orange-500 text-md font-bold text-white2 black_contour p-3">Retirar</button>
-            <button id="deposit-button" class="rounded-3xl bg-green-500 text-md font-bold text-white2 black_contour p-3">Depositar</button>
+            <a href="good/create" id="register-button" class="rounded-3xl bg-black2 text-md font-bold text-white2 black_contour p-3 text-center w-40">Registrar</a>
         </div>
     </x-slot>
 

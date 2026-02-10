@@ -58,6 +58,7 @@
                 <th>Teléfono</th>
                 <th>Perfil</th>
                 <th class="text-nowrap">Asistencia (pdf)</th>
+                <th>Editar</th>
             </tr>
         </thead>
         <tbody class="overflow-auto  relative">
@@ -75,9 +76,15 @@
                 <td class="person-data-attribute">{{$person->sex}}</td>
                 <td class="person-data-attribute">{{$person->phone_number}}</td>
                 <td class="person-data-attribute">{{$person->position?->name ?? 'Sin cargo.'}}</td>
-                <td><input class="person-assistance-status" type="checkbox" value="1"
+                <td>
+                    <input class="person-assistance-status" type="checkbox" value="1"
                     {{ collect($personsAssistance)->contains('person_id', $person->id) ? 'checked' : '' }}
                     >
+                </td>
+                <td class="dataField">
+                    <div class="flex justify-center align-center">
+                        <a href={{ route("person.edit", $person->id) }} class="cursor-pointer"><img src="{{ asset("images/edit_light.png") }}" class="size-6"></a>
+                    </div>
                 </td>
             </tr>
             @endforeach
@@ -94,10 +101,8 @@
                 <input type="hidden" id="userId" name="user_id" value="{{ $userId }}">
             </form>
 
-            <a href="person/create" id="register-button" class="rounded-3xl bg-sky-500 text-md font-bold text-white2 black_contour p-3">Registrar Persona</a>
-            <a href="person/pdf" target="blank" class="rounded-3xl bg-orange-500 text-md font-bold text-white2 black_contour p-3">Generar Asistencia</a>
-            <div id="update-button" class="cursor-pointer rounded-3xl bg-green-500 text-md font-bold text-white2 black_contour p-3">Editar Persona</div>
-            <button id="suspend-button" class="rounded-3xl bg-red-600 text-md font-bold text-white2 black_contour p-3">Suspender Persona</button>
+            <a href="person/create" id="register-button" class="rounded-3xl bg-black2 text-md font-bold text-white2 black_contour p-3 text-center w-40">Registrar Persona</a>
+            <a href="person/pdf" target="blank" class="rounded-3xl bg-black2 text-md font-bold text-white2 black_contour p-3 text-center w-40">Generar Asistencia</a>
         </div>
     </x-slot>
     <x-slot name="script">

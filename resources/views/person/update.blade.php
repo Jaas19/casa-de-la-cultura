@@ -83,7 +83,7 @@
 
 
     <div class="flex justify-center w-full items-end p-[5vh]">
-        <button class="rounded-3xl bg-yellow-900 text-md font-bold text-white2 black_contour py-3 px-10 hover:bg-yellow-800 transition">Registrar</button>
+        <button class="rounded-3xl bg-yellow-900 text-md font-bold text-white2 black_contour py-3 px-10 hover:bg-yellow-800 transition">Confirmar</button>
     </div>
     </form>
     <x-slot name="script">

@@ -31,9 +31,12 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/inventory', [InventoryController::class, 'index'])->name('inventory.index');
+
+    // Goods
     Route::get('/good/create', [GoodController::class, 'create'])->name('good.create');
+    Route::get('/good/{good}/edit', [GoodController::class, 'edit'])->name('good.edit');
     Route::post('/good/create', [GoodController::class, 'store'])->name('good.store');
-    Route::patch('/good/patch', [GoodController::class, 'patch'])->name('good.update');
+    Route::patch('/good/{good}/patch', [GoodController::class, 'patch'])->name('good.update');
 
     // Register new user
     Route::get('/user/create', [UserController::class, 'create'])->name('user.create');
@@ -69,6 +72,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('person', [PersonController::class, 'index'])->name('person.index');
     Route::get('person/create', [PersonController::class, 'create'])->name('person.create');
+    Route::get('person/{person}/edit', [PersonController::class, 'edit'])->name('person.edit');
     Route::post('person/store', [PersonController::class, 'store'])->name('person.store');
     Route::post('person/update', [PersonController::class, 'update'])->name('person.update');
     Route::patch('person/update', [PersonController::class, 'patch'])->name('person.patch');

@@ -25,11 +25,22 @@ class GoodController extends Controller
         return view("good.create", compact("inventories", "inventoriesAttributes"));
     }
 
+    public function edit(Good $good){
+        $good->load('attributes');
+        $inventories = $this -> inventoryService -> listInventories(Auth::id());
+        $inventoriesAttributes = [];
+        foreach($inventories as $inventory){
+            $inventoriesAttributes[$inventory->id] = $this->inventoryService->getInventoryAttributes($inventory->id);
+        }
+        return view("good.edit", compact("good", "inventories", "inventoriesAttributes"));
+    }
+
     public function store(Request $data) {
         $this->goodService->createGood($data);
         return redirect(route("inventory.index"));
 }
-    public function patch(Request $data){
-        return $this->goodService->updateGoodStatus($data->id, $data->status);
+    public function patch(Request $data, Good $good){
+        $this->goodService->updateGood($data, $good -> id);
+        return redirect(route("inventory.index"));
     }
 }

@@ -81,7 +81,16 @@ function showInventoryData(e){
 
 function highlightField(e){
 
-    const focus = e.target.parentElement
+    if(e.target.closest('a')){
+        return;
+    }
+
+    const focus = e.target.closest('tr');
+
+    if (!focus) {
+        return;
+    }
+
     if(typeof selected !== 'undefined'){
         selected.classList.remove('bg-yellow-950')
         focus.classList.add('bg-yellow-950')

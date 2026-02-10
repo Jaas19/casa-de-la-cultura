@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\PositionType;
 use App\Models\Position;
+use App\Models\Person;
+
 
 class PersonController extends Controller
 {
@@ -32,13 +34,11 @@ class PersonController extends Controller
         return view("person.create", compact("positions"));
     }
 
-    public function update(Request $request){
+    public function edit(Person $person){
         // $request->disciplineId;
-        $disciplineId = $request->disciplineId ?? null;
-        $userId = $request->userId;
+        $userId = Auth::id();
         $positions = $this->positionService->listPositions();
-        $person = $this -> personService -> findPerson($request->input("id"));
-        return view("person.update", compact("positions", "person", "disciplineId"));
+        return view("person.update", compact("positions", "person"));
     }
 
     public function patch(Request $request) {
