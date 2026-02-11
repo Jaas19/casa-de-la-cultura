@@ -18,7 +18,8 @@ class InventoryController extends Controller
         $this -> goodService = $goodService;
     }
     public function index(){
-        $inventories = $this -> inventoryService -> listInventories(Auth::id());
+        $ids = Auth::user()->keys();
+        $inventories = $this -> inventoryService -> listInventories($ids);
         $inventoryGoods = [];
         $inventoryAttributes = [];
         $goodsAttributes = [];
@@ -41,7 +42,8 @@ class InventoryController extends Controller
     }
     public function update() {
         $userId = Auth::id();
-        $inventories = $this->inventoryService -> listInventories($userId);
+        $ids = Auth::user()->keys();
+        $inventories = $this->inventoryService -> listInventories($ids);
         return view('inventory.update', compact('userId', 'inventories'));
     }
 
@@ -67,6 +69,7 @@ class InventoryController extends Controller
             'attributes.*.type.in' => 'El tipo de atributo seleccionado no es válido.',
         ]);
         try {
+            $validatedData['user_id'] = Auth::id();
             $this->inventoryService->createInventory($validatedData);
             return redirect()->route('inventory.index')->with('success', 'Inventario creado con éxito');
         } catch(\Exception $e){
@@ -82,7 +85,9 @@ class InventoryController extends Controller
 
     public function attributes(Request $request){
         $inventory = Inventory::find($request->inventory_id);
-        if(!$inventory || $inventory->user_id != Auth::id()){
+        $ids = Auth::user()->keys();
+
+        if(!$inventory || !in_array($inventory->user_id, $allowedIds)){
             return;
         }
         $attributes = InventoryAttribute::where("inventory_id", $request->inventory_id)->get();

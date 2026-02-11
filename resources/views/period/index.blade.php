@@ -12,6 +12,7 @@
             <option class="bg-black2 redirectOption" value="{{ route("inventory.index") }}">Inventario</option>
             <option class="bg-black2 redirectOption" value="{{ route("person.index") }}">Personas</option>
             <option class="bg-black2 redirectOption" value="{{ route("loan.index") }}">Prestamos</option>
+            <option class="bg-black2 redirectOption" value="{{ route("permission.index") }}">Permisos</option>
             @can('is-admin')
                 <option class="bg-black2 redirectOption" value="{{ route("user.create") }}">Crear usuario</option>
             @endcan
@@ -23,7 +24,7 @@
                 <h3 class="absolute text-center w-full">
                     <a href="{{ route("lesson.index", $lesson->discipline_id) }}"
                         class="text-white2
-                        text-2xl black_contour font-black mr-5">
+                        text-2xl black_contour font-black">
                         {{ $lesson->name }}
                     </a>
                 </h3>

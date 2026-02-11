@@ -1,16 +1,21 @@
 <x-app-layout>
     <x-slot name="header">
-        <form action="" id="redirectForm">
-            <select id="redirect-select" class="dropdown-arrow z-10 font-black text-xl bg-transparent border-0 text-gray-200 leading-tight black_contour"
-            style="background-image: url('{{ asset('images/arrow_drop_down.png') }}');">
-                <option value="" selected disabled>Volver</option>
-                <option class="bg-black2 redirectOption" value="{{ route("dashboard.index") }}">Dashboard</option>
-                <option class="bg-black2 redirectOption" value="{{ route("activity.index") }}">Actividades</option>
-                <option class="bg-black2 redirectOption" value="{{ route("inventory.index") }}">Inventario</option>
-                <option class="bg-black2 redirectOption" value="{{ route("person.index") }}">Personas</option>
-                <option class="bg-black2 redirectOption" value="{{ route("permission.index") }}">Permisos</option>
-            </select>
-        </form>
+            <form action="" id="redirectForm" class="z-20">
+                <select id="redirect-select" class="bg-black2 dropdown-arrow font-black text-xl bg-transparent border-0 text-gray-200 leading-tight black_contour"
+                style="background-image: url('{{ asset('images/arrow_drop_down.png') }}');">
+                    <option class="bg-black2 redirectOption" value="{{ route("dashboard.index") }}">Dashboard</option>
+                    <option class="bg-black2 redirectOption" value="{{ route("activity.index") }}">Actividades</option>
+                    <option class="bg-black2 redirectOption" value="{{ route("inventory.index") }}">Inventario</option>
+                    <option class="bg-black2 redirectOption" value="{{ route("person.index") }}">Personas</option>
+                    <option class="bg-black2 redirectOption" value="{{ route("loan.index") }}">Prestamos</option>
+                    <option class="bg-black2 redirectOption" value="{{ route("discipline.index") }}">Disciplinas</option>
+                    <option class="bg-black2 redirectOption" value="{{ route("permission.index") }}" selected disabled>Permisos</option>
+                    @can('is-admin')
+                        <option class="bg-black2 redirectOption" value="{{ route("user.create") }}">Crear usuario</option>
+                    @endcan
+                    <option class="bg-black2 redirectOption" value="{{ route("session.destroy") }}">Cerrar sesión</option>
+                </select>
+            </form>
 
         <h3 class="absolute text-right sm:text-center w-full">
             <a href="{{ route("dashboard.index") }}"

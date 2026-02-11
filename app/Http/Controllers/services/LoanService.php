@@ -12,8 +12,8 @@ class LoanService implements LoanServiceInterface{
         $this->movementService = $movementService;
     }
 
-    public function getLoans($userId){
-        return Loan::where("user_id", $userId)->with('good')->with('user')->with('person')->get();
+    public function getLoans($ids){
+        return Loan::whereIn("user_id", $ids)->with('good')->with('user')->with('person')->get();
     }
 
     public function updateStatus($status, $loanId){

@@ -50,22 +50,38 @@ class ActivityService implements ActivityServiceInterface {
         return $this -> headers[$data -> header]($data -> id);
     }
 
-    public function listActivities(int $userId){
+    public function listActivities(array $ids, ?string $status = null, ?string $search = null) {
         $this->updateActivities();
-        $activities = Activity::where("user_id", "=", $userId)->get();
 
-        $ids = $this -> getActivitiesIds($activities);
+        $query = Activity::whereIn("user_id", $ids)
+                        ->distinct()
+                        ->orderBy('created_at', 'desc');
 
-        $this -> checkActivityDates($ids, $activities);
-        $this -> checkActivityGoods($ids, $activities);
-        $this -> checkActivityPersons($ids, $activities);
+        if ($status && $status !== 'Todas') {
+            $query->where('status', $status);
+        }
 
-        $this -> getActivitiesColors($activities);
-        $this -> formatDates($activities);
-        $this -> formatHours($activities);
+        if ($search) {
+            $query->where('name', 'like', '%' . $search . '%');
+        }
 
+        $paginator = $query->paginate(7);
 
-        return $activities;
+        $activities = $paginator->getCollection();
+
+        if ($activities->isNotEmpty()) {
+            $ids = $this->getActivitiesIds($activities);
+
+            $this->checkActivityDates($ids, $activities);
+            $this->checkActivityGoods($ids, $activities);
+            $this->checkActivityPersons($ids, $activities);
+
+            $this->getActivitiesColors($activities);
+            $this->formatDates($activities);
+            $this->formatHours($activities);
+        }
+
+        return $paginator;
     }
 
     public function getActivitiesColors($activities){
@@ -354,15 +370,14 @@ class ActivityService implements ActivityServiceInterface {
         ];
     }
 
-    public function getUpcomingActivities($userId){
+public function getUpcomingActivities(){
 
         $from = now()->copy()->startOfDay();
         $to = now()->copy()->addDays(7)->endOfDay();
 
         $extraActivities = ActivityDate::whereBetween("date", [$from, $to])
-        ->whereHas('activity', function ($query) use ($userId) {
-            $query->where('user_id', '=', $userId)
-            ->where('important', 1);
+        ->whereHas('activity', function ($query) {
+            $query->where('important', 1);
         })
         ->with('activity')
         ->get();

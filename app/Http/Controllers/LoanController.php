@@ -24,8 +24,8 @@ class LoanController extends Controller
     }
 
     public function index() {
-        $userId = Auth::id();
-        $loans = $this->loanService->getLoans($userId);
+        $ids = Auth::user()->keys();
+        $loans = $this->loanService->getLoans($ids);
         return view('loan.index', compact("loans"));
     }
 
@@ -34,9 +34,9 @@ class LoanController extends Controller
     }
 
     public function create(){
-        $userId = Auth::id();
-        $goods = $this->goodService->listGoodsWithInventory($userId);
-        $inventories = $this->inventoryService->listInventories($userId);
+        $ids = Auth::user()->keys();
+        $goods = $this->goodService->listGoodsWithInventory($ids);
+        $inventories = $this->inventoryService->listInventories($ids);
         $persons = $this->personService->listPersons();
         return view("loan.create", compact("goods", "persons", "inventories"));
     }

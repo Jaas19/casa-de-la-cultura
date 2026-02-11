@@ -21,20 +21,23 @@ class ActivityController extends Controller
         $this->inventoryService = $inventoryService;
     }
 
-    public function index() {
-        $activities = $this->activityService->listActivities(Auth::id());
-        return view('activity.index', compact("activities"));
+    public function index(Request $request) {
+        $status = $request->input('status', 'Todas');
+        $search = $request->input('search');
+        $ids = Auth::user()->keys();
+        $activities = $this->activityService->listActivities($ids, $status, $search);
+        return view('activity.index', compact("activities", "status", "search"));
     }
 
     public function dashboard() {
-        $upcomingActivities = $this->activityService->getUpcomingActivities(Auth::id());
+        $upcomingActivities = $this->activityService->getUpcomingActivities();
         $username = Auth::user()->name;
         return view('dashboard', compact('upcomingActivities', 'username'));
     }
 
     public function create() {
-        $userId = Auth::id();
-        $inventoriesResponse = $this->inventoryService->listInventories($userId);
+        $ids = Auth::user()->keys();
+        $inventoriesResponse = $this->inventoryService->listInventories($ids);
         $goods = [];
         $inventories = [];
         foreach($inventoriesResponse as $inventory){
@@ -48,11 +51,18 @@ class ActivityController extends Controller
         if(!$data->input("activityId")){
             return redirect("/");
         }
-        $userId = Auth::id();
+        $ids = Auth::user()->keys();
         $activityId = $data->input("activityId");
-        $inventoriesResponse = $this->inventoryService->listInventories($userId);
+        $inventoriesResponse = $this->inventoryService->listInventories($ids);
         $goods = [];
         $inventories = [];
+
+        $activity = Activity::find($data->activityId);
+
+        if (!$activity || !in_array($activity->user_id, $ids)) {
+            return redirect()->route('activity.index')->with('error', 'No tienes permiso para editar esta actividad.');
+        }
+
 
         $activityDates = $this->activityService->getActivityDates($activityId);
         $activityGoods = $this->activityService->getActivityGoods($activityId);
@@ -62,7 +72,8 @@ class ActivityController extends Controller
             $inventories[$inventory->id] = $inventory->name;
             $goods[$inventory->id] = $this->goodService->listGoods($inventory->id);
         }
-        $activity = Activity::find($data->activityId);
+
+
         return view('activity.update', compact('activity', 'goods', 'inventories',
     'activityDates', 'activityGoods', 'activityOrganizers'));
     }
@@ -73,6 +84,12 @@ class ActivityController extends Controller
     }
     public function patch(Request $data){
         $activity = Activity::find($data->id);
+
+        $ids = Auth::user()->keys();
+        if (!$activity || !in_array($activity->user_id, $ids)) {
+             return response()->json(['error' => 'No autorizado'], 403);
+        }
+
         if (!$activity) {
         return response()->json(['error' => 'Actividad no encontrada'], 404);
     }
@@ -80,6 +97,14 @@ class ActivityController extends Controller
     }
 
     public function updateActivity(Request $data){
+        $activity = Activity::find($data->id);
+        $ids = Auth::user()->keys();
+
+        if (!$activity || !in_array($activity->user_id, $ids)) {
+             return redirect()->route('activity.index')->with('error', 'No autorizado');
+        }
+
+
         $this -> activityService -> updateActivity($data);
         return redirect('activity');
     }

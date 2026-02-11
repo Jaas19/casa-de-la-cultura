@@ -13,15 +13,18 @@ use App\Models\Discipline;
 class PaymentController extends Controller
 {
     public function index(Discipline $discipline) {
-        $userId = Auth::id();
+        $ids = Auth::user()->keys();
+        if (!in_array($discipline->administrator_id, $ids)) {
+            return back()->with("error", "Acceso denegado.");
+        }
         $payments = Payment::with("student.person")->where("discipline_id", $discipline->id)->get();
         return view('payment.index', compact("payments", "discipline"));
     }
 
     public function create(Request $request, Discipline $discipline){
-        $userId = Auth::id();
-        if($discipline -> administrator_id != $userId){
-            return back()->with("Error", "Acceso denegado.");
+        $ids = Auth::user()->keys();
+        if (!in_array($discipline->administrator_id, $ids)) {
+            return back()->with("error", "Acceso denegado.");
         }
 
         $student = null;
@@ -36,6 +39,10 @@ class PaymentController extends Controller
     }
 
     public function store(Request $request, Discipline $discipline){
+        $ids = Auth::user()->keys();
+        if (!in_array($discipline->administrator_id, $ids)) {
+            return back()->with("error", "Acceso denegado.");
+        }
         $request->merge(['discipline_id' => $discipline->id]);
 
         $validatedData = $request->validate([
@@ -93,6 +100,11 @@ class PaymentController extends Controller
     }
 
     public function getPersonByDni(Request $request, Discipline $discipline){
+        $ids = Auth::user()->keys();
+        if (!in_array($discipline->administrator_id, $ids)) {
+            return response()->json(null, 404);
+        }
+
         $dni = $request->input('dni');
         if(!$dni) return response()->json(null, 400);
 

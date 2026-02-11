@@ -26,7 +26,7 @@ class LessonService implements LessonServiceInterface {
     }
 
 
-    public function getMonthlyLessons(?int $disciplineId, ?string $dateInput) {
+    public function getMonthlyLessons($disciplineId, ?string $dateInput) {
         $date = $dateInput ? Carbon::parse($dateInput) : Carbon::now();
         $startOfMonth = $date->copy()->startOfMonth();
         $endOfMonth = $date->copy()->endOfMonth();
@@ -34,7 +34,13 @@ class LessonService implements LessonServiceInterface {
         $schedules = Schedule::query()
             ->when($disciplineId, function($query) use ($disciplineId) {
                 return $query->whereHas('lesson', function ($q) use ($disciplineId) {
-                    $q->where('discipline_id', $disciplineId);
+                    if (is_array($disciplineId)) {
+                        $q->whereHas('discipline', function($dq) use ($disciplineId) {
+                            $dq->whereIn('administrator_id', $disciplineId);
+                        });
+                    } else {
+                        $q->where('discipline_id', $disciplineId);
+                    }
                 });
             })
             ->with('lesson.discipline')
@@ -48,7 +54,13 @@ class LessonService implements LessonServiceInterface {
         ->with('lesson.discipline')
         ->when($disciplineId, function($query) use ($disciplineId) {
             return $query->whereHas('lesson', function ($q) use ($disciplineId) {
-                $q->where('discipline_id', $disciplineId);
+                if (is_array($disciplineId)) {
+                    $q->whereHas('discipline', function($dq) use ($disciplineId) {
+                        $dq->whereIn('administrator_id', $disciplineId);
+                    });
+                } else {
+                    $q->where('discipline_id', $disciplineId);
+                }
             });
         })
         ->where('status', 1)

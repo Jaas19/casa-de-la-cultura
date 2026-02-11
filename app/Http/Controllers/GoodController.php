@@ -17,7 +17,8 @@ class GoodController extends Controller
         $this -> goodService = $goodService;
     }
     public function create(){
-        $inventories = $this -> inventoryService -> listInventories(Auth::id());
+        $ids = Auth::user()->keys();
+        $inventories = $this -> inventoryService -> listInventories($ids);
         $inventoriesAttributes = [];
         foreach($inventories as $inventory){
             $inventoriesAttributes[$inventory->id] = $this->inventoryService->getInventoryAttributes($inventory->id);
@@ -27,7 +28,8 @@ class GoodController extends Controller
 
     public function edit(Good $good){
         $good->load('attributes');
-        $inventories = $this -> inventoryService -> listInventories(Auth::id());
+        $ids = Auth::user()->keys();
+        $inventories = $this -> inventoryService -> listInventories($ids);
         $inventoriesAttributes = [];
         foreach($inventories as $inventory){
             $inventoriesAttributes[$inventory->id] = $this->inventoryService->getInventoryAttributes($inventory->id);

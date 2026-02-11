@@ -8,7 +8,7 @@ interface InventoryServiceInterface
 {
     public function createInventory($data);
     public function updateInventory($data);
-    public function listInventories($id);
+    public function listInventories($ids);
     public function getInventoryAttributes($id);
     public function createInventoryAttribute($data);
     public function updateInventoryAttribute($data);

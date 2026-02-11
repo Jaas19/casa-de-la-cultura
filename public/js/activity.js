@@ -11,7 +11,7 @@ const endingDates = document.querySelectorAll(".ending-date");
 
 const statusSelectInputs = document.querySelectorAll('.status-select-input');
 const statusSelectOptions = document.querySelectorAll('.status-select-option');
-
+/*
 function filterActivity(e){
     filter = e.target.value;
     if (filter == "Todas") {
@@ -28,7 +28,7 @@ function filterActivity(e){
         }
     }
 }
-
+*/
 function hide(){
     detailsWindow.classList.add("opacity-0")
     setTimeout(detailsWindow.classList.add('hidden'), 300)
@@ -88,7 +88,7 @@ for(clickableElement of clickableElements){
     clickableElement.addEventListener('click', showDetails);
 }
 
-filterActivitySelect.addEventListener('change', filterActivity);
+// filterActivitySelect.addEventListener('change', filterActivity);
 
 for(statusSelectOption of statusSelectOptions){
     statusSelectOption.addEventListener('click', updateColor);

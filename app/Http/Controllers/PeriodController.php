@@ -10,6 +10,11 @@ use App\Models\Lesson;
 class PeriodController extends Controller
 {
     public function index(Lesson $lesson){
+        $ids = Auth::user()->keys();
+        if (!in_array($lesson->discipline->administrator_id, $ids)) {
+            abort(403);
+        }
+
         $activePeriods = $lesson->periods()
         ->orderBy('day', 'asc')
         ->orderBy("starting_time", 'asc')
@@ -29,10 +34,19 @@ class PeriodController extends Controller
     }
 
     public function edit(Lesson $lesson, Period $period){
+        $ids = Auth::user()->keys();
+        if (!in_array($lesson->discipline->administrator_id, $ids)) {
+            abort(403);
+        }
+
         return view("period.edit", compact("lesson", "period"));
     }
 
     public function store(Request $request, Lesson $lesson){
+        $ids = Auth::user()->keys();
+        if (!in_array($lesson->discipline->administrator_id, $ids)) {
+            abort(403);
+        }
         $validatedData = $request->validate([
             "day" => "required|integer|between:1,7",
             "starting_time" => "required|date_format:H:i",
@@ -44,6 +58,10 @@ class PeriodController extends Controller
     }
 
     public function update(Request $request, Lesson $lesson, Period $period){
+        $ids = Auth::user()->keys();
+        if (!in_array($lesson->discipline->administrator_id, $ids)) {
+            abort(403);
+        }
         $validatedData = $request->validate([
             "day" => "required|integer|between:1,7",
             "starting_time" => "required|date_format:H:i",

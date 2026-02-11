@@ -5,6 +5,7 @@ use App\Models\Inventory;
 use App\Models\InventoryAttribute;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class InventoryService implements InventoryServiceInterface {
     public function createInventory($data) {
@@ -64,8 +65,8 @@ class InventoryService implements InventoryServiceInterface {
         }
         $inventory->save();
     }
-    public function listInventories($id){
-        $inventories = Inventory::where("user_id", "=", $id)->get();
+    public function listInventories($ids){
+        $inventories = Inventory::whereIn("user_id", $ids)->with('user')->get();
         return $inventories;
     }
 

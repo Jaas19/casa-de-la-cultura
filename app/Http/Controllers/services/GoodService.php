@@ -62,9 +62,9 @@ class GoodService implements GoodServiceInterface {
     return $good;
 }
 
-    public function listGoodsWithInventory ($userId){
-        return Good::whereHas('inventory', function ($query) use ($userId){
-            $query->where('user_id', $userId);
+    public function listGoodsWithInventory ($ids){
+        return Good::whereHas('inventory', function ($query) use ($ids){
+            $query->whereIn('user_id', $ids);
         })->get();
     }
 

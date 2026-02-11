@@ -10,6 +10,7 @@
                 <option class="bg-black2 redirectOption" value="{{ route("inventory.index") }}">Inventario</option>
                 <option class="bg-black2 redirectOption" value="{{ route("person.index") }}">Personas</option>
                 <option class="bg-black2 redirectOption" value="{{ route("loan.index") }}">Prestamos</option>
+                <option class="bg-black2 redirectOption" value="{{ route("permission.index") }}">Permisos</option>
                 @can('is-admin')
                     <option class="bg-black2 redirectOption" value="{{ route("user.create") }}">Crear usuario</option>
                 @endcan

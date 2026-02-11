@@ -19,17 +19,26 @@ class PositionController extends Controller
         "position_type_id.exists" => "La vinculación seleccionada no existe."
     ];
     public function create(){
+        if(Auth::user()->role != 1){
+            return back()->with("error", "Acceso denegado.");
+        }
         $positionTypes = PositionType::all();
         return view("position.create", compact("positionTypes"));
     }
 
     public function edit(){
+        if(Auth::user()->role != 1){
+            return back()->with("error", "Acceso denegado.");
+        }
         $positions = Position::all();
         $positionTypes = PositionType::all();
         return view("position.update", compact("positionTypes", "positions"));
     }
 
     public function store(Request $request){
+        if(Auth::user()->role != 1){
+            return back()->with("error", "Acceso denegado.");
+        }
         $validatedData = $request->validate([
             "name" => ["regex:/^[\pL\s\d\.\(\)\-]+$/u", "string", "required", "min:3", "max:100", "unique:positions,name"],
             "position_type_id" => ["required", "exists:position_types,id"],
@@ -43,6 +52,9 @@ class PositionController extends Controller
     }
 
     public function update(Request $request){
+        if(Auth::user()->role != 1){
+            return back()->with("error", "Acceso denegado.");
+        }
         $validatedData = $request->validate([
             "name" => ["regex:/^[\pL\s\d\.\(\)\-]+$/u", "string", "required", "min:3", "max:100", "unique:positions,name," . $request->name],
             "position_type_id" => ["required", "exists:position_types,id"],

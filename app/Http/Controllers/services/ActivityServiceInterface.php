@@ -4,7 +4,7 @@ use Illuminate\Http\Request;
 
 
 interface ActivityServiceInterface{
-    public function listActivities(int $userId);
+public function listActivities(array $userId, ?string $status = null, ?string $search = null);
     public function changeStatus(Request $data);
     public function updateActivities();
     public function updateActivity(Request $request);
@@ -16,5 +16,5 @@ interface ActivityServiceInterface{
     public function getActivityPersons($activityId);
     public function getActivityData($data);
     public function getActivitiesInTheMonth(Request $request);
-    public function getUpcomingActivities($userId);
+    public function getUpcomingActivities();
 }

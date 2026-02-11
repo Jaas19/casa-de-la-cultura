@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Log;
 use App\Models\Lesson;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Discipline;
 use App\Http\Controllers\Services\LessonServiceInterface;
 
@@ -17,7 +18,10 @@ class LessonController extends Controller
         $this->lessonService = $lessonService;
     }
     public function index(Discipline $discipline){
-        $this->authorize('index', $discipline);
+        $ids = Auth::user()->keys();
+        if (!in_array($discipline->administrator_id, $ids)) {
+            abort(403);
+        }
 
         $periodsQuery = function($query) {
             $query->where('status', 1)
@@ -31,7 +35,10 @@ class LessonController extends Controller
     }
 
     public function calendar(Discipline $discipline){
-        $this->authorize('calendar', $discipline);
+        $ids = Auth::user()->keys();
+        if (!in_array($discipline->administrator_id, $ids)) {
+            abort(403);
+        }
         $activeLessons = $discipline->lessons()->where("status", 1)->get();
         $inactiveLessons = $discipline->lessons()->where("status", 0)->get();
         return view('discipline.calendar', compact('activeLessons', 'inactiveLessons', 'discipline'));
@@ -42,14 +49,21 @@ class LessonController extends Controller
         $discipline-> id = 0;
         $discipline->name = "Calendario general";
 
-        $activeLessons = collect();
+        $ids = Auth::user()->keys();
+
+        $activeLessons = Lesson::whereHas('discipline', function($q) use ($ids) {
+            $q->whereIn('administrator_id', $ids);
+        })->where('status', 1)->get();
         $inactiveLessons = collect();
 
         return view('discipline.calendar', compact('activeLessons', 'inactiveLessons', 'discipline'));
     }
 
     public function create(Discipline $discipline){
-        $this->authorize('show', $discipline);
+        $ids = Auth::user()->keys();
+        if (!in_array($discipline->administrator_id, $ids)) {
+            abort(403);
+        }
         return view('lesson.create', compact('discipline'));
     }
 
@@ -88,12 +102,18 @@ class LessonController extends Controller
     }
 
     public function edit(Discipline $discipline, Lesson $lesson){
-        $this->authorize("update", $discipline);
+        $ids = Auth::user()->keys();
+        if (!in_array($discipline->administrator_id, $ids)) {
+            abort(403);
+        }
         return view('lesson.edit', compact("discipline", "lesson"));
     }
 
     public function update(Request $request, Discipline $discipline, Lesson $lesson){
-        $this->authorize("update", $discipline);
+        $ids = Auth::user()->keys();
+        if (!in_array($discipline->administrator_id, $ids)) {
+            abort(403);
+        }
         $validatedData = $request->validate(
             [
                 'name' => 'string|max:255|required',
@@ -131,10 +151,10 @@ class LessonController extends Controller
             'discipline_id' => 'nullable',
         ]);
 
-        $disciplineId = (!empty($validated['discipline_id'])) ? $validated['discipline_id'] : null;
+        $parameter = $validatedData['discipline_id'] ?: Auth::user()->keys();
 
         $data = $this->lessonService->getMonthlyLessons(
-            $validatedData['discipline_id'],
+            $parameter,
             $validatedData['date']
         );
 

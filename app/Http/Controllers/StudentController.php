@@ -11,23 +11,39 @@ use App\Models\Person;
 class StudentController extends Controller
 {
     public function index(Discipline $discipline){
+        $ids = Auth::user()->keys();
+        if (!in_array($discipline->administrator_id, $ids)) {
+            return back()->with("error", "Acceso denegado.");
+        }
         $students = Student::where("discipline_id", $discipline->id)
         ->get();
         return view("student.index", compact("discipline", "students"));
     }
     public function create(Discipline $discipline){
+        $ids = Auth::user()->keys();
+        if (!in_array($discipline->administrator_id, $ids)) {
+            return back()->with("error", "Acceso denegado.");
+        }
         $persons = Person::where("status", "active")
         ->get();
         $disciplines = Discipline::where("administrator_id", Auth::id())->get();
         return view("student.create", compact("discipline", "persons", "disciplines"));
     }
     public function edit(Discipline $discipline, Student $student){
+        $ids = Auth::user()->keys();
+        if (!in_array($discipline->administrator_id, $ids)) {
+            return back()->with("error", "Acceso denegado.");
+        }
         $persons = Person::where("status", "active")
         ->get();
         $disciplines = Discipline::where("administrator_id", Auth::id())->get();
         return view("student.edit", compact("student", "persons", "disciplines", "discipline"));
     }
     public function store(Request $request, Discipline $discipline){
+        $ids = Auth::user()->keys();
+        if (!in_array($discipline->administrator_id, $ids)) {
+            return back()->with("error", "Acceso denegado.");
+        }
         $validatedData = $request->validate([
             "person_id" => 'required|integer|exists:people,id',
             "discipline_id" => 'required|integer|exists:disciplines,id',
@@ -41,6 +57,10 @@ class StudentController extends Controller
         }
     }
     public function update(Request $request, Discipline $discipline, Student $student){
+        $ids = Auth::user()->keys();
+        if (!in_array($discipline->administrator_id, $ids)) {
+            return back()->with("error", "Acceso denegado.");
+        }
         $validatedData = $request->validate([
             "person_id" => 'required|integer|exists:people,id',
             "discipline_id" => 'required|integer|exists:disciplines,id',
@@ -55,6 +75,13 @@ class StudentController extends Controller
         }
     }
     public function toggleStatus(Request $request, Discipline $discipline, Student $student){
+        $ids = Auth::user()->keys();
+        if (!in_array($discipline->administrator_id, $ids)) {
+            return response()->json([
+            'success' => false,
+            'message' => 'Acceso denegado.',
+            'error'   => $e->getMessage()], 403);
+        }
         $validatedData = $request->validate([
             "status" => 'nullable|in:active,inactive',
         ]);
@@ -75,6 +102,10 @@ class StudentController extends Controller
         }
     }
     public function registerPayment(Request $request, Discipline $discipline, Student $student){
+        $ids = Auth::user()->keys();
+        if (!in_array($discipline->administrator_id, $ids)) {
+            return back()->with("error", "Acceso denegado.");
+        }
         $validatedData = $request->validate([
             "next_payment" => 'required|string|in:Day,Week,Month',
         ]);

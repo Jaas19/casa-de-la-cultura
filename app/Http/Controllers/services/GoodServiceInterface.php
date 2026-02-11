@@ -8,7 +8,7 @@ interface GoodServiceInterface
     public function createGood (Request $data);
     public function listGoods (int $inventoryId);
     public function listGoodsWithAttributes (int $inventoryId);
-        
+    public function listGoodsWithInventory ($ids);
     public function listGoodsAttributes(int $inventoryId);
     public function checkInventoryAttribute(int $inventoryId);
     public function getInventoryAttributeKeys();

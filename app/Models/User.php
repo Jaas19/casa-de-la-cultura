@@ -54,12 +54,12 @@ class User extends Authenticatable
 
     public function collaborators(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'foreign_key', 'local_key');
+        return $this->belongsToMany(User::class, 'permissions', 'giver', 'collaborator_id');
     }
 
     public function givers(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'foreign_key', 'local_key');
+        return $this->belongsToMany(User::class, 'permissions', 'collaborator_id', 'giver_id');
     }
 
     public function keys(){

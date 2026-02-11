@@ -18,8 +18,14 @@ class DisciplineController extends Controller
     }
 
     public function index() {
-        $activeDisciplines = Auth::user()->disciplines()->where("status", "1")->get();
-        $inactiveDisciplines = Auth::user()->disciplines()->where("status", "0")->get();
+        $ids = Auth::user()->keys();
+
+        $activeDisciplines = Discipline::whereIn("administrator_id", $ids)
+                                        ->where("status", "1")
+                                        ->get();
+        $inactiveDisciplines = Discipline::whereIn("administrator_id", $ids)
+                                          ->where("status", "0")
+                                          ->get();
         return view('discipline.index', compact('activeDisciplines', 'inactiveDisciplines'));
     }
 
@@ -53,8 +59,13 @@ class DisciplineController extends Controller
     }
 
     public function edit(Discipline $discipline) {
-        $this->authorize('update', $discipline);
-        $disciplines = Auth::user()->disciplines()->where('id', "!=", $discipline->id)->get();
+        $ids = Auth::user()->keys();
+        if (!in_array($discipline->administrator_id, $ids)) {
+            abort(403, 'No tienes permiso para editar esta disciplina.');
+        }
+        $disciplines = Discipline::whereIn('administrator_id', $ids)
+                                  ->where('id', "!=", $discipline->id)
+                                  ->get();
         return view('discipline.edit', compact('discipline', 'disciplines'));
 }
 
@@ -72,7 +83,10 @@ class DisciplineController extends Controller
             ]
             );
         $discipline = Discipline::findOrFail($request->id);
-        $this->authorize('update', $discipline);
+        $ids = Auth::user()->keys();
+        if (!in_array($discipline->administrator_id, $ids)) {
+            abort(403, 'No tienes permiso para editar esta disciplina.');
+        }
 
         try {
             $this->disciplineService->updateDiscipline($discipline, $validatedData);
@@ -85,7 +99,10 @@ class DisciplineController extends Controller
     }
 
     public function show(Discipline $discipline) {
-        $this->authorize('show', $discipline);
+        $ids = Auth::user()->keys();
+        if (!in_array($discipline->administrator_id, $ids)) {
+            abort(403, 'No tienes permiso para editar esta disciplina.');
+        }
         $activeLessons = $discipline->lessons->where('status', 1);
         $inactiveLessons = $discipline->lessons->where('status', 0);
         return view("discipline.show", compact("discipline", "activeLessons", "inactiveLessons"));

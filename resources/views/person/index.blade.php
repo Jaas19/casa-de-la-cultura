@@ -9,6 +9,7 @@
                 <option class="bg-black2 redirectOption" value="{{ route("inventory.index") }}">Inventario</option>
                 <option class="bg-black2 redirectOption" value="{{ route("person.index") }}" selected disabled>Personas</option>
                 <option class="bg-black2 redirectOption" value="{{ route("loan.index") }}">Prestamos</option>
+                <option class="bg-black2 redirectOption" value="{{ route("permission.index") }}">Permisos</option>
                 @can('is-admin')
                     <option class="bg-black2 redirectOption" value="{{ route("user.create") }}">Crear usuario</option>
                 @endcan
@@ -26,16 +27,20 @@
                 @foreach ($positionTypes as $type)
                     <option value="{{ $type->id }}">{{ $type->name }}</option>
                 @endforeach
+                @can('is-admin')
                     <option value="{{ route("position_type.create") }}">Crear vinculación</option>
                     <option value="{{ route("position_type.edit") }}">Editar vinculación</option>
+                @endcan
             </select>
             <select name="positions" id="positions" class="bg-white2 dark:bg-black2 text-black2 dark:text-gray-500">
                     <option value="" selected>Todos</option>
                     @foreach ($positions as $position)
-                    <option class="text-center" value="{{ $position->id }}">{{ $position->name }}</option>
+                        <option class="text-center" value="{{ $position->id }}">{{ $position->name }}</option>
                     @endforeach
-                    <option value="{{ route("position.create") }}">Crear perfil</option>
-                    <option value="{{ route("position.edit") }}">Editar perfil</option>
+                    @can('is-admin')
+                        <option value="{{ route("position.create") }}">Crear perfil</option>
+                        <option value="{{ route("position.edit") }}">Editar perfil</option>
+                    @endcan
                 </select>
             <!--Barra de búsqueda y botón de filtro-->
             <div class="relative flex items-center justify-center">

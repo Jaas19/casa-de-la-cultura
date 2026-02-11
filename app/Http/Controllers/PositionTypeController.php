@@ -12,16 +12,25 @@ class PositionTypeController extends Controller
         "" => ""
     ];
     public function create(){
+        if(Auth::user()->role != 1){
+            return back()->with("error", "Acceso denegado.");
+        }
         $positionTypes = PositionType::all();
         return view("position_type.create");
     }
 
     public function edit(){
+        if(Auth::user()->role != 1){
+            return back()->with("error", "Acceso denegado.");
+        }
         $positionTypes = PositionType::all();
         return view("position_type.update", compact("positionTypes"));
     }
 
     public function store(Request $request){
+        if(Auth::user()->role != 1){
+            return back()->with("error", "Acceso denegado.");
+        }
         $validatedData = $request->validate([
             "name" => ["regex:/^[\pL\s\d\.\(\)\-]+$/u", "string", "required", "min:3", "max:50", "unique:positions_types,name"],
         ], $this->messages);
@@ -34,7 +43,9 @@ class PositionTypeController extends Controller
     }
 
     public function update(Request $request){
-
+        if(Auth::user()->role != 1){
+            return back()->with("error", "Acceso denegado.");
+        }
         $validatedData = $request->validate([
             "name" => ["regex:/^[\pL\s\d\.\(\)\-]+$/u", "string", "required", "min:3", "max:50", "unique:position_types,name," . $request->id],
             "id" => ["required", "exists:position_types,id"],
