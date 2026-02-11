@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends Authenticatable
 {
@@ -49,5 +50,21 @@ class User extends Authenticatable
 
     public function disciplines(){
         return $this->hasMany(Discipline::class, 'administrator_id');
+    }
+
+    public function collaborators(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'foreign_key', 'local_key');
+    }
+
+    public function givers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'foreign_key', 'local_key');
+    }
+
+    public function keys(){
+        $givers = $this->givers()->pluck('users.id')->toArray();
+        $ids = array_merge([$this->id], $givers);
+        return $ids;
     }
 }

@@ -17,6 +17,7 @@ use App\Http\Controllers\PositionController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PositionTypeController;
 use App\Http\Controllers\PeriodController;
+use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use Illuminate\Support\Facades\Route;
 
@@ -148,6 +149,13 @@ Route::middleware('auth')->group(function () {
     Route::post('lesson/{lesson}/period', [PeriodController::class, 'store'])->name('period.store');
     Route::get('lesson/{lesson}/period/{period}', [PeriodController::class, 'edit'])->name('period.edit');
     Route::patch('lesson/{lesson}/period/{period}', [PeriodController::class, 'update'])->name('period.update');
+
+    // Permissions
+
+    Route::get('permission', [PermissionController::class, 'index'])->name('permission.index');
+    Route::get('permission/create', [PermissionController::class, 'create'])->name('permission.create');
+    Route::post('permission', [PermissionController::class, 'store'])->name('permission.store');
+    Route::delete('permission/{permission}', [PermissionController::class, 'destroy'])->name('permission.destroy');
 
     });
 require __DIR__.'/auth.php';

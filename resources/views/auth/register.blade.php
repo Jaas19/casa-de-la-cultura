@@ -39,9 +39,9 @@
         </div>
 
         <div class="mt-4">
-            <x-input-label for="status" :value="__('Rol')" />
+            <x-input-label for="role" :value="__('Rol')" />
 
-            <select name="status" id="status" class="bg-[#2b2b2b] text-gray-400 border-yellow-950 rounded-md border-2" required>
+            <select name="role" id="role" class="bg-[#2b2b2b] text-gray-400 border-yellow-950 rounded-md border-2" required>
                 @foreach ($roles as $role)
                     <option value="{{ $role->id }}">{{ ucfirst($role->name) }}</option>
                 @endforeach

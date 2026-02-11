@@ -43,15 +43,15 @@
             <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-[#f8f8f8] dark:bg-[#323232] shadow-md overflow-y-auto sm:rounded-3xl">
                 {{ $slot }}
                 @if (session('success'))
-                            <x-notification>
-                                <x-slot name="title">Éxito</x-slot>
-                                    <li>
-                                        <span class="text-gray-800">
-                                            {{ session('success') }}
-                                        </span>
-                                    </li>
-                            </x-notification>
-                        @endif
+                    <x-notification>
+                        <x-slot name="title">Éxito</x-slot>
+                            <li>
+                                <span class="text-gray-800">
+                                    {{ session('success') }}
+                                </span>
+                            </li>
+                    </x-notification>
+                @endif
 
                 @if($errors->any() || session('error'))
                     <x-notification>
@@ -63,15 +63,15 @@
                                 </span>
                             </li>
                         @endforeach
-                        @if (session('error'))
-                            <li>
-                                <span class="text-gray-800">
-                                    {{ session('error') }}
-                                </span>
-                            </li>
-                        @endif
-                        {{ session('error') }}
-                    </x-notification>
+                    @if (session('error'))
+                        <li>
+                            <span class="text-gray-800">
+                                {{ session('error') }}
+                            </span>
+                        </li>
+                    @endif
+                    {{ session('error') }}
+                </x-notification>
                 @endif
             </div>
         </div>

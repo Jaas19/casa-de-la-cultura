@@ -16,7 +16,7 @@ class UserController extends Controller
             return view('auth.register', compact('roles'));
 
         } elseif(!Auth::check()){
-            return redirect()->route('dashboard.index')
+            return redirect()->route('login')
             ->with('error', 'Sesión de administrador no iniciada.');
 
         } elseif (Auth::user()->role != 1) {
