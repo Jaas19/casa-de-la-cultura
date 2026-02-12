@@ -78,16 +78,48 @@ class InventoryController extends Controller
 
     }
 
-    public function patch(Request $data){
-        $this -> inventoryService -> updateInventory($data);
-        return redirect(route('inventory.index'));
+public function patch(Request $request) {
+    $validatedData = $request->validate([
+        'id' => 'required|exists:inventories,id',
+        'name' => 'required|string|max:255',
+        'attributes' => 'nullable|array',
+        'attributes.*.id' => 'nullable|exists:inventory_attributes,id',
+        'attributes.*.key_name' => 'required|string|max:255',
+        'attributes.*.type' => 'required|in:text,paragraph,numeric,boolean',
+    ], [
+    'id.required' => 'El identificador del inventario es necesario.',
+    'id.exists' => 'El inventario que intentas editar no existe.',
+    'name.required' => 'El nombre del inventario no puede estar vacío.',
+    'name.max' => 'El nombre del inventario es demasiado largo (máximo 255 caracteres).',
+    'name.string' => 'El nombre no es válido',
+
+    'attributes.*.key_name.required' => 'Cada atributo debe tener un nombre obligatorio.',
+    'attributes.*.key_name.max' => 'El nombre del atributo es demasiado largo.',
+    'attributes.*.key_name.max' => 'El nombre del atributo no es válido.',
+    'attributes.*.type.required' => 'Debes seleccionar un tipo de dato para cada atributo.',
+    'attributes.*.type.in' => 'El tipo de dato seleccionado no es válido.',
+    'attributes.*.id.exists' => 'Uno de los atributos que intentas modificar no es válido.']);
+
+    $inventory = Inventory::find($request->id);
+    $ids = Auth::user()->keys();
+    if (!$inventory || !in_array($inventory->user_id, $ids)) {
+        return back()->with('error', 'No autorizado.');
     }
+
+    try {
+        $this->inventoryService->updateInventory($request);
+        return redirect()->route('inventory.index')->with('success', 'Inventario actualizado correctamente.');
+    } catch (\Exception $e) {
+        Log::error("Error actualizando inventario: " . $e->getMessage());
+        return back()->with("error", "Error al actualizar el inventario.")->withInput();
+    }
+}
 
     public function attributes(Request $request){
         $inventory = Inventory::find($request->inventory_id);
         $ids = Auth::user()->keys();
 
-        if(!$inventory || !in_array($inventory->user_id, $allowedIds)){
+        if(!$inventory || !in_array($inventory->user_id, $ids)){
             return;
         }
         $attributes = InventoryAttribute::where("inventory_id", $request->inventory_id)->get();

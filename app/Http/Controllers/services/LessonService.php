@@ -20,7 +20,7 @@ class LessonService implements LessonServiceInterface {
     }
     public function updateLesson($lesson, $data){
         if (!$lesson->update($data)) {
-            throw new Exception("No se pudo actualizar la disciplina.");
+            throw new Exception("No se pudo actualizar la clase.");
         }
         return $lesson->fresh();
     }

@@ -57,9 +57,13 @@
 
                 @foreach ($inventoriesAttributes as $inventoryId => $inventoryAttributes)
                     @foreach($inventoryAttributes as $inventoryAttribute)
+                    @php
+                        $attributeValue = $good->attributes->where('id_key', $inventoryAttribute->id)->first();
+                    @endphp
                     <div data-inventory-id="{{ $inventoryId }}" class="good-attribute hidden">
                         <label for="name">{{ $inventoryAttribute->key_name }}</label>
-                        <input type="text" name="value[]" class="block good-attribute-input" placeholder="Introduzca el valor...">
+                        <input type="text" name="value[]" class="block good-attribute-input" placeholder="Introduzca el valor..."
+                        value="{{ old('value.' . $loop->parent->index, $attributeValue ? $attributeValue->value : '') }}">
                         <input type="hidden" name="id_key[]" value="{{ $inventoryAttribute->id }}">
                     </div>
                     @endforeach

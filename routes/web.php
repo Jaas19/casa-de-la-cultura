@@ -54,7 +54,7 @@ Route::middleware('auth')->group(function () {
     // Activities
     Route::get('/activity', [ActivityController::class, 'index'])->name('activity.index');
     Route::get('/activity/create', [ActivityController::class, 'create'])->name('activity.create');
-    Route::post('/activity/update', [ActivityController::class, 'update'])->name('activity.update');
+    Route::get('/activity/edit/{activity}', [ActivityController::class, 'update'])->name('activity.update');
     Route::post('/activity/getDetails', [ActivityController::class, 'getDetails'])->name('activity.getDetails');
     Route::patch('/activity/patch', [ActivityController::class, 'updateActivity'])->name('activity.patch');
     Route::post('/activity/store', [ActivityController::class, 'store'])->name('activity.store');

@@ -6,6 +6,7 @@ use App\Http\Controllers\Services\PositionServiceInterface;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use App\Models\PositionType;
 use App\Models\Position;
 use App\Models\Person;
@@ -35,20 +36,29 @@ class PersonController extends Controller
     }
 
     public function edit(Person $person){
-        // $request->disciplineId;
         $userId = Auth::id();
         $positions = $this->positionService->listPositions();
         return view("person.update", compact("positions", "person"));
     }
 
     public function patch(Request $request) {
+    try {
         $this->personService->updatePerson($request);
-        return redirect(route("person.index"));
+        return redirect()->route("person.index")->with('success', 'Persona actualizada correctamente.');
+    } catch (\Exception $e) {
+        Log::error("Error actualizando persona ID {$request->id}: " . $e->getMessage());
+        return back()->withInput()->with('error', 'Error al actualizar los datos.');
+    }
     }
 
     public function store(Request $request){
+    try {
         $this->personService->createPerson($request);
-        return redirect(route("person.create"));
+        return redirect()->route("person.index")->with('success', 'Persona registrada exitosamente.');
+    } catch (\Exception $e) {
+        Log::error("Error registrando persona: " . $e->getMessage());
+        return back()->withInput()->with('error', 'No se pudo completar el registro.');
+    }
     }
 
     public function put(Request $request){

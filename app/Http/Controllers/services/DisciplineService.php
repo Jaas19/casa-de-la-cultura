@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Discipline;
 use App\Models\User;
+use Exception;
 
 class DisciplineService implements DisciplineServiceInterface{
     public function storeDiscipline($data, $user){

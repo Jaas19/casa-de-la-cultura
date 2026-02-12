@@ -120,22 +120,17 @@ class ActivityService implements ActivityServiceInterface {
     }
 
     public function createActivity(Request $request){
-        try {
-            DB::transaction(function () use ($request) {
+
+        return DB::transaction(function () use ($request) {
                 $data = $request->only(['name', 'status']);
                 $data['important'] = $request->has('important') ? 1 : 0;
                 $data['user_id'] = Auth::id();
                 $activity = Activity::create($data);
 
-
                 $this->saveActivityDetails($activity, $request);
+
+                return $activity;
             });
-
-            return redirect()->route('activity.index')->with('success', 'Actividad creada correctamente');
-
-        } catch (\Exception $e) {
-            return back()->withErrors(['error' => 'Error al guardar: ' . $e->getMessage()])->withInput();
-        }
     }
 
     private function saveActivityDetails(Activity $activity, Request $request)
@@ -185,30 +180,25 @@ class ActivityService implements ActivityServiceInterface {
         }
     }
 
-    public function updateActivity(Request $request)
-    {
+public function updateActivity(Request $request)
+{
+    return DB::transaction(function () use ($request) {
         $activity = Activity::findOrFail($request->id);
-        try {
-            DB::transaction(function () use ($request, $activity) {
-                $data = $request->only(['name', 'status']);
-                $data['important'] = $request->has('important') ? 1 : 0;
+        $data = $request->only(['name', 'status']);
+        $data['important'] = $request->has('important') ? 1 : 0;
+        $activity->update($data);
 
-                $activity->update($data);
-                $dateIds = $activity->dates()->pluck('id');
-                ActivityHour::whereIn('date_id', $dateIds)->delete();
-                $activity->dates()->delete();
-                $activity->goods()->delete();
-                $activity->organizers()->delete();
+        $dateIds = $activity->dates()->pluck('id');
+        ActivityHour::whereIn('date_id', $dateIds)->delete();
 
-                $this->saveActivityDetails($activity, $request);
-            });
+        $activity->dates()->delete();
+        $activity->goods()->delete();
+        $activity->organizers()->delete();
 
-            return back()->with('success', 'Actividad actualizada correctamente');
-
-        } catch (\Exception $e) {
-            return back()->withErrors(['error' => 'Error al actualizar: ' . $e->getMessage()]);
-        }
-    }
+        $this->saveActivityDetails($activity, $request);
+        return $activity;
+    });
+}
 
     public function changeStatus(Request $data){
         $activity = Activity::where("id", "=", $data->id)

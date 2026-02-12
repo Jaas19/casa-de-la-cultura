@@ -74,7 +74,7 @@ class DisciplineController extends Controller
             [
                 'id' => 'required|exists:disciplines,id',
                 'name' => 'required|string|max:255',
-                'status' => 'nullable|integer'
+                'status' => 'nullable|in:0,1'
             ], [
                 'name.required' => "El nombre es obligatorio.",
                 'name.string' => "El nombre no es válido.",

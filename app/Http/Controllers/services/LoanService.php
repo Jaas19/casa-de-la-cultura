@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Services;
 use App\Models\Loan;
+use App\Models\Good;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class LoanService implements LoanServiceInterface{
 
@@ -16,69 +18,70 @@ class LoanService implements LoanServiceInterface{
         return Loan::whereIn("user_id", $ids)->with('good')->with('user')->with('person')->get();
     }
 
-    public function updateStatus($status, $loanId){
-        $loan = Loan::with(['good.inventory'])->findOrFail($loanId);
-        if(($loan->status == "given" || $loan->status == "overdue") && $status == "returned"){
-            $data = [
-            'good_id'  => $loan->good_id,
-            'user_id'  => Auth::user()->id,
-            'type'     => 'deposit',
-            'quantity' => $loan->quantity_requested,
-            'inventory_id' => $loan->good->inventory->id];
+    public function updateStatus($status, $loanId) {
+        return DB::transaction(function () use ($status, $loanId) {
+            $loan = Loan::with(['good.inventory'])->findOrFail($loanId);
+            $oldStatus = $loan->status;
 
-            $response = $this->movementService->registerMovement($data);
-            if (isset($response['error'])) {
-            return $response;
+            if (in_array($oldStatus, ['given', 'overdue']) && $status == 'returned') {
+                $this->movementService->registerMovement([
+                    'good_id' => $loan->good_id,
+                    'user_id' => Auth::id(),
+                    'type' => 'deposit',
+                    'quantity' => $loan->quantity_requested,
+                    'inventory_id' => $loan->good->inventory->id
+                ]);
             }
-        }
 
-        if($loan->status == "returned" && ($status == "given" or $status == "overdue")){
-            $data = [
-            'good_id'  => $loan->good_id,
-            'user_id'  => Auth::user()->id,
-            'type'     => 'retire',
-            'quantity' => $loan->quantity_requested,
-            'inventory_id' => $loan->good->inventory->id];
+            if ($oldStatus == 'returned' && in_array($status, ['given', 'overdue'])) {
+                $response = $this->movementService->registerMovement([
+                    'good_id' => $loan->good_id,
+                    'user_id' => Auth::id(),
+                    'type' => 'retire',
+                    'quantity' => $loan->quantity_requested,
+                    'inventory_id' => $loan->good->inventory->id
+                ]);
 
-            $response = $this->movementService->registerMovement($data);
+                if (isset($response['error'])) return $response;
+            }
 
-            if (isset($response['error'])) {
-            return $response;
-        }
-        }
-
-        $loan->update(["status" => $status]);
-
-        return $loan->save();
-        }
+            $loan->update(["status" => $status]);
+            return $loan;
+        });
+    }
 
 
     public function createLoan($request){
 
-        $common_keys = [
+    $common_keys = [
         "good_id",
         "person_id",
         "loan_date",
         "retrieval_date",
         "quantity_requested",
-        "status"];
+        "status"
+    ];
 
-        $loan = $request->only($common_keys);
-        $loan["user_id"] = Auth::user()->id;
+    $loanData = $request->only($common_keys);
+    $loanData["user_id"] = Auth::user()->id;
 
-        if($loan['status'] == "given" or $loan['status'] == 'overdue'){
+    if($loanData['status'] == "given" || $loanData['status'] == 'overdue'){
 
-            $data = [
-                "good_id" => $loan['good_id'],
-                "type" => "retire",
-                "quantity" => $loan['quantity_requested']
-            ];
+        $good = Good::findOrFail($loanData['good_id']);
 
-            $this->movementService->registerMovement($data);
-        }
+        $movementData = [
+            "good_id" => $loanData['good_id'],
+            "inventory_id" => $good->inventory_id,
+            "user_id" => Auth::id(),
+            "type" => "retire",
+            "quantity" => $loanData['quantity_requested']
+        ];
 
-        return $loan = Loan::create($loan);
+        $this->movementService->registerMovement($movementData);
     }
+
+    return Loan::create($loanData);
+}
 
     /*
 

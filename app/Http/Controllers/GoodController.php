@@ -38,11 +38,63 @@ class GoodController extends Controller
     }
 
     public function store(Request $data) {
+        $request->validate([
+        'inventory_id' => 'required|exists:inventories,id',
+        'name' => 'required|string|max:255',
+        'available_amount' => 'required|integer|min:0',
+        'description' => 'nullable|string|max:255',
+        'id_key' => 'nullable|array',
+        'value' => 'nullable|array',
+    ], [
+        'inventory_id.required' => "El inventario es obligatorio.",
+        'inventory_id.exists' => "El inventario seleccionado no existe.",
+        'name.required' => 'El nombre del bien es obligatorio.',
+        'name.max' => 'El nombre del bien es muy largo.',
+        'name.string' => 'El nombre del bien no es válido.',
+        'description.string' => "La descripción no es válida.",
+        'description.max' => "La descripción es muy larga.",
+        'available_amount.required' => 'La cantidad disponible es obligatoria.',
+        'available_amount.integer' => 'La cantidad disponible debe ser un número entero.',
+        'available_amount.min' => 'La cantidad disponible no puede ser negativa.',
+        'id_key.array' => "Los campos extra son inválidos.",
+        'value.array' => "El valor de los campos extra son inválidos.",
+    ]);
         $this->goodService->createGood($data);
         return redirect(route("inventory.index"));
 }
-    public function patch(Request $data, Good $good){
-        $this->goodService->updateGood($data, $good -> id);
-        return redirect(route("inventory.index"));
+    public function patch(Request $request, Good $good){
+        $request->validate([
+        'inventory_id' => 'required|exists:inventories,id',
+        'name' => 'required|string|max:255',
+        'available_amount' => 'required|integer|min:0',
+        'description' => 'nullable|string|max:255',
+
+        'id_key' => 'nullable|array',
+        'id_key.*' => 'exists:inventory_attributes,id',
+        'value' => 'nullable|array',
+        'value.*' => 'nullable|string|max:255',
+    ], [
+        'inventory_id.required' => "El inventario es obligatorio.",
+        'inventory_id.exists' => "El inventario seleccionado no existe.",
+        'name.required' => 'El nombre del bien es obligatorio.',
+        'name.max' => 'El nombre del bien es muy largo.',
+        'name.string' => 'El nombre del bien no es válido.',
+        'description.string' => "La descripción no es válida.",
+        'description.max' => "La descripción es muy larga.",
+        'available_amount.required' => 'La cantidad disponible es obligatoria.',
+        'available_amount.integer' => 'La cantidad disponible debe ser un número entero.',
+        'available_amount.min' => 'La cantidad disponible no puede ser negativa.',
+        'id_key.array' => "Los campos extra son inválidos.",
+        'value.array' => "El valor de los campos extra son inválidos.",
+    ]);
+    try {
+        $this->goodService->updateGood($request, $good->id);
+        return redirect()->route("inventory.index")
+                         ->with('success', 'Bien actualizado correctamente');
+    } catch (\Exception $e) {
+        Log::error("Error en patch de Good ID {$good->id}: " . $e->getMessage());
+        return back()->withInput()
+                     ->with('error', 'Ocurrió un error al actualizar el bien.');
+    }
     }
 }

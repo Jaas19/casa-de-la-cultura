@@ -35,7 +35,6 @@ class PersonService implements PersonServiceInterface{
             'dni.required' => 'La cédula es obligatoria.',
             'phone_number.required' => 'El número de teléfono es obligatorio.',
             'dni.numeric' => 'La cédula debe contener solo números.',
-            'dni.digits' => 'La cédula debe tener exactamente 8 dígitos.',
             'dni.unique' => 'La cédula ya está registrada',
             'sex.required' => 'El sexo es obligatorio.',
             'sex.in' => 'El sexo debe ser Masculino, Femenino u Otro',
@@ -46,28 +45,19 @@ class PersonService implements PersonServiceInterface{
             'position_id.exists' => 'El cargo seleccionado no existe en la base de datos.',
     ];
 
-        $result = $request->validate($rules, $messages);
-
-        $data = [
-            "name" => $result['name'],
-            "lastname" => $result['lastname'],
-            "dni" => $result['dni'],
-            "sex" => $result['sex'],
-            "phone_number" => $result['phone_number'],
-            "position_id" => $result['position_id']
-        ];
+        $data = $request->validate($rules, $messages);
+        return DB::transaction(function () use ($request, $person, $data) {
 
         if ($request->hasFile('image')) {
-
             if ($person->image) {
                 Storage::disk('public')->delete($person->image);
             }
-
-            $image = $request->file('image')->store('persons', 'public');
-            $data["image"] = $image;
+            $data["image"] = $request->file('image')->store('persons', 'public');
         }
 
         $person->update($data);
+        return $person;
+    });
     }
 
     public function createPerson(Request $request){
@@ -86,7 +76,6 @@ class PersonService implements PersonServiceInterface{
             'dni.required' => 'El DNI es obligatorio.',
             'phone_number.required' => 'El número de teléfono es obligatorio.',
             'dni.numeric' => 'El DNI debe contener solo números.',
-            'dni.digits' => 'El DNI debe tener exactamente 8 dígitos.',
             'dni.unique' => 'El DNI ya está registrado.',
             'sex.required' => 'El sexo es obligatorio.',
             'image.image' => 'El archivo debe ser una imagen.',
@@ -98,24 +87,23 @@ class PersonService implements PersonServiceInterface{
 
         $result = $request->validate($rules, $messages);
 
+    return DB::transaction(function () use ($request, $result) {
         $image = null;
         if ($request->hasFile('image')) {
-
-
-
             $image = $request->file('image')->store('persons', 'public');
         }
 
-        $data = [
+        return Person::create([
             "name" => $result['name'],
             "lastname" => $result['lastname'],
             "dni" => $result['dni'],
             "sex" => $result['sex'],
             "image" => $image,
             "phone_number" => $result['phone_number'],
-            "position_id" => $result['position_id']
-        ];
-        return Person::create($data);
+            "position_id" => $result['position_id'],
+            "status" => 'active'
+        ]);
+    });
     }
 
     public function toggleStatus($id){

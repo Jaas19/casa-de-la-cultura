@@ -81,7 +81,11 @@ function newHour(e){
     activityFormDiv.insertBefore(div2, e.target);
 }
 
-addEventListener('DOMContentLoaded', newDate);
+addEventListener('DOMContentLoaded', () => {
+    if (dateAmount === 0) {
+        newDate();
+    }
+});
 
 function newDate(){
     dateAmount ++

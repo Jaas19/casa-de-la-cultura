@@ -38,28 +38,31 @@ class GoodService implements GoodServiceInterface {
 
     public function updateGood(Request $request, $id)
 {
-    $good = Good::findOrFail($id);
-    $common_keys = ['inventory_id', 'name', 'description', 'photo', 'available_amount'];
-    $good->update($request->only($common_keys));
-    $values = $request->input("value");
-    $keys = $request->input("id_key");
+return DB::transaction(function () use ($request, $id) {
+        $good = Good::findOrFail($id);
 
-    if (is_array($values) && is_array($keys)) {
+        $common_keys = ['inventory_id', 'name', 'description', 'photo', 'available_amount'];
+        $good->update($request->only($common_keys));
 
-        foreach ($values as $index => $value) {
+        $values = $request->input("value", []);
+        $keys = $request->input("id_key", []);
 
-            Good_Attribute::updateOrCreate(
-                [
-                    'id_good' => $good->id,
-                    'id_key'  => $keys[$index]
-                ],
-                [
-                    'value' => $value
-                ]
-            );
+        if (is_array($values) && is_array($keys)) {
+            foreach ($keys as $index => $key_id) {
+                Good_Attribute::updateOrCreate(
+                    [
+                        'id_good' => $good->id,
+                        'id_key'  => $key_id
+                    ],
+                    [
+                        'value' => $values[$index] ?? null
+                    ]
+                );
+            }
         }
-    }
-    return $good;
+
+        return $good;
+    });
 }
 
     public function listGoodsWithInventory ($ids){

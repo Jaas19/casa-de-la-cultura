@@ -5,13 +5,9 @@
     <main class="flex w-full h-full items-end text-nowrap">
         <div class="full">
             <ul class="flex flex-col text-sm">
-                <form action="{{ route('activity.update') }}" method="POST">
-                    @csrf
-                    <button class="self-end">
-                        <input type="hidden" name="activityId" value="{{ $activityId }}">
+                    <a href="{{ route('activity.update', ['activity' => $activityId]) }}">
                         <li class="cursor-pointer text-blue-400 border-b w-min border-blue-400">Editar</li>
-                    </button>
-                </form>
+                    </a>
                 {{ $slot }}
             </ul>
         </div>

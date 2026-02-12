@@ -26,53 +26,53 @@
                 <div>
                     <label for="name">Persona</label>
                     <select name="person_id" id="person_id" class="block">
-                        <option value="" disabled selected>Seleccionar...</option>
+                        <option value="" disabled {{ old('person_id') == '' ? 'selected' : '' }}>Seleccionar...</option>
                         @foreach ($persons as $person)
-                            <option value="{{ $person->id }}">{{ $person->name }}</option>
+                            <option value="{{ $person->id }}" {{ old('person_id') == $person->id ? 'selected' : '' }}>{{ $person->name }}</option>
                         @endforeach
                     </select>
                 </div>
 
                 <div>
                     <label for="loan_date">Fecha de despacho</label>
-                    <input type="date" id="loan_date" name="loan_date" class="block" value="{{ now()->format("Y-m-d") }}">
+                    <input type="date" id="loan_date" name="loan_date" class="block" value="{{ old('loan_date', now()->format("Y-m-d")) }}">
                 </div>
 
                 <div>
                     <label for="status">Estado</label>
                     <select name="status" id="status" class="block">
-                        <option value="given" selected>Entregado</option>
-                        <option value="returned">Devuelto</option>
-                        <option value="overdue">Atrasado</option>
+                        <option value="given" {{ old('status', 'given') == 'given' ? 'selected' : '' }}>Entregado</option>
+                        <option value="returned" {{ old('status') == 'returned' ? 'selected' : '' }}>Devuelto</option>
+                        <option value="overdue" {{ old('status') == 'overdue' ? 'selected' : '' }}>Atrasado</option>
                     </select>
                 </div>
 
                 <div>
                     <label for="retrieval_date">Fecha de devolucion</label>
-                    <input type="date" id="retrieval_date" name="retrieval_date" class="block">
+                    <input type="date" id="retrieval_date" name="retrieval_date" class="block" value="{{ old('retrieval_date') }}">
                 </div>
 
                 <div>
                     <label for="inventory_id">Inventario</label>
                     <select id="inventory_id" name="inventory_id" class="block" required>
-                        <option id="selectGoodOption" selected>Seleccionar...</option>
+                        <option id="selectGoodOption" value="" {{ old('inventory_id') == '' ? 'selected' : '' }}>Seleccionar...</option>
                         @foreach($inventories as $inventory)
-                            <option value="{{ $inventory->id }}">{{ $inventory->name }}</option>
+                            <option value="{{ $inventory->id }}" {{ old('inventory_id') == $inventory->id ? 'selected' : '' }}>{{ $inventory->name }}</option>
                         @endforeach
                     </select>
                 </div>
 
                 <div>
                     <label for="quantity_requested">Cantidad</label>
-                    <input type="number" id="quantity_requested" name="quantity_requested" class="block" placeholder="Ingresar monto...">
+                    <input type="number" id="quantity_requested" name="quantity_requested" class="block" placeholder="Ingresar monto..." value="{{ old('quantity_requested') }}">
                 </div>
 
                 <div>
                     <label for="good">Bien</label>
                     <select id="good" name="good_id" class="block" required>
-                        <option selected>Seleccionar...</option>
+                        <option value="" {{ old('good_id') == '' ? 'selected' : '' }}>Seleccionar...</option>
                         @foreach($goods as $good)
-                            <option value="{{ $good->id }}" data-inventory-id="{{ $good->inventory->id }}" class="goodOptions">{{ $good->name }}</option>
+                            <option value="{{ $good->id }}" data-inventory-id="{{ $good->inventory->id }}" class="goodOptions" {{ old('good_id') == $good->id ? 'selected' : '' }}>{{ $good->name }}</option>
                         @endforeach
                     </select>
                 </div>
