@@ -53,8 +53,8 @@
                 </div>
 
                 <div>
-                    <label for="inventory">Inventario</label>
-                    <select id="inventory" class="block" required>
+                    <label for="inventory_id">Inventario</label>
+                    <select id="inventory_id" name="inventory_id" class="block" required>
                         <option id="selectGoodOption" selected>Seleccionar...</option>
                         @foreach($inventories as $inventory)
                             <option value="{{ $inventory->id }}">{{ $inventory->name }}</option>

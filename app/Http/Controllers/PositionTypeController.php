@@ -32,7 +32,7 @@ class PositionTypeController extends Controller
             return back()->with("error", "Acceso denegado.");
         }
         $validatedData = $request->validate([
-            "name" => ["regex:/^[\pL\s\d\.\(\)\-]+$/u", "string", "required", "min:3", "max:50", "unique:positions_types,name"],
+            "name" => ["regex:/^[\pL\s\d\.\(\)\-]+$/u", "string", "required", "min:3", "max:50", "unique:position_types,name"],
         ], $this->messages);
         try{
             PositionType::create($validatedData);

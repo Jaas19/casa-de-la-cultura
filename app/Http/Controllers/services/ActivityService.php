@@ -65,7 +65,7 @@ class ActivityService implements ActivityServiceInterface {
             $query->where('name', 'like', '%' . $search . '%');
         }
 
-        $paginator = $query->paginate(7);
+        $paginator = $query->paginate(30);
 
         $activities = $paginator->getCollection();
 

@@ -8,12 +8,12 @@ const organizerDiv = document.querySelector('#organizer-div')
 
 const hourButtons = document.querySelectorAll('.hour-button');
 
-const selectableOptions = document.querySelectorAll('.selectable-good-option')
+const selects = document.querySelectorAll('select[name="good_id[]"]')
 
-for(let selectableOption of selectableOptions){
-    selectableOption.addEventListener("click", changeInventorySelectInnerText)
-    if(selectableOption.hasAttribute("selected")){
-        selectableOption.dispatchEvent(new Event("click"));
+for(let select of selects){
+    select.addEventListener("change", changeInventorySelectInnerText);
+    if(select.value){
+        select.dispatchEvent(new Event("change"));
     }
 }
 
@@ -157,9 +157,19 @@ function newDate(){
 }
 
 function changeInventorySelectInnerText(e){
-    let selectInput = document.querySelector(`[data-good-count="${e.target.getAttribute("data-good-count")}"].inventory-select-input`);
-    selectInput.options[0].innerText = inventories[e.target.getAttribute("data-inventory-id")];
-    selectInput.setAttribute("value", e.target.getAttribute("data-inventory-id"))
+let goodSelect = e.target;
+    let selectedOption = goodSelect.options[goodSelect.selectedIndex];
+
+    let inventoryId = selectedOption.getAttribute("data-inventory-id");
+    let goodCount = selectedOption.getAttribute("data-good-count");
+
+    let inventorySelectInput = document.querySelector(`[data-good-count="${goodCount}"].inventory-select-input`);
+
+    if (inventoryId && inventorySelectInput) {
+        inventorySelectInput.options[0].innerText = inventories[inventoryId];
+        inventorySelectInput.options[0].value = inventoryId;
+        inventorySelectInput.value = inventoryId;
+    }
 }
 
 function printGoodOption(select, good){
@@ -185,6 +195,9 @@ function newGood(){
     div1.appendChild(label1);
 
     let select = document.createElement("select");
+
+    select.addEventListener("change", changeInventorySelectInnerText);
+
     let initialOption = document.createElement("option");
     initialOption.innerText = "Seleccionar...";
     initialOption.setAttribute("disabled", "true");
@@ -199,7 +212,6 @@ function newGood(){
             option.setAttribute("data-good-count", goodAmount);
             option.classList.add("selectable-good-option")
             select.appendChild(option);
-            option.addEventListener("click", changeInventorySelectInnerText)
         })
     })
     select.classList.add("block")

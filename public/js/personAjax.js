@@ -1,7 +1,5 @@
-const suspendButton = document.querySelector("#suspend-button")
 const statusCheckboxes = document.querySelectorAll(".person-assistance-status")
 
-suspendButton.addEventListener("click", toggleUserStatus);
 
 for(const statusCheckbox of statusCheckboxes){
     statusCheckbox.addEventListener('change', toggleAssistanceStatus);

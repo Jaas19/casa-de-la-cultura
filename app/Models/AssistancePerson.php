@@ -9,7 +9,8 @@ class AssistancePerson extends Model
 {
     protected $fillable = [
         'user_id',
-        'person_id'
+        'person_id',
+        'status',
     ];
 
     public function person(): BelongsTo {

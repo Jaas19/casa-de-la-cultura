@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Http\Controllers\Services;
 
@@ -23,7 +23,7 @@ class PersonService implements PersonServiceInterface{
         $rules = [
             'name' => 'required|string|max:40',
             'lastname' => 'required|string|max:40',
-            'dni' => 'required|numeric|digits:8|unique:people,dni,' . $request->id,
+            'dni' => 'required|numeric|unique:people,dni,' . $request->id,
             'sex' => 'required|in:Masculino,Femenino,Otro',
             'image' => 'nullable|image|max:4096',
             'phone_number' => 'required|string|max:12',
@@ -45,7 +45,7 @@ class PersonService implements PersonServiceInterface{
             'position_id.required' => 'Debe seleccionar un cargo.',
             'position_id.exists' => 'El cargo seleccionado no existe en la base de datos.',
     ];
-        
+
         $result = $request->validate($rules, $messages);
 
         $data = [
@@ -74,7 +74,7 @@ class PersonService implements PersonServiceInterface{
         $rules = [
             'name' => 'required|string|max:40',
             'lastname' => 'required|string|max:40',
-            'dni' => 'required|numeric|digits:8|unique:people,dni',
+            'dni' => 'required|numeric|unique:people,dni',
             'sex' => 'required',
             'image' => 'nullable|image|max:4096',
             'phone_number' => 'required|string|max:12',
@@ -95,7 +95,7 @@ class PersonService implements PersonServiceInterface{
             'position_id.required' => 'Debe seleccionar un cargo.',
             'position_id.exists' => 'El cargo seleccionado no existe en la base de datos.',
     ];
-        
+
         $result = $request->validate($rules, $messages);
 
         $image = null;
@@ -122,7 +122,7 @@ class PersonService implements PersonServiceInterface{
         $person = $this->findPerson($id);
         if(!$person){
             return response()->json([
-            'success' => false, 
+            'success' => false,
             'message' => 'Persona no encontrada'
         ], 404);
         }
@@ -153,9 +153,9 @@ class PersonService implements PersonServiceInterface{
     }
 
     public function toggleAssistanceStatus($person_id, $user_id){
-        $person = AssistancePerson::where("user_id", "=", $user_id)
+        $person = AssistancePerson::where("user_id", "=", Auth::id())
         ->where("person_id", "=", $person_id)->first();
-    
+
         if(!$person){
             AssistancePerson::create(
                 [

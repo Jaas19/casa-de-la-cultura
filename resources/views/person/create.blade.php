@@ -48,7 +48,7 @@
         </div>
         <div>
             <label for="dni">Cédula</label>
-            <input type="text" required id="dni" name="dni" class="block" placeholder="Introduzca la cédula...">
+            <input type="text" required id="dni" name="dni" class="block" placeholder="Introduzca la cédula..." maxlength="8">
         </div>
         <div class="">
             <label for="sex">Sexo</label>
