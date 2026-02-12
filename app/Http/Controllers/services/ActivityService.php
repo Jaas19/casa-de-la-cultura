@@ -9,6 +9,7 @@ use App\Models\ActivityGood;
 use App\Models\ActivityPerson;
 use App\Models\ActivityDate;
 use App\Models\ActivityHour;
+use App\Models\AuditLog;
 use App\Models\InventoryAttribute;
 use Carbon\Carbon;
 use DateInterval;
@@ -180,25 +181,38 @@ class ActivityService implements ActivityServiceInterface {
         }
     }
 
-public function updateActivity(Request $request)
-{
-    return DB::transaction(function () use ($request) {
-        $activity = Activity::findOrFail($request->id);
-        $data = $request->only(['name', 'status']);
-        $data['important'] = $request->has('important') ? 1 : 0;
-        $activity->update($data);
+    public function updateActivity(Request $request)
+    {
+        return DB::transaction(function () use ($request) {
+            $activity = Activity::findOrFail($request->id);
+            $oldActivity = $activity->replicate();
+            $oldName = $oldActivity->name;
 
-        $dateIds = $activity->dates()->pluck('id');
-        ActivityHour::whereIn('date_id', $dateIds)->delete();
+            $data = $request->only(['name', 'status']);
+            $data['important'] = $request->has('important') ? 1 : 0;
+            $activity->update($data);
 
-        $activity->dates()->delete();
-        $activity->goods()->delete();
-        $activity->organizers()->delete();
+            $dateIds = $activity->dates()->pluck('id');
+            ActivityHour::whereIn('date_id', $dateIds)->delete();
 
-        $this->saveActivityDetails($activity, $request);
-        return $activity;
-    });
-}
+            $activity->dates()->delete();
+            $activity->goods()->delete();
+            $activity->organizers()->delete();
+
+            $this->saveActivityDetails($activity, $request);
+
+            if ($activity->user_id != Auth::id()) {
+                AuditLog::create([
+                    "giver_id" => $activity->user_id,
+                    "collaborator_id" => Auth::id(),
+                    "model_changed" => "Actividad: $oldName",
+                    "type" => "Actualización"
+                ]);
+            }
+
+            return $activity;
+        });
+    }
 
     public function changeStatus(Request $data){
         $activity = Activity::where("id", "=", $data->id)

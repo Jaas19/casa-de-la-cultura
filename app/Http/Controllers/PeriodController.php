@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Period;
 use App\Models\Lesson;
+use App\Models\AuditLog;
+use Illuminate\Support\Facades\DB;
+
 
 class PeriodController extends Controller
 {
@@ -47,33 +50,60 @@ class PeriodController extends Controller
         if (!in_array($lesson->discipline->administrator_id, $ids)) {
             abort(403);
         }
+
         $validatedData = $request->validate([
             "day" => "required|integer|between:1,7",
             "starting_time" => "required|date_format:H:i",
             "ending_time" => "required|date_format:H:i|after:starting_time",
             "status" => "required|in:1,0",
         ]);
-        $lesson->periods()->create($validatedData);
-        return redirect()->route("period.index", $lesson);
+
+        return DB::transaction(function () use ($validatedData, $lesson) {
+            $period = $lesson->periods()->create($validatedData);
+
+            if ($lesson->discipline->administrator_id != Auth::id()) {
+                AuditLog::create([
+                    "giver_id" => $lesson->discipline->administrator_id,
+                    "collaborator_id" => Auth::id(),
+                    "model_changed" => "Períodos (" . $lesson->discipline->name . ": " . $lesson->name . ")",
+                    "type" => "Creación"
+                ]);
+            }
+
+            return redirect()->route("period.index", $lesson)->with("success", "Período creado");
+        });
     }
 
     public function update(Request $request, Lesson $lesson, Period $period){
-        $ids = Auth::user()->keys();
-        if (!in_array($lesson->discipline->administrator_id, $ids)) {
-            abort(403);
-        }
-        $validatedData = $request->validate([
-            "day" => "required|integer|between:1,7",
-            "starting_time" => "required|date_format:H:i",
-            "ending_time" => "required|date_format:H:i|after:starting_time",
-            "status" => "required|in:1,0",
-        ]);
-        try {
-            $period->update($validatedData);
-            return redirect()->route("period.index", $lesson)->with("success", "Período registrado con éxito.");
-        } catch(\Exception $e){
-            return back()->withInput()->with("error", "Hubo un error al registrar el período.");
-        }
+            $ids = Auth::user()->keys();
+            if (!in_array($lesson->discipline->administrator_id, $ids)) {
+                abort(403);
+            }
 
-    }
+            $validatedData = $request->validate([
+                "day" => "required|integer|between:1,7",
+                "starting_time" => "required|date_format:H:i",
+                "ending_time" => "required|date_format:H:i|after:starting_time",
+                "status" => "required|in:1,0",
+            ]);
+
+            return DB::transaction(function () use ($validatedData, $lesson, $period) {
+                try {
+                    $period->update($validatedData);
+
+                    if ($lesson->discipline->administrator_id != Auth::id()) {
+                        AuditLog::create([
+                            "giver_id" => $lesson->discipline->administrator_id,
+                            "collaborator_id" => Auth::id(),
+                            "model_changed" => "Períodos (" . $lesson->discipline->name . ": " . $lesson->name . ")",
+                            "type" => "Actualización"
+                        ]);
+                    }
+
+                    return redirect()->route("period.index", $lesson)->with("success", "Período registrado con éxito.");
+                } catch(\Exception $e){
+                    return back()->withInput()->with("error", "Hubo un error al registrar el período.");
+                }
+            });
+        }
 }

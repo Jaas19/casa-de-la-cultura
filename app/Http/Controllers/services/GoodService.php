@@ -5,14 +5,18 @@ use App\Models\Good;
 use App\Models\Good_Attribute;
 use App\Models\Inventory;
 use App\Models\InventoryAttribute;
+use App\Models\AuditLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class GoodService implements GoodServiceInterface {
     public function createGood (Request $data){
-
+        return DB::transaction(function () use ($data) {
+            $inventory = Inventory::find($data["inventory_id"]);
             $common_keys = ['inventory_id', 'name', 'description', 'photo', 'available_amount'];
-            $modelId = Good::create($data->only($common_keys))->id;
+            $model = Good::create($data->only($common_keys));
+            $modelId = $model->id;
             $goodAttributes = [];
             $values = $data -> input("value");
             $keys = $data -> input("id_key");
@@ -34,6 +38,16 @@ class GoodService implements GoodServiceInterface {
         if(!empty($goodAttributes)){
             Good_Attribute::insert($goodAttributes);
         }
+        if($inventory->user_id != Auth::id()){
+            AuditLog::create([
+            "giver_id" => $inventory->user_id,
+            "collaborator_id" => Auth::id(),
+            "model_changed" => "Bien: $model->name ($inventory->name)",
+            "type" => "Creación"
+        ]);
+        }
+            return $model;
+        });
     }
 
     public function updateGood(Request $request, $id)
@@ -60,7 +74,15 @@ return DB::transaction(function () use ($request, $id) {
                 );
             }
         }
-
+        $inventory = Inventory::find($good->inventory_id);
+        if($inventory->user_id != Auth::id()){
+            AuditLog::create([
+            "giver_id" => $inventory->user_id,
+            "collaborator_id" => Auth::id(),
+            "model_changed" => "Bien: $good->name ($inventory->name)",
+            "type" => "Actualización"
+        ]);
+        }
         return $good;
     });
 }
@@ -78,8 +100,7 @@ return DB::transaction(function () use ($request, $id) {
     public function listGoodsWithAttributes(int $inventoryId) {
         return DB::table('goods')
                             ->leftJoin('good__attributes', 'goods.id', '=', 'good__attributes.id_good')
-                            ->get('id_key')
-                            ->as();
+                            ->get('id_key');
     }
 
     public function listGoodsAttributes($inventory_id) {

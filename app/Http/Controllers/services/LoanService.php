@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Services;
 use App\Models\Loan;
 use App\Models\Good;
+use App\Models\AuditLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -21,7 +22,9 @@ class LoanService implements LoanServiceInterface{
     public function updateStatus($status, $loanId) {
         return DB::transaction(function () use ($status, $loanId) {
             $loan = Loan::with(['good.inventory'])->findOrFail($loanId);
-            $oldStatus = $loan->status;
+
+            $oldLoan = $loan->replicate();
+            $oldStatus = $oldLoan->status;
 
             if (in_array($oldStatus, ['given', 'overdue']) && $status == 'returned') {
                 $this->movementService->registerMovement([
@@ -46,41 +49,60 @@ class LoanService implements LoanServiceInterface{
             }
 
             $loan->update(["status" => $status]);
+            if ($loan->user_id != Auth::id()) {
+            AuditLog::create([
+                "giver_id" => $loan->user_id,
+                "collaborator_id" => Auth::id(),
+                "model_changed" => "Préstamo ID: " . $loan->id,
+                "type" => "Actualización de Estado ($oldStatus -> $status)"
+            ]);
+            }
             return $loan;
         });
     }
 
 
     public function createLoan($request){
-
-    $common_keys = [
-        "good_id",
-        "person_id",
-        "loan_date",
-        "retrieval_date",
-        "quantity_requested",
-        "status"
-    ];
-
-    $loanData = $request->only($common_keys);
-    $loanData["user_id"] = Auth::user()->id;
-
-    if($loanData['status'] == "given" || $loanData['status'] == 'overdue'){
-
-        $good = Good::findOrFail($loanData['good_id']);
-
-        $movementData = [
-            "good_id" => $loanData['good_id'],
-            "inventory_id" => $good->inventory_id,
-            "user_id" => Auth::id(),
-            "type" => "retire",
-            "quantity" => $loanData['quantity_requested']
+    return DB::transaction(function () use ($request) {
+        $common_keys = [
+            "good_id",
+            "person_id",
+            "loan_date",
+            "retrieval_date",
+            "quantity_requested",
+            "status"
         ];
 
-        $this->movementService->registerMovement($movementData);
-    }
+        $loanData = $request->only($common_keys);
+        $loanData["user_id"] = Auth::user()->id;
 
-    return Loan::create($loanData);
+        if($loanData['status'] == "given" || $loanData['status'] == 'overdue'){
+
+            $good = Good::findOrFail($loanData['good_id']);
+
+            $movementData = [
+                "good_id" => $loanData['good_id'],
+                "inventory_id" => $good->inventory_id,
+                "user_id" => Auth::id(),
+                "type" => "retire",
+                "quantity" => $loanData['quantity_requested']
+            ];
+
+            $this->movementService->registerMovement($movementData);
+        }
+
+        $loan = Loan::create($loanData);
+        $good = Good::with('inventory')->find($loan->good_id);
+            if ($good->inventory->user_id != Auth::id()) {
+                AuditLog::create([
+                    "giver_id" => $good->inventory->user_id,
+                    "collaborator_id" => Auth::id(),
+                    "model_changed" => "Préstamo de: $loan->quantity " . $good->name,
+                    "type" => "Creación"
+                ]);
+            }
+        return $loan;
+    });
 }
 
     /*

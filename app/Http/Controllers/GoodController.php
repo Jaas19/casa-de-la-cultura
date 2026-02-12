@@ -38,7 +38,7 @@ class GoodController extends Controller
     }
 
     public function store(Request $data) {
-        $request->validate([
+        $data->validate([
         'inventory_id' => 'required|exists:inventories,id',
         'name' => 'required|string|max:255',
         'available_amount' => 'required|integer|min:0',

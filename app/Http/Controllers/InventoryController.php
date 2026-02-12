@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\InventoryAttribute;
 use App\Models\Inventory;
+use Illuminate\Support\Facades\Log;
 
 class InventoryController extends Controller
 {

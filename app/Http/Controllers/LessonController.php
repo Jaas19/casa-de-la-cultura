@@ -68,7 +68,10 @@ class LessonController extends Controller
     }
 
     public function store(Request $request, Discipline $discipline){
-        $this->authorize('update', $discipline);
+        $ids = Auth::user()->keys();
+        if (!in_array($discipline->administrator_id, $ids)) {
+            abort(403);
+        }
         $validatedData = $request->validate(
             [
                 'name' => 'string|max:255|required',

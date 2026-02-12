@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Services;
 use App\Models\Inventory;
 use App\Models\InventoryAttribute;
+use App\Models\AuditLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
 class InventoryService implements InventoryServiceInterface {
@@ -14,7 +16,6 @@ class InventoryService implements InventoryServiceInterface {
                 'name' => $data['name'],
                 'user_id' => $data['user_id'],
             ]);
-
             if(!empty($data['attributes'])){
                 $inventory->attributes()->createMany($data['attributes']);
             }
@@ -23,6 +24,8 @@ class InventoryService implements InventoryServiceInterface {
     }
     public function updateInventory($data){
         $inventory = Inventory::find($data->id);
+        $oldInventory = $inventory->replicate();
+        $inventoryName = $oldInventory->name;
         $inventory->update(["name" => $data->name]);
 
         $attributes = $data->input('attributes', []);
@@ -64,6 +67,14 @@ class InventoryService implements InventoryServiceInterface {
             );
         }
         $inventory->save();
+        if($inventory->user_id != Auth::id()){
+            AuditLog::create([
+            "giver_id" => $inventory->user_id,
+            "collaborator_id" => Auth::id(),
+            "model_changed" => "Inventario: $inventoryName",
+            "type" => "Actualización"
+        ]);
+        }
     }
     public function listInventories($ids){
         $inventories = Inventory::whereIn("user_id", $ids)->with('user')->get();

@@ -18,15 +18,12 @@
             </form>
 
         <h3 class="absolute text-right sm:text-center w-full">
-            <a href="{{ route("dashboard.index") }}"
+            <a href="{{ route("permission.index") }}"
                 class="text-white2
                 text-2xl black_contour font-black mr-5">
-                Permisos
+                Historial
             </a>
         </h3>
-        <a href="{{ route("log.index") }}" class="text-gray-200 leading-tight black_contour text-xl font-black cursor-pointer z-30">
-            Historial
-        </a>
     </x-slot>
 
     <table class="w-full grid-cols-[auto-fill] table-fixed overflow-auto grow-0">
@@ -34,49 +31,31 @@
               after:content-[''] after:absolute after:inset-0 after:-z-10
               after:bg-gradient-to-r after:from-yellow-900 after:to-yellow-700">
             <tr class="w-full">
-                <th>Colaborador (Autorizado)</th>
-                <th>Correo Electrónico</th>
-                <th>Fecha de Asignación</th>
-                <th>Revocar</th>
+                <th>Colaborador</th>
+                <th>Registro cambiado</th>
+                <th>Acción</th>
+                <th>Fecha</th>
             </tr>
         </thead>
         <tbody class="overflow-auto w-full relative">
-            @foreach ($permissions as $permission)
+            @foreach ($logs as $log)
             <tr>
-                <td class="text-center py-2">{{ $permission->collaborator->name }}</td>
-                <td class="text-center py-2">{{ $permission->collaborator->email }}</td>
-                <td class="text-center py-2">{{ $permission->created_at->format('d/m/Y') }}</td>
-                <td class="text-center py-2">
-                    <form action="{{ route('permission.destroy', $permission->id) }}" method="POST"
-                          onsubmit="return confirm('¿Estás seguro de que deseas revocar el permiso a este usuario?');">
-                        @csrf
-                        @method('DELETE')
-
-                        <button type="submit" class="text-red-400 font-bold hover:text-red-600 transition">
-                            <img src="{{ asset("images/delete.png") }}" class="size-6">
-                        </button>
-                    </form>
-                </td>
+                <td class="text-center py-2">{{ $log->collaborator->name }} - {{  $log->collaborator->email }}</td>
+                <td class="text-center py-2">{{ $log->model_changed }}</td>
+                <td class="text-center py-2">{{ $log->type }}</td>
+                <td class="text-center py-2">{{ $log->created_at->format('d/m/Y g:i a') }}</td>
             </tr>
             @endforeach
 
-            @if($permissions->isEmpty())
+            @if($logs->isEmpty())
             <tr>
                 <td colspan="4" class="text-center py-4 text-gray-400">
-                    No has otorgado permisos a ningún usuario todavía.
+                    Tus colaboradores no han hecho cambios.
                 </td>
             </tr>
             @endif
         </tbody>
     </table>
-
-    <x-slot name="footer">
-        <div class="bg-gradient-to-r from-yellow-950 to-yellow-900 min-w-full p-6 text-sm flex items-center justify-center">
-            <a href="{{ route('permission.create') }}" class="rounded-3xl bg-black2 text-md font-bold text-white2 black_contour p-3 text-center w-[20%]">
-                Otorgar Nuevo Permiso
-            </a>
-        </div>
-    </x-slot>
 
     <x-slot name="script">
         {{ asset("js/redirect.js") }}

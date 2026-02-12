@@ -5,24 +5,59 @@ namespace App\Http\Controllers\Services;
 use App\Models\Lesson;
 use App\Models\Schedule;
 use App\Models\Period;
+use App\Models\AuditLog;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Collection;
 use Exception;
 
 class LessonService implements LessonServiceInterface {
     public function storeLesson($data, $disciplineId){
-        return Lesson::create([
-            'name' => $data['name'],
-            'description' => $data['description'],
-            'discipline_id' => $disciplineId,
-            'color' => $data['color'],
-        ]);
+        return DB::transaction(function () use ($data, $disciplineId) {
+            $lesson = Lesson::create([
+                'name' => $data['name'],
+                'description' => $data['description'],
+                'discipline_id' => $disciplineId,
+                'color' => $data['color'],
+            ]);
+
+            $lesson->load('discipline');
+
+            if ($lesson->discipline->administrator_id != Auth::id()) {
+                AuditLog::create([
+                    "giver_id" => $lesson->discipline->administrator_id,
+                    "collaborator_id" => Auth::id(),
+                    "model_changed" => "Clase: $lesson->name ($lesson->discipline->name)",
+                    "type" => "Creación"
+                ]);
+            }
+
+            return $lesson;
+        });
     }
+
     public function updateLesson($lesson, $data){
-        if (!$lesson->update($data)) {
-            throw new Exception("No se pudo actualizar la clase.");
-        }
-        return $lesson->fresh();
+        return DB::transaction(function () use ($lesson, $data) {
+            $oldLesson = $lesson->replicate();
+            $oldName = $oldLesson->name;
+            $lesson->load('discipline');
+
+            if (!$lesson->update($data)) {
+                throw new Exception("No se pudo actualizar la clase.");
+            }
+
+            if ($lesson->discipline->administrator_id != Auth::id()) {
+                AuditLog::create([
+                    "giver_id" => $lesson->discipline->administrator_id,
+                    "collaborator_id" => Auth::id(),
+                    "model_changed" => "Clase: $oldName ($lesson->discipline->name)",
+                    "type" => "Actualización"
+                ]);
+            }
+
+            return $lesson->fresh();
+        });
     }
 
 

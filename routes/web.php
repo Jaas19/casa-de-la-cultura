@@ -18,6 +18,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PositionTypeController;
 use App\Http\Controllers\PeriodController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use Illuminate\Support\Facades\Route;
 
@@ -156,6 +157,11 @@ Route::middleware('auth')->group(function () {
     Route::get('permission/create', [PermissionController::class, 'create'])->name('permission.create');
     Route::post('permission', [PermissionController::class, 'store'])->name('permission.store');
     Route::delete('permission/{permission}', [PermissionController::class, 'destroy'])->name('permission.destroy');
+
+    // Logs
+
+    Route::get('log', [AuditLogController::class, 'index'])->name('log.index');
+
 
     });
 require __DIR__.'/auth.php';
