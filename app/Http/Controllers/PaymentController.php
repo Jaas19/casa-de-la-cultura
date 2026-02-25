@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Services\paymentServiceInterface;
 use App\Models\Payment;
 use App\Models\Student;
 use App\Models\Discipline;
+use Exception;
 
 class PaymentController extends Controller
 {
@@ -33,43 +35,46 @@ class PaymentController extends Controller
                 ->where('id', $request->query('student'))
                 ->where('discipline_id', $discipline->id)
                 ->first();
-
-        return view("payment.create", compact("discipline" , "student"));
         }
+        return view("payment.create", compact("discipline" , "student"));
     }
 
-    public function store(Request $request, Discipline $discipline){
-        $ids = Auth::user()->keys();
-        if (!in_array($discipline->administrator_id, $ids)) {
-            return back()->with("error", "Acceso denegado.");
-        }
-        $request->merge(['discipline_id' => $discipline->id]);
+    public function store(Request $request, Discipline $discipline) {
+    $ids = Auth::user()->keys();
+    if (!in_array($discipline->administrator_id, $ids)) {
+        return back()->with("error", "Acceso denegado.");
+    }
 
-        $validatedData = $request->validate([
-            'dni' => 'required|integer|exists:people,dni',
-            'discipline_id' => 'required|integer|exists:disciplines,id',
-            'date' => 'required|date',
-            'amount' => 'required|numeric|min:0',
-            'method' => 'required|string|max:50',
-            'reference_number' => 'prohibited_if:method,Efectivo|nullable|string|max:50|regex:/^[0-9]+$/',
-            'receipt' => 'prohibited_if:method,Efectivo|nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
-        ], [
-            'dni.exists' => 'La cédula ingresada no existe en el sistema.',
-            'reference_number.prohibited_if' => 'No debe ingresar referencia si paga en Efectivo.',
-            'reference_number.regex' => 'La referencia solo puede contener números.',
-            'receipt.prohibited_if' => 'No debe subir comprobante si paga en Efectivo.',
-            'receipt.mimes' => 'El comprobante debe ser una imagen (JPG, PNG) o PDF.'
-        ]);
+    // Agregamos el ID para validarlo
+    $request->merge(['discipline_id' => $discipline->id]);
 
-        try {
+    $validatedData = $request->validate([
+        'dni' => 'required|integer|exists:people,dni',
+        'discipline_id' => 'required|integer|exists:disciplines,id',
+        'date' => 'required|date',
+        'next_payment' => 'required|date|after:date', // Tu validación corregida
+        'amount' => 'required|numeric|min:0',
+        'method' => 'required|string|max:50',
+        'reference_number' => 'prohibited_if:method,Efectivo|nullable|string|max:50|regex:/^[0-9]+$/',
+        'receipt' => 'prohibited_if:method,Efectivo|nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+    ], [
+        'dni.exists' => 'La cédula ingresada no existe en el sistema.',
+        'reference_number.prohibited_if' => 'No debe ingresar referencia si paga en Efectivo.',
+        'reference_number.regex' => 'La referencia solo puede contener números.',
+        'receipt.prohibited_if' => 'No debe subir comprobante si paga en Efectivo.',
+        'receipt.mimes' => 'El comprobante debe ser una imagen (JPG, PNG) o PDF.'
+    ]);
+
+    try {
+        DB::transaction(function () use ($request, $discipline, $validatedData) {
+
             $student = Student::where('discipline_id', $discipline->id)
-            ->whereHas('person', function($query) use ($validatedData) {
-            $query->where('dni', $validatedData['dni']);
-            })->first();
+                ->whereHas('person', function ($query) use ($validatedData) {
+                    $query->where('dni', $validatedData['dni']);
+                })->lockForUpdate()->first();
 
             if (!$student) {
-                return back()->with('error', 'El estudiante no está inscrito en esta disciplina.')
-                ->withInput();
+                throw new \Exception('El estudiante no está inscrito en esta disciplina.');
             }
 
             $receiptPath = null;
@@ -78,26 +83,30 @@ class PaymentController extends Controller
             }
 
             Payment::create([
-                'student_id'  => $student->id,
-                'discipline_id' => $discipline->id,
-                'date' => $validatedData['date'],
-                'method' => $validatedData['method'],
-                'amount' => $validatedData['amount'],
+                'student_id'     => $student->id,
+                'discipline_id'  => $discipline->id,
+                'date'           => $validatedData['date'],
+                'method'         => $validatedData['method'],
+                'amount'         => $validatedData['amount'],
                 'reference_number' => $validatedData['reference_number'] ?? null,
-                'receipt_path' => $receiptPath,
+                'receipt_path'   => $receiptPath,
             ]);
 
-            return redirect()
-                ->route('payment.index', $discipline)
-                ->with('success', 'Pago registrado correctamente');
+            $student->next_payment = $validatedData['next_payment'];
+            $student->save();
+        });
 
-        } catch (\Exception $e) {
-            Log::error("Error registrando el pago: " . $e->getMessage());
-            return back()
-                ->with('error', 'Ocurrió un error al registrar el pago: ' . $e->getMessage())
-                ->withInput();
-        }
+        return redirect()
+            ->route('payment.index', $discipline)
+            ->with('success', 'Pago registrado y fecha de estudiante actualizada correctamente.');
+
+    } catch (\Exception $e) {
+        Log::error("Error registrando el pago: " . $e->getMessage());
+        return back()
+            ->with('error', 'Ocurrió un error: ' . $e->getMessage())
+            ->withInput();
     }
+}
 
     public function getPersonByDni(Request $request, Discipline $discipline){
         $ids = Auth::user()->keys();

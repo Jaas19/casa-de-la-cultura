@@ -9,12 +9,20 @@ use App\Models\AuditLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class GoodService implements GoodServiceInterface {
     public function createGood (Request $data){
         return DB::transaction(function () use ($data) {
             $inventory = Inventory::find($data["inventory_id"]);
             $common_keys = ['inventory_id', 'name', 'description', 'photo', 'available_amount'];
+            $goodData = $data->only($common_keys);
+
+        if ($data->hasFile('photo')) {
+            $path = $data->file('photo')->store('goods', 'public');
+            $goodData['photo'] = $path;
+        }
+
             $model = Good::create($data->only($common_keys));
             $modelId = $model->id;
             $goodAttributes = [];
@@ -51,41 +59,53 @@ class GoodService implements GoodServiceInterface {
     }
 
     public function updateGood(Request $request, $id)
-{
-return DB::transaction(function () use ($request, $id) {
-        $good = Good::findOrFail($id);
+    {
+        return DB::transaction(function () use ($request, $id) {
+            $good = Good::findOrFail($id);
 
-        $common_keys = ['inventory_id', 'name', 'description', 'photo', 'available_amount'];
-        $good->update($request->only($common_keys));
+            $common_keys = ['inventory_id', 'name', 'description', 'available_amount'];
+            $goodData = $request->only($common_keys);
 
-        $values = $request->input("value", []);
-        $keys = $request->input("id_key", []);
+            if ($request->hasFile('photo')) {
+                if ($good->photo) {
+                    Storage::disk('public')->delete($good->photo);
+                }
+                $path = $request->file('photo')->store('goods', 'public');
+                $goodData['photo'] = $path;
+            }
 
-        if (is_array($values) && is_array($keys)) {
-            foreach ($keys as $index => $key_id) {
-                Good_Attribute::updateOrCreate(
-                    [
-                        'id_good' => $good->id,
-                        'id_key'  => $key_id
-                    ],
-                    [
-                        'value' => $values[$index] ?? null
-                    ]
-                );
+            $good->update($goodData);
+
+            $values = $request->input("value", []);
+            $keys = $request->input("id_key", []);
+
+            if (is_array($values) && is_array($keys)) {
+                foreach ($keys as $index => $key_id) {
+                    if (isset($values[$index])) {
+                    Good_Attribute::updateOrCreate(
+                        [
+                            'id_good' => $good->id,
+                            'id_key'  => $key_id
+                        ],
+                        [
+                            'value' => $values[$index]
+                        ]
+                    );
+                }
             }
         }
-        $inventory = Inventory::find($good->inventory_id);
-        if($inventory->user_id != Auth::id()){
-            AuditLog::create([
-            "giver_id" => $inventory->user_id,
-            "collaborator_id" => Auth::id(),
-            "model_changed" => "Bien: $good->name ($inventory->name)",
-            "type" => "Actualización"
-        ]);
-        }
-        return $good;
-    });
-}
+            $inventory = Inventory::find($good->inventory_id);
+            if($inventory->user_id != Auth::id()){
+                AuditLog::create([
+                "giver_id" => $inventory->user_id,
+                "collaborator_id" => Auth::id(),
+                "model_changed" => "Bien: $good->name ($inventory->name)",
+                "type" => "Actualización"
+            ]);
+            }
+            return $good;
+        });
+    }
 
     public function listGoodsWithInventory ($ids){
         return Good::whereHas('inventory', function ($query) use ($ids){

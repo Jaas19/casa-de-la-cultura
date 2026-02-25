@@ -72,7 +72,9 @@
             <tr class="person-data {{ $person->status == "inactive" ? 'hide2' : '' }}" data-status="{{ $person->status }}" data-discipline-id="0" data-person-id="{{ $person->id }}" data-position-id="{{ $person->position->id }}" data-position-type-id="{{ $person->position->type->id }}">
                 <td class="person-data-attribute overflow-hidden flex justify-center">
                 @if ($person->image)
-                    <img src="{{Storage::url($person->image)}}" class="max-h-12">
+                    <a href="{{ Storage::url($person->image) }}" target="_blank">
+                        <img src="{{Storage::url($person->image)}}" class="max-h-12">
+                    </a>
                 @endif
                 </td>
                 <td class="person-data-attribute">{{$person->dni}}</td>

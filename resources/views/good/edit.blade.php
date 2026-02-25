@@ -21,7 +21,7 @@
         </form>
     </x-slot>
 
-    <form action="{{ route('good.update', $good) }}" method="POST">
+    <form action="{{ route('good.update', $good) }}" method="POST" enctype="multipart/form-data">
     @method("PATCH")
     @csrf
     <div class="px-[10vw] py-[10vh] grid sm:grid-cols-2 gap-5">

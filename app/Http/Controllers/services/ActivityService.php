@@ -52,7 +52,6 @@ class ActivityService implements ActivityServiceInterface {
     }
 
     public function listActivities(array $ids, ?string $status = null, ?string $search = null) {
-        $this->updateActivities();
 
         $query = Activity::whereIn("user_id", $ids)
                         ->distinct()
@@ -185,6 +184,7 @@ class ActivityService implements ActivityServiceInterface {
     {
         return DB::transaction(function () use ($request) {
             $activity = Activity::findOrFail($request->id);
+
             $oldActivity = $activity->replicate();
             $oldName = $oldActivity->name;
 
@@ -194,7 +194,6 @@ class ActivityService implements ActivityServiceInterface {
 
             $dateIds = $activity->dates()->pluck('id');
             ActivityHour::whereIn('date_id', $dateIds)->delete();
-
             $activity->dates()->delete();
             $activity->goods()->delete();
             $activity->organizers()->delete();
@@ -205,7 +204,7 @@ class ActivityService implements ActivityServiceInterface {
                 AuditLog::create([
                     "giver_id" => $activity->user_id,
                     "collaborator_id" => Auth::id(),
-                    "model_changed" => "Actividad: $oldName",
+                    "model_changed" => "Actividad: " . $oldName,
                     "type" => "Actualización"
                 ]);
             }
@@ -215,37 +214,29 @@ class ActivityService implements ActivityServiceInterface {
     }
 
     public function changeStatus(Request $data){
-        $activity = Activity::where("id", "=", $data->id)
-        ->first();
-        $activity->status = $data->status;
-        $databaseFormat = "Y-m-d";
-        $activity->save();
-        return response()->json([
-        'success' => true,
-        'message' => 'Estado actualizado correctamente',
-        'data' => $activity
-    ]);
-    }
-    // this won't work for now, must be edited
-    public function updateActivities(){
-        /*
-        Activity::where("ending_date", "=", date("Y-m-d"))
-        ->where("ending_time", "<=", date("H:i:s"))
-        ->where("status", "!=", "Completada")
-        ->where("status", "!=", "Suspendida")
-        ->orWhere("ending_date", "<", date("Y-m-d"))
-        ->where("status", "!=", "Completada")
-        ->where("status", "!=", "Suspendida")
-        ->update(["status" => "En Espera"]);
+        $activity = Activity::where("id", "=", $data->id)->first();
 
-        Activity::where("starting_date", "=", date("Y-m-d"))
-        ->where("starting_time", "<=", date("H:i:s"))
-        ->where("status", "!=", "Completada")
-        ->where("status", "!=", "Suspendida")
-        ->where("ending_date", ">=", date("Y-m-d"))
-        ->where("ending_time", ">", date("H:i:s"))
-        ->update(["status" => "En Progreso"]);
-        */
+        if (!$activity) {
+            return response()->json(['error' => 'Actividad no encontrada'], 404);
+        }
+
+        $activity->status = $data->status;
+        $activity->save();
+
+        // --- INICIO AUDIT LOG (Para cambio de estado vía PATCH) ---
+        if ($activity->user_id != Auth::id()) {
+            AuditLog::create([
+                "giver_id" => $activity->user_id,
+                "collaborator_id" => Auth::id(),
+                "model_changed" => "Actividad: " . $activity->name . "(Estado)",
+                "type" => "Actualización"
+            ]);
+        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Estado actualizado correctamente',
+            'data' => $activity
+        ]);
     }
 
     public function getActivitiesIds($activities){

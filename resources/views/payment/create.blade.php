@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <form action="" id="redirectForm">
+        <form action="" id="redirectForm" class="z-20">
             <select id="redirect-select" class="dropdown-arrow z-10 font-black text-xl bg-transparent border-0 text-gray-200 leading-tight black_contour"
             style="background-image: url('{{ asset('images/arrow_drop_down.png') }}');">
                 <option value="" selected disabled>Volver</option>
@@ -49,12 +49,12 @@
                 </div>
 
                 <div>
-                    <label for="loan_date">Fecha de pago</label>
+                    <label for="date">Fecha de pago</label>
                     <input type="date" id="date" name="date" class="block" value="{{ old('method', now()->format("Y-m-d")) }}">
                 </div>
 
                 <div>
-                    <label for="loan_date">Método de pago</label>
+                    <label for="method">Método de pago</label>
                     <select name="method" id="method" class="block">
                         <option value="Pago móvil">Pago móvil</option>
                         <option value="Transferencia">Transferencia</option>
@@ -63,20 +63,20 @@
                     </select>
                 </div>
                 <div>
-                    <label for="loan_date">Siguiente fecha de pago</label>
+                    <label for="next_payment">Siguiente fecha de pago</label>
                     <input type="date" name="next_payment" id="next_payment" class="block">
                 </div>
                 <div>
-                    <label for="loan_date">Monto (bs)</label>
+                    <label for="amount">Monto (bs)</label>
                     <input type="number" name="amount" id="amount" class="block" placeholder="Introduzca el monto...">
                 </div>
                 <div>
-                    <label for="loan_date">Número de referencia (opcional)</label>
+                    <label for="reference_number">Número de referencia (opcional)</label>
                     <input type="text" name="reference_number" id="reference_number" class="block" placeholder="Introduzca la referencia...">
                 </div>
                 <div>
-                    <label for="loan_date">Recibo (opcional)</label>
-                    <input type="file" name="" id="" class="block" placeholder="Introduzca el monto...">
+                    <label for="receipt">Recibo (opcional)</label>
+                    <input type="file" name="receipt" id="receipt" class="block" placeholder="Introduzca el monto...">
                 </div>
 
             </div>

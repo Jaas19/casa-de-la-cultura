@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <form action="" id="redirectForm">
+        <form action="" id="redirectForm" class="z-20">
             <select id="redirect-select" class="dropdown-arrow z-10 font-black text-xl bg-transparent border-0 text-gray-200 leading-tight black_contour"
             style="background-image: url('{{ asset('images/arrow_drop_down.png') }}');">
                 <option value="" selected disabled>Volver</option>
@@ -46,7 +46,15 @@
                 <td>{{ $payment->date->format("d/m/Y") }}</td>
                 <td>{{ $payment->method }}</td>
                 <td>{{ $payment->reference_number ?? "-" }}</td>
-                <td>{{ $payment->receipt_path ?? "-" }}</td>
+                <td>
+                    @if ($payment->receipt_path)
+                        <a href="{{ Storage::url($payment->receipt_path) }}" target="_blank" class="flex items-center justify-center">
+                            <img src="{{Storage::url($payment->receipt_path)}}" class="max-h-12">
+                        </a>
+                    @else
+                        -
+                    @endif
+                </td>
             </tr>
             @endforeach
         </tbody>

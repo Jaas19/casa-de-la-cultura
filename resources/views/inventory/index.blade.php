@@ -65,7 +65,11 @@
                     @foreach ($inventoryGoods as $tableGoods)
                         @foreach ($tableGoods as $good)
                             <tr class="inventoryData hidden w-full" data-good-id={{ $good->id }} data-inventory-id="{{ $good->inventory_id }}">
-                                <td class="dataField" maxlength="30">{{ $good -> photo }}</td>
+                                <td class="dataField" maxlength="30">
+                                    <a href="{{ $good->photo ? asset('storage/' . $good->photo) : ""}}">
+                                        <img src="{{ $good->photo ? asset('storage/' . $good->photo) : ""}}" class="max-h-12">
+                                    </a>
+                                </td>
                                 <td class="dataField" maxlength="30">{{ $good -> name }}</td>
                                 <td class="dataField text-balance" maxlength="30">{{
                                 strlen($good -> description) > 60

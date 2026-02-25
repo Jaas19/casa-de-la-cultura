@@ -21,7 +21,7 @@
         </form>
     </x-slot>
 
-    <form action="{{ route('good.store') }}" method="POST">
+    <form action="{{ route('good.store') }}" method="POST" enctype="multipart/form-data">
     @csrf
     <div class="px-[10vw] py-[10vh] grid sm:grid-cols-2 gap-5">
 

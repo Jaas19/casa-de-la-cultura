@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 interface ActivityServiceInterface{
 public function listActivities(array $userId, ?string $status = null, ?string $search = null);
     public function changeStatus(Request $data);
-    public function updateActivities();
     public function updateActivity(Request $request);
     public function createActivity(Request $data);
     public function getActivitiesColors($activities);
